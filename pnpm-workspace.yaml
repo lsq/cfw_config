@@ -1,0 +1,5 @@
+onlyBuiltDependencies:
+  - isolated-vm
+
+patchedDependencies:
+  ts-punycode@0.1.0: patches/ts-punycode@0.1.0.patch
