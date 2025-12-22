@@ -363,5 +363,6 @@ module.exports.parse = async (
   // console.log(data)
   //axios.get(free_pac).then(function(res) {console.log(res)}).catch(function(err){console.log(err)})
   obj['proxy-groups'][0]['proxies'].push(...prxoyNames);
+  obj['allow-lan'] = true;
   return yaml.stringify(obj);
 };
