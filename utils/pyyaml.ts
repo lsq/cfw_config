@@ -1,4 +1,4 @@
-import { loadPyodide, version as pyodideVersion } from "pyodide";
+import { loadPyodide, version as pyodideVersion } from 'pyodide';
 
 let pyodidePromise: Promise<any> | null = null;
 let isPyodideLoading = false;
@@ -18,7 +18,7 @@ export async function getPyodide() {
   }
 
   isPyodideLoading = true;
-  console.log("Pyodide 加载中（首次约 2-5 秒）...");
+  console.log('Pyodide 加载中（首次约 2-5 秒）...');
 
   try {
     const py = await loadPyodide({
@@ -26,23 +26,23 @@ export async function getPyodide() {
     });
 
     // 步骤1: 加载 micropip（Pyodide 内置）
-    await py.loadPackage("micropip");
-    const micropip = py.pyimport("micropip");
+    await py.loadPackage('micropip');
+    const micropip = py.pyimport('micropip');
 
     // 步骤2: 用自定义镜像安装 PyYAML（加速下载）
-    console.log("通过镜像安装 PyYAML...");
-    await micropip.install("PyYAML", {
-      index_url: "https://pypi-mirror.siiway.top/pypi/simple/", // 你的自定义镜像
-      trusted_host: "pypi-mirror.siiway.top", // 避免 SSL 警告
+    console.log('通过镜像安装 PyYAML...');
+    await micropip.install('PyYAML', {
+      index_url: 'https://pypi-mirror.siiway.top/pypi/simple/', // 你的自定义镜像
+      trusted_host: 'pypi-mirror.siiway.top', // 避免 SSL 警告
     });
 
-    console.log("PyYAML 安装完成！");
+    console.log('PyYAML 安装完成！');
 
     pyodidePromise = Promise.resolve(py);
     isPyodideLoading = false;
     return py;
   } catch (err: any) {
-    console.error("Pyodide + PyYAML 加载失败:", err);
+    console.error('Pyodide + PyYAML 加载失败:', err);
     isPyodideLoading = false;
     throw new Error(`PyYAML 加载失败：${err.message}`);
   }
@@ -54,7 +54,7 @@ export async function parsePyYaml(yamlText: string): Promise<any> {
     const py = await getPyodide();
 
     // 只清理非法字符，绝不动换行！
-    const safeText = yamlText.replace(/[\x00-\x1F\x7F-\x9F]/g, "");
+    const safeText = yamlText.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
 
     // 直接用 py.runPythonAsync 内联，避免 globals.set 吃换行
     const result = await py.runPythonAsync(`
@@ -64,7 +64,7 @@ yaml.safe_load("""${safeText}""") or {}
 
     return result?.toJs({ dict_converter: Object.fromEntries }) || {};
   } catch (err: any) {
-    console.error("PyYAML 解析错误:", err);
+    console.error('PyYAML 解析错误:', err);
     throw err;
   }
 }

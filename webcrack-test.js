@@ -1,22 +1,22 @@
-const { webcrack } = require("@bratel/webcrack");
-const { exec, execSync } = require("child_process");
-const fs = require("fs");
-const util = require("util");
+const { webcrack } = require('@bratel/webcrack');
+const { exec, execSync } = require('child_process');
+const fs = require('fs');
+const util = require('util');
 const execAsync = util.promisify(exec);
-const { updateUrl } = require("./findNode");
+const { updateUrl } = require('./findNode');
 const { execFile } = require('child_process');
 const { promisify } = require('util');
 
 async function getNodeFromPath() {
   try {
-    console.log("std-------");
+    console.log('std-------');
     // const path = execSync('which node', {encoding: 'utf8'});
-    const { stdout } = await execAsync("where.exe node");
-    console.log("stdout-------", stdout);
+    const { stdout } = await execAsync('where.exe node');
+    console.log('stdout-------', stdout);
     return stdout
       .trim()
       .split(/\r?\n/)
-      .filter((p) => p.trim() !== "");
+      .filter((p) => p.trim() !== '');
   } catch (err) {
     return [];
   }
@@ -38,20 +38,20 @@ async function findAllNodePaths() {
 
   // 4. PATH
   const fromPath = await getNodeFromPath();
-  console.log("fromPath: ", fromPath);
+  console.log('fromPath: ', fromPath);
   fromPath.forEach((p) => set.add(p));
 
-  return Array.from(set).filter((p) => require("fs").existsSync(p));
+  return Array.from(set).filter((p) => require('fs').existsSync(p));
 }
 
-const code = fs.readFileSync("./iframe.js", "utf8");
+const code = fs.readFileSync('./iframe.js', 'utf8');
 
 webcrack(code).then((result) => {
   console.log(result.code);
   const scriptCode = result.code;
   const match = scriptCode.match(/\.src\s*=\s*["']([^"']+)["']/);
   if (match) {
-    console.log("Extracted src:", match[1]);
+    console.log('Extracted src:', match[1]);
   }
 });
 
@@ -60,19 +60,18 @@ async function update_uri() {
     const nodePath = await findAllNodePaths();
     console.log(nodePath);
     const output = execSync(`${nodePath[0]} updateUri.js`, {
-      encoding: "utf8",
+      encoding: 'utf8',
     });
     // const result = JSON.parse(output.trim());
     const result = output.trim();
-    console.log("Captured result:", result); // { status: 'ok', data: [1,2,3] }
+    console.log('Captured result:', result); // { status: 'ok', data: [1,2,3] }
 
     const myVar = result; // 保存到变量
     console.log(myVar);
   } catch (err) {
-    console.error("Script failed:", err);
+    console.error('Script failed:', err);
   }
 }
-
 
 // 将 execFile 转为 Promise 版本
 const execFileAsync = promisify(execFile);
@@ -84,13 +83,13 @@ async function getNodeVersion(nodePath) {
     return {
       path: nodePath,
       version: stdout.trim(), // 去掉换行符
-      error: null
+      error: null,
     };
   } catch (err) {
     return {
       path: nodePath,
       version: null,
-      error: err.message || 'Unknown error'
+      error: err.message || 'Unknown error',
     };
   }
 }
@@ -99,7 +98,7 @@ async function getNodeVersion(nodePath) {
 async function testAllNodeVersions(nodePaths) {
   // 并发执行所有测试
   const results = await Promise.all(
-    nodePaths.map(path => getNodeVersion(path))
+    nodePaths.map((path) => getNodeVersion(path))
   );
 
   // 输出结果
@@ -129,19 +128,19 @@ async function getNodeOsName(nodePath) {
     // 方法3: 使用 process.report.getReport().header.osName（返回更友好的名称，如 'Windows_NT'）
     const { stdout } = await execFileAsync(nodePath, [
       '-p',
-      'process.report.getReport().header.osName'
+      'process.report.getReport().header.osName',
     ]);
 
     return {
       path: nodePath,
       osName: stdout.trim(),
-      error: null
+      error: null,
     };
   } catch (err) {
     return {
       path: nodePath,
       osName: null,
-      error: err.message || 'Unknown error'
+      error: err.message || 'Unknown error',
     };
   }
 }
@@ -149,7 +148,7 @@ async function getNodeOsName(nodePath) {
 // 主函数：测试所有路径
 async function testAllNodeOsNames(nodePaths) {
   const results = await Promise.all(
-    nodePaths.map(path => getNodeOsName(path))
+    nodePaths.map((path) => getNodeOsName(path))
   );
 
   console.log('Node.js 运行时操作系统测试结果：');
@@ -166,35 +165,33 @@ async function testAllNodeOsNames(nodePaths) {
 
 // 使用示例
 // const nodePaths = [
-  // "c:\\node.exe",
-  // "d:\\node.exe"
+// "c:\\node.exe",
+// "d:\\node.exe"
 // ];
 async function findValidNode() {
   // setTimeout(()=>{
   //     console('haha..')
   // }, 3000)
-  const output = execSync("where.exe node", { encoding: "utf8" });
-  const pathArr = output.split(/\r?\n/).filter((p) => p.trim() !== "");
-  const results = await Promise.all(
-    pathArr.map(path => getNodeOsName(path))
-  );
-  const validPath = results.filter(p => {
-    return !p.osName.startsWith('MINGW')
-    })
-  return validPath
+  const output = execSync('where.exe node', { encoding: 'utf8' });
+  const pathArr = output.split(/\r?\n/).filter((p) => p.trim() !== '');
+  const results = await Promise.all(pathArr.map((path) => getNodeOsName(path)));
+  const validPath = results.filter((p) => {
+    return !p.osName.startsWith('MINGW');
+  });
+  return validPath;
 }
 
 (async () => {
-  const nodePaths = await findAllNodePaths()
+  const nodePaths = await findAllNodePaths();
   testAllNodeVersions(nodePaths).catch(console.error);
   testAllNodeOsNames(nodePaths).catch(console.error);
   await update_uri();
-  console.log("-----------------------");
+  console.log('-----------------------');
   const url = await updateUrl();
-  console.log("-----------------------");
+  console.log('-----------------------');
   console.log(url || 'lsq');
-  console.log('------------------')
-  const np = await findValidNode()
-  console.log(np)
+  console.log('------------------');
+  const np = await findValidNode();
+  console.log(np);
   // console.log(url);
 })();

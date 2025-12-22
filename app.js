@@ -1,3 +1,3 @@
-const math = require('./math')
+const math = require('./math');
 
-console.log(math.add(8,8))
+console.log(math.add(8, 8));
