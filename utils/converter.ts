@@ -219,7 +219,13 @@ function isIPv6(address: string): boolean {
 
 function decodeBase64OrOriginal(str: string): string {
   try {
-    return atob(str);
+    // return atob(str);
+    const binary = atob(str);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return new TextDecoder().decode(bytes);
   } catch {
     return str;
   }

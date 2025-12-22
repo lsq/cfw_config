@@ -9,6 +9,8 @@ const ssrUrl = [
   'ssr://c3NyMi43NjI5ODgueHl6OjMzMzM2OmF1dGhfY2hhaW5fYTpjaGFjaGEyMC1pZXRmOnRsczEuMl90aWNrZXRfYXV0aDpaRzl1WjNSaGFYZGhibWN1WTI5dC8_b2Jmc3BhcmFtPSZyZW1hcmtzPVUxTlM2SXFDNTRLNQ'
    ,
   'ss://YWVzLTI1Ni1nY206ZG9uZ3RhaXdhbmcuY29t@[2a14:7584:d009::a]:12345#SS%E8%8A%82%E7%82%B9-ipv6'
+,
+    vmessUrl
 ]
 const ret = linkToClash(ssrUrl)
 console.log("解析结果为：", ret)
@@ -39,3 +41,13 @@ try {
 } catch (error) {
   console.error('Failed to parse proxies:', error);
 }
+
+function encodeBase64(str) {
+  return Buffer.from(str, 'utf8').toString('base64');
+}
+
+function decodeBase64(base64) {
+  return Buffer.from(base64, 'base64').toString('utf8');
+}
+
+console.log(`decodeBase64: ${decodeBase64(vmessUrl.split('vmess://')[1])}`)
