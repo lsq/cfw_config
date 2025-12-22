@@ -7,6 +7,8 @@ const execFileAsync = util.promisify(execFile);
 const fsA = require("fs/promises");
 const { DOMParser } = require("@xmldom/xmldom");
 const xpath = require("xpath");
+const {linkToClash} = require('./lib/converter')
+const yaml = require('js-yaml')
 // const {updateUrll} = require('./findNode')
 // const url = 'https://dgithub.xyz/Alvin9999/new-pac/wiki/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7'
 const parser = new DOMParser();
@@ -74,20 +76,22 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function parse_data() {
   try {
-    const newUri = await updateUrl();
+    const newUri = await updateUrl() || url;
+    const v2rayUri = newUri.replace('/ss', '/v2ray')
     // await sleep(3000)
     // const input = await fsA.readFile("./ssrurl.txt", "utf8");
     // const newUri = input?.trim()
     // if (newUri) {
     // await fsA.rm("ssrurl.txt");
     // }
+    const ret = await Promise.allSettled([newUri, v2rayUri].map(async (link) => {
     saveTextToFile(
       __dirname + "/ssUrl.log",
       // new Date().toLocaleString() + ": " + (newUri || url) + (JSON.stringify(newUri)) + "\n",
-      new Date().toLocaleString() + ": " + (newUri || fixedurl) + "\n",
+      new Date().toLocaleString() + `: ${link}\n`,
       { f: "a" },
     );
-    const response = await axiosN.get(newUri || fixedurl);
+    const response = await axiosN.get(link);
     const data = response.data;
     // console.log(data)
     const doc = parser.parseFromString(data, "text/html");
@@ -106,16 +110,22 @@ async function parse_data() {
     */
     /* for @xmldom
      */
-    const node = xpath
-      .parse("//code[preceding::*[contains(text(),'SSR节点')]]")
-      .select({ node: doc, isHtml: true });
+    // const node = xpath
+    //   .parse("//code[preceding::*[contains(text(),'SSR节点')]]")
+    //   .select({ node: doc, isHtml: true });
     // const info = node[0].firstChild?.nodeValue;
-    const new_pac = node
+
+    const node = xpathHtml(
+      "//p/code/text()",
+      doc,
+    );
+
+    const new_pac_link = node
       .map((info) => {
-        const nvalue = info.firstChild?.nodeValue;
-        return parseNodes(nvalue);
-      }).flat()
+        return info.nodeValue;
+      })
       .filter(item => item !== null);
+    const config_data = parseProxies(linkToClash(new_pac_link))
     // console.log(info)
     /*
     const jsonStr =
@@ -141,9 +151,44 @@ async function parse_data() {
     */
     // const new_pac = parseNodes(info);
 
+    return config_data
+}))
+        const new_pac = ret.map(result => {
+          if (result.status === 'fulfilled') {
+              return result.value
+          }
+          else {
+          saveTextToFile(
+            __dirname + "/ssUrl.log",
+              new Date().toLocaleString() + `Fetch error: ${result.reason}`  + "\n",
+            { f: "a" },
+          );
+              throw result.reason
+          }
+      })
+          .flat()
     return new_pac;
-  } catch (e) {
+} catch (e) {
     console.log(e);
+  }
+}
+
+function parseProxies(response) {
+  if (!response.success) {
+    throw new Error('Response not successful');
+  }
+
+  const data = response.data;
+
+  // 方法 1：直接用 YAML 解析整个 data（推荐）
+  // 因为 "proxies:" 是合法的 YAML 映射键，值是一个列表
+  try {
+    const parsed = yaml.load(data);
+    // parsed 是 { proxies: [ {...}, {...} ] }
+    return parsed.proxies.filter((n)=> {return n.name !== null && n.server && n.name !== 'Unnamed' && n.server !== null});
+  } catch (err) {
+    console.error('YAML parse error:', err.message);
+    throw err;
   }
 }
 

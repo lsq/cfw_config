@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   ts-punycode@0.1.0:
-    hash: b1df37dcbe2e7684507bbdd00c341472696927049d6dd4a538a19308fee88f47
+    hash: 6d2ebf6ce54e364fed74f1110b9092e9b70b43afc7f8109cd15f9bf332c3d74f
     path: patches/ts-punycode@0.1.0.patch
 
 importers:
@@ -48,7 +48,7 @@ importers:
         version: 0.29.0
       ts-punycode:
         specifier: ^0.1.0
-        version: 0.1.0(patch_hash=b1df37dcbe2e7684507bbdd00c341472696927049d6dd4a538a19308fee88f47)
+        version: 0.1.0(patch_hash=6d2ebf6ce54e364fed74f1110b9092e9b70b43afc7f8109cd15f9bf332c3d74f)
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -1296,7 +1296,7 @@ snapshots:
       '@tokenizer/token': 0.3.0
       ieee754: 1.2.1
 
-  ts-punycode@0.1.0(patch_hash=b1df37dcbe2e7684507bbdd00c341472696927049d6dd4a538a19308fee88f47): {}
+  ts-punycode@0.1.0(patch_hash=6d2ebf6ce54e364fed74f1110b9092e9b70b43afc7f8109cd15f9bf332c3d74f): {}
 
   tslib@2.8.1: {}
 

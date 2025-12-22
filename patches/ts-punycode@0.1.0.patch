@@ -1,3 +1,25 @@
+diff --git a/dist/index.js b/dist/index.js
+index c0792c9c37e339fdf90a5396d2e665d0565a1d7b..2a11dbcc0ca741c8253cc1924c046722336fbf01 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -224,7 +224,7 @@ var punycode_default = punycode;
+ 
+ // src/index.ts
+ var src_default = punycode_default;
+-export {
++module.export = {
+   ucs2encode,
+   ucs2decode,
+   toUnicode,
+@@ -236,7 +236,7 @@ export {
+   error,
+   encode,
+   digitToBasic,
+-  src_default as default,
++  default: src_default,
+   decode,
+   basicToDigit,
+   adapt,
 diff --git a/dist/types.d.ts b/dist/types.d.ts
 index 3c57b576ec422ce6b7cff09d0ac25950b64566bb..1b3f2c884c9dc922287bee9447d1d149d28358fd 100644
 --- a/dist/types.d.ts
@@ -10,9 +32,17 @@ index 3c57b576ec422ce6b7cff09d0ac25950b64566bb..1b3f2c884c9dc922287bee9447d1d149
    'overflow': 'Overflow: input needs wider integers to process',
    'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
 diff --git a/package.json b/package.json
-index e2a7652a392b71b1dee8c491bc73b04fb90b73f9..1860d294c63d150dd3f0ff015605ba246dc92791 100644
+index e2a7652a392b71b1dee8c491bc73b04fb90b73f9..ee787620b8aaa37c2dfe03b157dc458d8c845576 100644
 --- a/package.json
 +++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "ts-punycode",
+-  "type": "module",
++  "type": "commonjs",
+   "version": "0.1.0",
+   "description": "A modern TypeScript implementation of Punycode (RFC 3492) with full RFC 5891 support.",
+   "author": "Chris Breuer <chris@stacksjs.org>",
 @@ -24,16 +24,17 @@
    "exports": {
      ".": {

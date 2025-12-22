@@ -8,6 +8,7 @@ const { webcrack } = require("@bratel/webcrack");
 const { DOMParser } = require("@xmldom/xmldom");
 // const { DOMParser } = require("xmldom");
 const {linkToClash} = require('./lib/converter')
+const yaml = require('js-yaml')
 
 const xpath = require("xpath");
 const fs = require("fs").promises;
@@ -139,7 +140,9 @@ async function parse_data() {
   try {
     const newUri = await update_uri() || url;
     // const url = newUri + uriPath;
-    const response = await axios.get(newUri, {
+    const v2rayUri = newUri.replace('/ss', '/v2ray')
+    const ret = await Promise.allSettled([newUri, v2rayUri].map(async (link) => {
+    const response = await axios.get(link, {
       proxy: { host: "127.0.0.1", port: 7890, protocol: "http" },
     });
     const data = response.data;
@@ -193,15 +196,19 @@ async function parse_data() {
     // console.log(info)
     // const jsonStr = '[{"' + info.replace(/ /g,'').replace(/\n+/g,'} {').replace(/\s([^\s]*?：)/g, ',$1').replace(/：/g,'":"').replace(/,/g,'","') + '"}]'
     // const new_pac = parseNodes(info);
-    const new_pac = node
+    const new_pac_link = node
       .map((info) => {
-        const nvalue = info.firstChild.nodeValue;
-        // const nvalue = info.nodeValue;
-        return parseNodes(nvalue);
+        // const nvalue = info.firstChild.nodeValue;
+        // return parseNodes(nvalue);
+        const nvalue = info.nodeValue;
+          console.log(`nvalue: ${nvalue}`)
+        return nvalue
       })
-      .filter((p) => p[0] !== null);
-    // console.log(jsonStr)
-    console.log(new_pac);
+      .filter((p) => p !== null);
+    console.log(new_pac_link)
+      console.log(`link2Clash: ${JSON.stringify(linkToClash(new_pac_link))}`)
+    const config_data = parseProxies(linkToClash(new_pac_link))
+    console.log(JSON.stringify(config_data));
     /*
     const meta = JSON.parse(jsonStr)
     const new_pac = [{
@@ -213,10 +220,44 @@ async function parse_data() {
         password: meta['密码']
     }]
     */
-
+    return config_data
+}))
+      const new_pac = ret.map(result => {
+          if (result.status === 'fulfilled') {
+              return result.value
+          }
+          else {
+          saveTextToFile(
+            __dirname + "/ssUrl.log",
+              new Date().toLocaleString() + `Fetch error: ${result.reason}`  + "\n",
+            { f: "a" },
+          );
+              throw result.reason
+          }
+      })
+          .flat()
     return new_pac;
   } catch (e) {
     console.log(e);
+  }
+}
+
+function parseProxies(response) {
+  if (!response.success) {
+    throw new Error('Response not successful');
+  }
+
+  const data = response.data;
+
+  // 方法 1：直接用 YAML 解析整个 data（推荐）
+  // 因为 "proxies:" 是合法的 YAML 映射键，值是一个列表
+  try {
+    const parsed = yaml.load(data);
+    // parsed 是 { proxies: [ {...}, {...} ] }
+    return parsed.proxies.filter((n)=> {return n.name !== null && n.server && n.name !== 'Unnamed' && n.server !== null});
+  } catch (err) {
+    console.error('YAML parse error:', err.message);
+    throw err;
   }
 }
 
