@@ -116,7 +116,7 @@ async function parse_data() {
         //   .select({ node: doc, isHtml: true });
         // const info = node[0].firstChild?.nodeValue;
 
-        const node = xpathHtml('//p/code/text()', doc);
+        const node = xpathHtml('//p[.//code]//code//text()[normalize-space()]', doc);
 
         const new_pac_link = node
           .map((info) => {

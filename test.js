@@ -174,7 +174,8 @@ async function parse_data() {
         //   "//code[preceding::*[contains(text(),'SSR节点')]]",
         //   doc,
         // );
-        const node = xpathHtml('//p/code/text()', doc);
+        // const node = xpathHtml('//p/code/text()', doc);
+        const node = xpathHtml('//p[.//code]//code//text()[normalize-space()]', doc);
         /*
           xpath
       .parse("//code[preceding::*[contains(text(),'SS节点')]]")
