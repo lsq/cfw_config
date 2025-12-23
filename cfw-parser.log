@@ -1,0 +1,149 @@
+2025/12/23 16:56:17
+C:\Program Files\Clash for Windows :  Windows_NT
+Node.js 版本: v20.9.0
+Node.js 路径: C:\Program Files\Clash for Windows\Clash for Windows.exe
+平台: win32
+架构: x64
+当前工作目录: C:\Program Files\Clash for Windows
+启动参数: [
+  'C:\\Program Files\\Clash for Windows\\Clash for Windows.exe',
+  '--type=renderer',
+  '--user-data-dir=C:\\Users\\Administrator\\AppData\\Roaming\\clash_win',
+  '--app-user-model-id=com.lbyczf.clashwin',
+  '--app-path=C:\\Program Files\\Clash for Windows\\resources\\app.asar',
+  '--no-sandbox',
+  '--no-zygote',
+  '--disable-gpu-compositing',
+  '--lang=zh-CN',
+  '--device-scale-factor=1.25',
+  '--num-raster-threads=4',
+  '--enable-main-frame-before-activation',
+  '--renderer-client-id=4',
+  '--time-ticks-at-unix-epoch=-1766459888014203',
+  '--launch-time-ticks=20283468888',
+  '--mojo-platform-channel-handle=2588',
+  '--field-trial-handle=1736,i,8633443303255154469,1396191911914766831,262144',
+  '--enable-features=kWebSQLAccess',
+  '--disable-features=OutOfBlinkCors,SpareRendererForSitePerProcess,WinDelaySpellcheckServiceInit,WinRetrieveSuggestionsOnlyOnDemand',
+  '--variations-seed-version',
+  '/prefetch:1'
+]
+环境变量: {
+  ALLUSERSPROFILE: 'C:\\ProgramData',
+  APPDATA: 'C:\\Users\\Administrator\\AppData\\Roaming',
+  CARGO_HOME: 'C:\\Users\\Administrator\\scoop\\persist\\rustup\\.cargo',
+  ChocolateyInstall: 'C:\\ProgramData\\chocolatey',
+  ChocolateyLastPathUpdate: '133662165896872900',
+  CHROME_EXECUTABLE: 'C:\\Users\\Administrator\\scoop\\apps\\RunningCheeseChrome\\current\\app\\chrome.exe',
+  CLINK_DIR: 'C:\\Program Files (x86)\\clink',
+  CommonProgramFiles: 'C:\\Program Files\\Common Files',
+  'CommonProgramFiles(x86)': 'C:\\Program Files (x86)\\Common Files',
+  CommonProgramW6432: 'C:\\Program Files\\Common Files',
+  COMPUTERNAME: 'LSQ',
+  ComSpec: 'C:\\Windows\\system32\\cmd.exe',
+  DriverData: 'C:\\Windows\\System32\\Drivers\\DriverData',
+  HOMEDRIVE: 'C:',
+  HOMEPATH: '\\Users\\Administrator',
+  JAVA_HOME: 'C:\\Users\\Administrator\\scoop\\apps\\openjdk17\\current',
+  LOCALAPPDATA: 'C:\\Users\\Administrator\\AppData\\Local',
+  LOGONSERVER: '\\\\LSQ',
+  MSYS2_PATH_TYPE: ' inherit',
+  NUMBER_OF_PROCESSORS: '12',
+  OneDrive: 'C:\\Users\\Administrator\\OneDrive',
+  ORIGINAL_XDG_CURRENT_DESKTOP: 'undefined',
+  OS: 'Windows_NT',
+  Path: 'C:\\Users\\Administrator\\.cache\\pnpm;C:\\Program Files (x86)\\Razer Chroma SDK\\bin;C:\\Program Files\\Razer Chroma SDK\\bin;C:\\Program Files\\ImageMagick-7.1.0-Q16-HDRI;C:\\Program Files (x86)\\Razer\\ChromaBroadcast\\bin;C:\\Program Files\\Razer\\ChromaBroadcast\\bin;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\;C:\\ProgramData\\chocolatey\\bin;C:\\Users\\Administrator\\scoop\\shims;C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\bin;C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current;C:\\msys64\\ucrt64\\bin;C:\\msys64\\usr\\bin;C:\\Users\\Administrator\\scoop\\apps\\okular\\current\\bin;C:\\Program Files\\dotnet\\;C:\\texlive\\2025\\bin\\windows;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;C:\\Program Files\\PowerShell\\7-preview\\preview;C:\\Users\\Administrator\\scoop\\apps\\mpv-config\\current;C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\bin;C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current;C:\\Users\\Administrator\\scoop\\apps\\ghostscript\\current\\lib;C:\\Users\\Administrator\\.cache\\pnpm;C:\\Users\\Administrator\\scoop\\apps\\qemu\\current;C:\\Users\\Administrator\\scoop\\apps\\rustup\\current\\.cargo\\bin;C:\\Users\\Administrator\\.cargo\\bin;C:\\Users\\Administrator\\scoop\\apps\\openjdk17\\current\\bin;C:\\Users\\Administrator\\scoop\\shims;C:\\Users\\Administrator\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Administrator\\AppData\\Local\\Programs\\oh-my-posh\\bin;C:\\Users\\Administrator\\go\\bin;c:/users/administrator/.local/bin;C:\\Users\\Administrator\\scoop\\apps\\racket-bc\\current\\lib;C:\\Users\\Administrator\\.dotnet\\tools',
+  PATHEXT: '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC',
+  PLTCOLLECTS: 'C:\\Users\\Administrator\\scoop\\apps\\racket-bc\\current\\collects',
+  PLTCONFIGDIR: 'C:\\Users\\Administrator\\scoop\\apps\\racket-bc\\current\\etc',
+  PNPM_HOME: 'C:\\Users\\Administrator\\.cache\\pnpm',
+  POSH_INSTALLER: 'scoop',
+  POSH_THEMES_PATH: 'C:\\Users\\Administrator\\scoop\\apps\\oh-my-posh\\current\\themes',
+  POWERSHELL_DISTRIBUTION_CHANNEL: 'MSI:Windows 10 Enterprise',
+  PROCESSOR_ARCHITECTURE: 'AMD64',
+  PROCESSOR_IDENTIFIER: 'AMD64 Family 23 Model 113 Stepping 0, AuthenticAMD',
+  PROCESSOR_LEVEL: '23',
+  PROCESSOR_REVISION: '7100',
+  ProgramData: 'C:\\ProgramData',
+  ProgramFiles: 'C:\\Program Files',
+  'ProgramFiles(x86)': 'C:\\Program Files (x86)',
+  ProgramW6432: 'C:\\Program Files',
+  PSModulePath: 'C:\\Users\\Administrator\\scoop\\modules;C:\\Users\\Administrator\\Documents\\WindowsPowerShell\\Modules',
+  PUBLIC: 'C:\\Users\\Public',
+  RUSTUP_DIST_SERVER: 'https://rsproxy.cn',
+  RUSTUP_HOME: 'C:\\Users\\Administrator\\scoop\\persist\\rustup\\.rustup',
+  RUSTUP_UPDATE_ROOT: 'https://rsproxy.cn/rustup',
+  SESSIONNAME: 'Console',
+  StartPageUrl: 'http://www.2345.com/?15315',
+  SystemDrive: 'C:',
+  SystemRoot: 'C:\\Windows',
+  TEMP: 'C:\\Users\\ADMINI~1\\AppData\\Local\\Temp',
+  TMP: 'C:\\Users\\ADMINI~1\\AppData\\Local\\Temp',
+  USERDOMAIN: 'LSQ',
+  USERDOMAIN_ROAMINGPROFILE: 'LSQ',
+  USERNAME: 'Administrator',
+  USERPROFILE: 'C:\\Users\\Administrator',
+  windir: 'C:\\Windows',
+  YAZI_CONFIG_HOME: 'C:\\Users\\Administrator\\.config\\yazi-alt'
+}
+进程 ID: 17540
+父进程 ID: 1156
+执行目录: []
+内存使用情况: {
+  rss: 188207104,
+  heapTotal: 57556992,
+  heapUsed: 41084688,
+  external: 17417543,
+  arrayBuffers: 0
+}
+运行时间 (秒): 10.6090756
+[
+  {
+    name: 'SS节点-ipv6',
+    type: 'ss',
+    server: '[2a14:7584:d009::a]',
+    port: 12345,
+    password: 'dongtaiwang.com',
+    cipher: 'aes-256-gcm'
+  },
+  {
+    name: 'VLESS节点1-xhttp-reality',
+    type: 'vless',
+    server: '62.210.8.152',
+    port: 18877,
+    uuid: '3fb38b37-c636-44d3-ab0c-897fab438bf1',
+    network: 'tcp',
+    tls: true,
+    'skip-cert-verify': false,
+    servername: 'mxj.myanimelist.net',
+    'client-fingerprint': 'chrome',
+    'reality-opts': {
+      'public-key': 'DZj1qrLAm6EJfPkVRPpSCgoQN8sM8Rbio0jpsS1A3FM',
+      'short-id': '288132e297984d34',
+      'spider-x': '/'
+    }
+  },
+  {
+    name: 'VMESSè\x8A\x82ç\x82¹2-ipv6',
+    type: 'vmess',
+    server: '2001:bc8:32d7:2013::8',
+    port: 62211,
+    uuid: 'e1786d49-ccba-466b-a0dd-e1ab59bd83bb',
+    cipher: 'auto',
+    alterId: 0,
+    network: 'ws',
+    tls: false,
+    'ws-opts': { path: '/github.com/Alvin9999', headers: [Object] }
+  },
+  {
+    name: 'Hysteria2节点3',
+    type: 'hysteria2',
+    server: '109.104.152.244',
+    port: 11220,
+    password: 'dongtaiwang.com',
+    'skip-cert-verify': true,
+    sni: 'apple.com',
+    alpn: [ 'h3' ],
+    servername: 'apple.com'
+  }
+]
