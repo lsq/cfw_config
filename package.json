@@ -27,6 +27,7 @@
     "pyodide": "^0.29.0",
     "ts-punycode": "^0.1.0",
     "typescript": "^5.9.3",
+    "@xmldom/xmldom": "^0.8.0",
     "xpath": "github:goto100/xpath#master",
     "xpath-html": "^1.0.3"
   },
