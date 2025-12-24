@@ -3,12 +3,14 @@
   "extends": [
     "config:recommended"
   ],
-   "dependencyDashboard": true,
+  "dependencyDashboard": true,
   "prHourlyLimit": 2,
   "prConcurrentLimit": 10,
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch"],
+      "automergeType": "pr",
+      "platformAutomerge": true,
       "automerge": true
     }
   ],
@@ -17,5 +19,6 @@
   },
   "github-actions": {
     "enabled": true
-  }  
+  },
+  "automergeStrategy": "squash"
 }
