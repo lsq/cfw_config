@@ -21,20 +21,36 @@ jobs:
         uses: actions/checkout@v6
         with:
           # Necessary to find the commits included in the release
-          fetch-depth: 0
+          fetch-depth: 0        
+      # 使用 pnpm 官方 action
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
       - name: Setup Node
         uses: actions/setup-node@v6 # v6.0.0
         with:
           node-version: ${{ matrix.node-version }}
           registry-url: 'https://registry.npmjs.org'
+          cache: pnpm
       - name: Update npm for publishing
         run: npm install -g npm@latest && npm install yarn@latest -g
-      - name: npm install, build, and test
+      # 安装依赖
+      - name: Install dependencies
         run: |
-          npm install
-          npm run build
-        env:
-          CI: true
+          pnpm i --frozen-lockfile
+
+      # 构建 React 应用
+      - name: Build
+        run: |
+          pnpm build
+      - name: Upload libs
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'clashUrlLibs'
+          path: 'libs'
+      
             #      - name: check auth
             #        run: |
             #          cat .npmrc || echo "pass"
