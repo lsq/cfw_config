@@ -1,0 +1,68 @@
+name: Node CI
+
+on: [push]
+
+jobs:
+  build:
+    permissions:
+      pull-requests: write # for writing comments
+      issues: write # for writing comments
+      contents: write # for creating a release
+      id-token: write  # Required for OIDC
+ 
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [24.x]
+
+    steps:
+      - name: Checkout Commit
+        uses: actions/checkout@v5 # v5.0.0
+        with:
+          # Necessary to find the commits included in the release
+          fetch-depth: 0
+      - name: Setup Node
+        uses: actions/setup-node@v6 # v6.0.0
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: 'https://registry.npmjs.org'
+      - name: Update npm for publishing
+        run: npm install -g npm@latest && npm install yarn@latest -g
+      - name: npm install, build, and test
+        run: |
+          npm install
+          npm run build
+        env:
+          CI: true
+            #      - name: check auth
+            #        run: |
+            #          cat .npmrc || echo "pass"
+            #          cat ~/.npmrc || echo "pass"
+            #          echo "=== npm config list ==="
+            #          npm config list
+            #          cat /home/runner/work/_temp/.npmrc || echo "pass"
+            #          cp /home/runner/work/_temp/.npmrc x-npmrc || echo "pass"
+            #          # ls -la "$(npm config get prefix)/etc/npmrc" 2>/dev/null || echo "Not found"
+            #      - name: Upload npmrc
+            #        uses: actions/upload-artifact@v4
+            #        with:
+            #          name: 'npmrc'
+            #          path: 'x-npmrc'
+            #      - name: Publish
+            #        if: startsWith(github.ref_name, 'v')
+            #        run: |
+            #          if git --no-pager log -1 --pretty=%B | grep "^v[0-9]\+\.[0-9]\+\.[0-9]\+$";
+            #          then
+            #            echo "Publishing regular release"
+            #            npm publish --access public
+            #          elif git --no-pager log -1 --pretty=%B | grep "^v[0-9]\+\.[0-9]\+\.[0-9]\+-[0-9]\+$";
+            #          then
+            #            echo "Publishing beta release"
+            #            npm publish --tag beta --access public
+            #          else
+            #            echo "Not a release, skipping publish"
+            #          fi
+            #        env:
+            #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
