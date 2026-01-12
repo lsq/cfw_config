@@ -1,10 +1,11 @@
+const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
+
 const xpath = require('xpath');
 
-const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
 const parser = new DOMParser();
 
-const xml =
-  '<books><book><title lang="en">XPath指南</title></book><book><title lang="en">XxPath指南</title></book></books>';
+const xml
+  = '<books><book><title lang="en">XPath指南</title></book><book><title lang="en">XxPath指南</title></book></books>';
 
 const doc = new DOMParser().parseFromString(xml, 'text/xml');
 
@@ -12,20 +13,17 @@ const title = xpath.select('//title/text()', doc);
 //
 console.log(title);
 
-const str =
-  '节点：92.118.205.61 端口：22222 密码： dongtaiwang.com  加密方式：aes-256-gcm';
+const str
+  = '节点：92.118.205.61 端口：22222 密码： dongtaiwang.com  加密方式：aes-256-gcm';
 
-console.log('{' + str.replace(/\s([^\s]*?)：/g, ',$1:') + '}');
-jsonStr =
-  '{"' +
-  str
-    .replace(/\s([^\s]*?：)/g, ',$1')
-    .replace(/：/g, '":"')
-    .replace(/,/g, '","') +
-  '"}';
-json = JSON.stringify(jsonStr);
+console.log(`{${str.replace(/\s(\S*?)：/g, ',$1:')}}`);
+const jsonStr = `{"${str
+  .replace(/\s(\S*?：)/g, ',$1')
+  .replace(/：/g, '":"')
+  .replace(/,/g, '","')}"}`;
+const json = JSON.stringify(jsonStr);
 console.log(json);
-obj = JSON.parse(jsonStr.replace(/ /g, ''));
+const obj = JSON.parse(jsonStr.replace(/ /g, ''));
 console.log(obj);
 console.log(obj['节点'], obj.端口);
 
@@ -43,8 +41,8 @@ const html = `<div>
 const newDoc = parser.parseFromString(html, 'text/html');
 
 const cNode = xpath.select(
-  "//code[preceding::*[self::strong and contains(text(),'SS节点')]]",
-  newDoc
+  '//code[preceding::*[self::strong and contains(text(),\'SS节点\')]]',
+  newDoc,
 );
 
 console.log(cNode);

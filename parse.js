@@ -1,22 +1,31 @@
-const { exec, execSync, execFile, execFileSync } = require('child_process');
+const {
+  exec,
+  execSync,
+  execFile,
+  execFileSync,
+} = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+const util = require('node:util');
 const axiosN = require('axios');
-const fs = require('fs');
-const util = require('util');
+
 const execAsync = util.promisify(exec);
 const execFileAsync = util.promisify(execFile);
-const fsA = require('fs/promises');
+const fsA = require('node:fs/promises');
 const { DOMParser } = require('@xmldom/xmldom');
+const yaml = require('js-yaml');
 const xpath = require('xpath');
 const { linkToClash } = require('./lib/converter');
-const yaml = require('js-yaml');
 // const {updateUrll} = require('./findNode')
 // const url = 'https://dgithub.xyz/Alvin9999/new-pac/wiki/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7'
 const parser = new DOMParser();
+const process = require('node:process');
 // const uriPath = "/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/";
-const fixedurl =
-  'https://fan2.194529.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/';
-const xpathHtml = (parseString, doc) =>
-  xpath.parse(parseString).select({ node: doc, isHtml: true });
+const fixedurl
+  = 'https://fan2.380227.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/';
+function xpathHtml(parseString, doc) {
+  return xpath.parse(parseString).select({ node: doc, isHtml: true });
+}
 //
 // 解析函数
 function parseNodes(input) {
@@ -25,23 +34,23 @@ function parseNodes(input) {
 
   return lines.map((line) => {
     // 匹配各个字段
-    const typeMatch = line.match(/(ipv[46]\s+)?节点：\s*([^\s]+)/);
+    const typeMatch = line.match(/(ipv[46]\s+)?节点：\s*(\S+)/);
     const portMatch = line.match(/端口：\s*(\d+)/);
-    const passwordMatch = line.match(/密码：\s*([^\s]+)/);
-    const encryptionMatch = line.match(/加密方式：\s*([^\s]+)/);
-    const protocolMatch = line.match(/协议：\s*([^\s]+)/);
-    const obfsMatch = line.match(/混淆：\s*([^\s]+)/);
+    const passwordMatch = line.match(/密码：\s*(\S+)/);
+    const encryptionMatch = line.match(/加密方式：\s*(\S+)/);
+    const protocolMatch = line.match(/协议：\s*(\S+)/);
+    const obfsMatch = line.match(/混淆：\s*(\S+)/);
     const className = protocolMatch ? 'ssr' : 'ss';
 
     if (typeMatch) {
       if (className === 'ssr') {
         return {
           name: typeMatch
-            ? 'new-pac-' + className + '-' + (typeMatch[1] ?? '节点').trim()
+            ? `new-pac-${className}-${(typeMatch[1] ?? '节点').trim()}`
             : null,
           type: className,
           server: typeMatch ? typeMatch[2] : null,
-          port: portMatch ? parseInt(portMatch[1], 10) : null,
+          port: portMatch ? Number.parseInt(portMatch[1], 10) : null,
           password: passwordMatch ? passwordMatch[1] : null,
           cipher: encryptionMatch ? encryptionMatch[1] : null,
           protocol: protocolMatch ? protocolMatch[1] : null,
@@ -50,11 +59,11 @@ function parseNodes(input) {
       }
       return {
         name: typeMatch
-          ? 'new-pac-' + className + '-' + (typeMatch[1] ?? '节点').trim()
+          ? `new-pac-${className}-${(typeMatch[1] ?? '节点').trim()}`
           : null,
         type: className,
         server: typeMatch ? typeMatch[2] : null,
-        port: portMatch ? parseInt(portMatch[1], 10) : null,
+        port: portMatch ? Number.parseInt(portMatch[1], 10) : null,
         password: passwordMatch ? passwordMatch[1] : null,
         cipher: encryptionMatch ? encryptionMatch[1] : null,
       };
@@ -67,16 +76,17 @@ async function saveTextToFile(filename, content, options = {}) {
   const { e = 'utf8', f = 'w' } = options;
   try {
     await fsA.writeFile(filename, content, { encoding: e, flag: f });
-  } catch (err) {
+  }
+  catch (err) {
     console.error('保存文件时出错:', err);
   }
 }
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 async function parse_data() {
   try {
-    const newUri = (await updateUrl()) || url;
+    const newUri = (await updateUrl()) || fixedurl;
     const v2rayUri = newUri.replace('/ss', '/v2ray');
     // await sleep(3000)
     // const input = await fsA.readFile("./ssrurl.txt", "utf8");
@@ -87,10 +97,10 @@ async function parse_data() {
     const ret = await Promise.allSettled(
       [newUri, v2rayUri].map(async (link) => {
         saveTextToFile(
-          __dirname + '/ssUrl.log',
+          path.join(__dirname, 'ssUrl.log'),
           // new Date().toLocaleString() + ": " + (newUri || url) + (JSON.stringify(newUri)) + "\n",
-          new Date().toLocaleString() + `: ${link}\n`,
-          { f: 'a' }
+          `${new Date().toLocaleString()}: parse_data() -> ${link}\n`,
+          { f: 'a' },
         );
         const response = await axiosN.get(link);
         const data = response.data;
@@ -116,13 +126,16 @@ async function parse_data() {
         //   .select({ node: doc, isHtml: true });
         // const info = node[0].firstChild?.nodeValue;
 
-        const node = xpathHtml('//p[.//code]//code//text()[normalize-space()]', doc);
+        const node = xpathHtml(
+          '//p[.//code]//code//text()[normalize-space()]',
+          doc,
+        );
 
         const new_pac_link = node
           .map((info) => {
             return info.nodeValue;
           })
-          .filter((item) => item !== null);
+          .filter(item => item !== null);
         const config_data = parseProxies(linkToClash(new_pac_link));
         // console.log(info)
         /*
@@ -150,26 +163,27 @@ async function parse_data() {
         // const new_pac = parseNodes(info);
 
         return config_data;
-      })
+      }),
     );
     const new_pac = ret
       .map((result) => {
         if (result.status === 'fulfilled') {
           return result.value;
-        } else {
+        }
+        else {
           saveTextToFile(
-            __dirname + '/ssUrl.log',
-            new Date().toLocaleString() +
-              `Fetch error: ${result.reason}` +
-              '\n',
-            { f: 'a' }
+            path.join(__dirname, 'ssUrl.log'),
+            `${new Date().toLocaleString()}: parse.js -> Fetch error: ${result.reason}`
+            + `\n`,
+            { f: 'a' },
           );
           throw result.reason;
         }
       })
       .flat();
     return new_pac;
-  } catch (e) {
+  }
+  catch (e) {
     console.log(e);
   }
 }
@@ -191,7 +205,8 @@ function parseProxies(response) {
         n.name !== null && n.server && n.name !== 'Unnamed' && n.server !== null
       );
     });
-  } catch (err) {
+  }
+  catch (err) {
     console.error('YAML parse error:', err.message);
     throw err;
   }
@@ -218,7 +233,8 @@ async function getNodeOsName(nodePath) {
       osName: stdout.trim(),
       error: null,
     };
-  } catch (err) {
+  }
+  catch (err) {
     return {
       path: nodePath,
       osName: null,
@@ -229,16 +245,17 @@ async function getNodeOsName(nodePath) {
 
 async function findLocaleNode() {
   const output = execSync('where.exe node', { encoding: 'utf8' });
-  const nodePaths = output.split(/\r?\n/).filter((p) => p.trim() !== '');
+  const nodePaths = output.split(/\r?\n/).filter(p => p.trim() !== '');
   const results = await Promise.all(
-    nodePaths.map((path) => getNodeOsName(path))
+    nodePaths.map(path => getNodeOsName(path)),
   );
 
   console.log('Node.js 运行时操作系统测试结果：');
   results.forEach(({ path, osName, error }) => {
     if (osName) {
       console.log(`✅ ${path} -> ${osName}`);
-    } else {
+    }
+    else {
       console.log(`❌ ${path} -> Error: ${error}`);
     }
   });
@@ -257,9 +274,9 @@ async function findLocaleNode() {
     return !p.osName.startsWith('MINGW');
   });
   saveTextToFile(
-    __dirname + '/ssUrl.log',
-    new Date().toLocaleString() + ': ' + validPath + '\n',
-    { f: 'a' }
+    path.join(__dirname, 'ssUrl.log'),
+    `${new Date().toLocaleString()}: ${validPath}\n`,
+    { f: 'a' },
   );
   return validPath;
 }
@@ -268,7 +285,7 @@ async function updateUrl() {
   //     console('haha..')
   // }, 3000)
   const output = execSync('where.exe node', { encoding: 'utf8' });
-  const pathArr = output.split(/\r?\n/).filter((p) => p.trim() !== '');
+  const pathArr = output.split(/\r?\n/).filter(p => p.trim() !== '');
   // saveTextToFile( __dirname + "/ssUrl.log",
   // new Date().toLocaleString() + `✅ ${Array.isArray(pathArr)}-> ` + pathArr + "\n",
   // { f: "a" },);
@@ -299,25 +316,30 @@ async function updateUrl() {
     pathArr.map(async (path) => {
       const nodeInfo = await getNodeOsName(path);
       return nodeInfo;
-    })
+    }),
   );
   const validPath = results
     .filter((p) => {
       return !p.osName.startsWith('MINGW');
     })
-    .map((item) => item.path);
+    .map(item => item.path);
   saveTextToFile(
-    __dirname + '/ssUrl.log',
-    new Date().toLocaleString() + ': ' + validPath + '\n',
-    { f: 'a' }
+    path.join(__dirname, 'ssUrl.log'),
+    `${new Date().toLocaleString()}: ${validPath}\n`,
+    { f: 'a' },
   );
   if (validPath.length > 0) {
     const nodePath = validPath[0];
     const nodeOutput = execSync(
-      `${nodePath.trim()} ${__dirname + '\\updateUri.js'}`,
-      { encoding: 'utf8' }
+      `${nodePath.trim()} ${path.join(__dirname, 'updateUri.js')}`,
+      { encoding: 'utf8' },
     );
-    return nodeOutput?.trim();
+    saveTextToFile(
+      path.join(__dirname, 'ssUrl.log'),
+      `${new Date().toLocaleString()}: getting new Url ->  ${nodeOutput}`,
+      { f: 'a' },
+    );
+    return nodeOutput?.trim() === 'null' ? null : nodeOutput?.trim();
   }
 }
 /*
@@ -329,21 +351,21 @@ async function updateUrl() {
     alpn:
       - h3
     protocol: tls
-    sni: 	apple.com
+    sni: apple.com
     insecure: true
 */
 
 module.exports.parse = async (
   raw,
   { axios, yaml, notify, console },
-  { name, url, interval, selected }
+  { name, url, interval, selected },
 ) => {
   const obj = yaml.parse(raw);
-  //console.log(obj['proxy-groups'][0]['proxies'])
-  //const free_pac = 'https://dgithub.xyz/Alvin9999/new-pac/wiki/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7'
+  // console.log(obj['proxy-groups'][0]['proxies'])
+  // const free_pac = 'https://dgithub.xyz/Alvin9999/new-pac/wiki/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7'
   // let {data, status} =  await axios.get(url)
   console.log(new Date().toLocaleString());
-  let prependProxies = await parse_data();
+  const prependProxies = await parse_data();
   console.log(process.cwd(), ': ', process.report.getReport().header.osName);
   console.log('Node.js 版本:', process.version);
   console.log('Node.js 路径:', process.execPath);
@@ -358,11 +380,13 @@ module.exports.parse = async (
   console.log('内存使用情况:', process.memoryUsage());
   console.log('运行时间 (秒):', process.uptime());
   console.log(prependProxies);
-  const prxoyNames = prependProxies.map((item) => item.name);
+  const prxoyNames = prependProxies.map(item => item.name);
+  // if (prependProxies) {
   obj.proxies = [...prependProxies, ...obj.proxies];
   // console.log(data)
-  //axios.get(free_pac).then(function(res) {console.log(res)}).catch(function(err){console.log(err)})
-  obj['proxy-groups'][0]['proxies'].push(...prxoyNames);
+  // axios.get(free_pac).then(function(res) {console.log(res)}).catch(function(err){console.log(err)})
+  obj['proxy-groups'][0].proxies.push(...prxoyNames);
+  // }
   obj['allow-lan'] = true;
   return yaml.stringify(obj);
 };

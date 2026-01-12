@@ -15,7 +15,7 @@ export function punycodeDomain(domain: string): string {
     .map((label) => {
       // 只对包含非 ASCII 字符的标签进行 Punycode 编码
       return /[^\x00-\x7F]/.test(label)
-        ? 'xn--' + encodePunycode(label)
+        ? `xn--${encodePunycode(label)}`
         : label;
     })
     .join('.');

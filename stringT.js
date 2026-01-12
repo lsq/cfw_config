@@ -1,13 +1,16 @@
 const { spawnSync } = require('node:child_process');
+const process = require('node:process');
+
 const i = 0;
 // function mystr() {
-const mystr = () => {
+function mystr() {
   if (i === 0) {
     return 'lsq';
-  } else {
+  }
+  else {
     return '';
   }
-};
+}
 
 const hel = 'hello, ';
 
@@ -15,9 +18,9 @@ const say = hel + mystr();
 
 console.log(say);
 
-const setPlatform = function (platform) {
+function setPlatform(platform) {
   Object.defineProperty(process, 'platform', { value: platform });
-};
+}
 
 setPlatform('linux');
 console.log(process.platform);
@@ -32,8 +35,8 @@ if (process.report?.getReport?.()?.header?.osName?.startsWith?.('MINGW')) {
   mingwPkgConfigPath = process.env.PKG_CONFIG_PATH?.split(';')
     .map((item) => {
       // console.log(item);
-      const ret =
-        spawnSync('cygpath', ['-u', `${item}`], {
+      const ret
+        = spawnSync('cygpath', ['-u', `${item}`], {
           ...spawnSyncOptions,
           shell: false,
         }).stdout || '';

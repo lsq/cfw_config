@@ -13,46 +13,46 @@ interface H2Options {
   path?: string;
   host?: string;
 }
-type CipherType =
-  | 'none'
-  | 'auto'
-  | 'dummy'
-  | 'aes-128-gcm'
-  | 'aes-192-gcm'
-  | 'aes-256-gcm'
-  | 'lea-128-gcm'
-  | 'lea-192-gcm'
-  | 'lea-256-gcm'
-  | 'aes-128-gcm-siv'
-  | 'aes-256-gcm-siv'
-  | '2022-blake3-aes-128-gcm'
-  | '2022-blake3-aes-256-gcm'
-  | 'aes-128-cfb'
-  | 'aes-192-cfb'
-  | 'aes-256-cfb'
-  | 'aes-128-ctr'
-  | 'aes-192-ctr'
-  | 'aes-256-ctr'
-  | 'chacha20'
-  | 'chacha20-ietf'
-  | 'chacha20-ietf-poly1305'
-  | '2022-blake3-chacha20-poly1305'
-  | 'rabbit128-poly1305'
-  | 'xchacha20-ietf-poly1305'
-  | 'xchacha20'
-  | 'aegis-128l'
-  | 'aegis-256'
-  | 'aez-384'
-  | 'deoxys-ii-256-128'
-  | 'rc4-md5';
+type CipherType
+  = | 'none'
+    | 'auto'
+    | 'dummy'
+    | 'aes-128-gcm'
+    | 'aes-192-gcm'
+    | 'aes-256-gcm'
+    | 'lea-128-gcm'
+    | 'lea-192-gcm'
+    | 'lea-256-gcm'
+    | 'aes-128-gcm-siv'
+    | 'aes-256-gcm-siv'
+    | '2022-blake3-aes-128-gcm'
+    | '2022-blake3-aes-256-gcm'
+    | 'aes-128-cfb'
+    | 'aes-192-cfb'
+    | 'aes-256-cfb'
+    | 'aes-128-ctr'
+    | 'aes-192-ctr'
+    | 'aes-256-ctr'
+    | 'chacha20'
+    | 'chacha20-ietf'
+    | 'chacha20-ietf-poly1305'
+    | '2022-blake3-chacha20-poly1305'
+    | 'rabbit128-poly1305'
+    | 'xchacha20-ietf-poly1305'
+    | 'xchacha20'
+    | 'aegis-128l'
+    | 'aegis-256'
+    | 'aez-384'
+    | 'deoxys-ii-256-128'
+    | 'rc4-md5';
 interface SmuxOptions {
-  enabled?: boolean;
-  protocol?: 'smux' | 'yamux' | 'h2mux';
+  'enabled'?: boolean;
+  'protocol'?: 'smux' | 'yamux' | 'h2mux';
   'max-connections'?: number;
   'min-streams'?: number;
   'max-streams'?: number;
-  padding?: boolean;
-  statistic?: boolean;
+  'padding'?: boolean;
+  'statistic'?: boolean;
   'only-tcp'?: boolean;
   'brutal-opts'?: {
     enabled?: boolean;
@@ -62,8 +62,8 @@ interface SmuxOptions {
 }
 // base
 interface IProxyBaseConfig {
-  tfo?: boolean;
-  mptcp?: boolean;
+  'tfo'?: boolean;
+  'mptcp'?: boolean;
   'interface-name'?: string;
   'routing-mark'?: number;
   'ip-version'?: 'dual' | 'ipv4' | 'ipv6' | 'ipv4-prefer' | 'ipv6-prefer';
@@ -81,41 +81,41 @@ interface IProxyDnsConfig extends IProxyBaseConfig {
 }
 // http
 interface IProxyHttpConfig extends IProxyBaseConfig {
-  name: string;
-  type: 'http';
-  server?: string;
-  port?: number;
-  username?: string;
-  password?: string;
-  tls?: boolean;
-  sni?: string;
+  'name': string;
+  'type': 'http';
+  'server'?: string;
+  'port'?: number;
+  'username'?: string;
+  'password'?: string;
+  'tls'?: boolean;
+  'sni'?: string;
   'skip-cert-verify'?: boolean;
-  fingerprint?: string;
-  headers?: {
+  'fingerprint'?: string;
+  'headers'?: {
     [key: string]: string;
   };
 }
 // socks5
 interface IProxySocks5Config extends IProxyBaseConfig {
-  name: string;
-  type: 'socks5';
-  server?: string;
-  port?: number;
-  username?: string;
-  password?: string;
-  tls?: boolean;
-  udp?: boolean;
+  'name': string;
+  'type': 'socks5';
+  'server'?: string;
+  'port'?: number;
+  'username'?: string;
+  'password'?: string;
+  'tls'?: boolean;
+  'udp'?: boolean;
   'skip-cert-verify'?: boolean;
-  fingerprint?: string;
+  'fingerprint'?: string;
 }
 // ssh
 interface IProxySshConfig extends IProxyBaseConfig {
-  name: string;
-  type: 'ssh';
-  server?: string;
-  port?: number;
-  username?: string;
-  password?: string;
+  'name': string;
+  'type': 'ssh';
+  'server'?: string;
+  'port'?: number;
+  'username'?: string;
+  'password'?: string;
   'private-key'?: string;
   'private-key-passphrase'?: string;
   'host-key'?: string;
@@ -123,17 +123,17 @@ interface IProxySshConfig extends IProxyBaseConfig {
 }
 // trojan
 interface IProxyTrojanConfig extends IProxyBaseConfig {
-  name: string;
-  type: 'trojan';
-  server?: string;
-  port?: number;
-  password?: string;
-  alpn?: string[];
-  sni?: string;
+  'name': string;
+  'type': 'trojan';
+  'server'?: string;
+  'port'?: number;
+  'password'?: string;
+  'alpn'?: string[];
+  'sni'?: string;
   'skip-cert-verify'?: boolean;
-  fingerprint?: string;
-  udp?: boolean;
-  network?: NetworkType;
+  'fingerprint'?: string;
+  'udp'?: boolean;
+  'network'?: NetworkType;
   'reality-opts'?: RealityOptions;
   'grpc-opts'?: GrpcOptions;
   'ws-opts'?: WsOptions;
@@ -146,16 +146,16 @@ interface IProxyTrojanConfig extends IProxyBaseConfig {
 }
 // tuic
 interface IProxyTuicConfig extends IProxyBaseConfig {
-  name: string;
-  type: 'tuic';
-  server?: string;
-  port?: number;
-  token?: string;
-  uuid?: string;
-  password?: string;
-  ip?: string;
+  'name': string;
+  'type': 'tuic';
+  'server'?: string;
+  'port'?: number;
+  'token'?: string;
+  'uuid'?: string;
+  'password'?: string;
+  'ip'?: string;
   'heartbeat-interval'?: number;
-  alpn?: string[];
+  'alpn'?: string[];
   'reduce-rtt'?: boolean;
   'request-timeout'?: number;
   'udp-relay-mode'?: string;
@@ -164,34 +164,34 @@ interface IProxyTuicConfig extends IProxyBaseConfig {
   'max-udp-relay-packet-size'?: number;
   'fast-open'?: boolean;
   'max-open-streams'?: number;
-  cwnd?: number;
+  'cwnd'?: number;
   'skip-cert-verify'?: boolean;
-  fingerprint?: string;
-  ca?: string;
+  'fingerprint'?: string;
+  'ca'?: string;
   'ca-str'?: string;
   'recv-window-conn'?: number;
   'recv-window'?: number;
   'disable-mtu-discovery'?: boolean;
   'max-datagram-frame-size'?: number;
-  sni?: string;
+  'sni'?: string;
   'udp-over-stream'?: boolean;
   'udp-over-stream-version'?: number;
 }
 // vless
 interface IProxyVlessConfig extends IProxyBaseConfig {
-  name: string;
-  type: 'vless';
-  server?: string;
-  port?: number;
-  uuid?: string;
-  flow?: string;
-  tls?: boolean;
-  alpn?: string[];
-  udp?: boolean;
+  'name': string;
+  'type': 'vless';
+  'server'?: string;
+  'port'?: number;
+  'uuid'?: string;
+  'flow'?: string;
+  'tls'?: boolean;
+  'alpn'?: string[];
+  'udp'?: boolean;
   'packet-addr'?: boolean;
-  xudp?: boolean;
+  'xudp'?: boolean;
   'packet-encoding'?: string;
-  network?: NetworkType;
+  'network'?: NetworkType;
   'reality-opts'?: RealityOptions;
   'http-opts'?: HttpOptions;
   'h2-opts'?: H2Options;
@@ -202,85 +202,85 @@ interface IProxyVlessConfig extends IProxyBaseConfig {
     [key: string]: string;
   };
   'skip-cert-verify'?: boolean;
-  fingerprint?: string;
-  servername?: string;
+  'fingerprint'?: string;
+  'servername'?: string;
   'client-fingerprint'?: ClientFingerprint;
-  smux?: boolean | SmuxOptions;
+  'smux'?: boolean | SmuxOptions;
 }
 // vmess
 interface IProxyVmessConfig extends IProxyBaseConfig {
-  name: string;
-  type: 'vmess';
-  server?: string;
-  port?: number;
-  uuid?: string;
-  alterId?: number;
-  cipher?: CipherType;
-  udp?: boolean;
-  network?: NetworkType;
-  tls?: boolean;
-  alpn?: string[];
+  'name': string;
+  'type': 'vmess';
+  'server'?: string;
+  'port'?: number;
+  'uuid'?: string;
+  'alterId'?: number;
+  'cipher'?: CipherType;
+  'udp'?: boolean;
+  'network'?: NetworkType;
+  'tls'?: boolean;
+  'alpn'?: string[];
   'skip-cert-verify'?: boolean;
-  fingerprint?: string;
-  servername?: string;
+  'fingerprint'?: string;
+  'servername'?: string;
   'reality-opts'?: RealityOptions;
   'http-opts'?: HttpOptions;
   'h2-opts'?: H2Options;
   'grpc-opts'?: GrpcOptions;
   'ws-opts'?: WsOptions;
   'packet-addr'?: boolean;
-  xudp?: boolean;
+  'xudp'?: boolean;
   'packet-encoding'?: string;
   'global-padding'?: boolean;
   'authenticated-length'?: boolean;
   'client-fingerprint'?: ClientFingerprint;
-  smux?: boolean | SmuxOptions;
+  'smux'?: boolean | SmuxOptions;
 }
 interface WireGuardPeerOptions {
-  server?: string;
-  port?: number;
+  'server'?: string;
+  'port'?: number;
   'public-key'?: string;
   'pre-shared-key'?: string;
-  reserved?: number[];
+  'reserved'?: number[];
   'allowed-ips'?: string[];
 }
 // wireguard
 interface IProxyWireguardConfig extends IProxyBaseConfig, WireGuardPeerOptions {
-  name: string;
-  type: 'wireguard';
-  ip?: string;
-  ipv6?: string;
+  'name': string;
+  'type': 'wireguard';
+  'ip'?: string;
+  'ipv6'?: string;
   'private-key'?: string;
-  workers?: number;
-  mtu?: number;
-  udp?: boolean;
+  'workers'?: number;
+  'mtu'?: number;
+  'udp'?: boolean;
   'persistent-keepalive'?: number;
-  peers?: WireGuardPeerOptions[];
+  'peers'?: WireGuardPeerOptions[];
   'remote-dns-resolve'?: boolean;
-  dns?: string[];
+  'dns'?: string[];
   'refresh-server-ip-interval'?: number;
 }
 // hysteria
 interface IProxyHysteriaConfig extends IProxyBaseConfig {
-  name: string;
-  type: 'hysteria';
-  server?: string;
-  port?: number;
-  ports?: string;
-  protocol?: string;
+  'name': string;
+  'type': 'hysteria';
+  'server'?: string;
+  'port'?: number;
+  'ports'?: string;
+  'protocol'?: string;
   'obfs-protocol'?: string;
-  up?: string;
+  'up'?: string;
   'up-speed'?: number;
-  down?: string;
+  'down'?: string;
   'down-speed'?: number;
-  auth?: string;
+  'auth'?: string;
   'auth-str'?: string;
-  obfs?: string;
-  sni?: string;
+  'obfs'?: string;
+  'sni'?: string;
   'skip-cert-verify'?: boolean;
-  fingerprint?: string;
-  alpn?: string[];
-  ca?: string;
+  'fingerprint'?: string;
+  'alpn'?: string[];
+  'ca'?: string;
   'ca-str'?: string;
   'recv-window-conn'?: number;
   'recv-window'?: number;
@@ -290,51 +290,51 @@ interface IProxyHysteriaConfig extends IProxyBaseConfig {
 }
 // hysteria2
 interface IProxyHysteria2Config extends IProxyBaseConfig {
-  name: string;
-  type: 'hysteria2';
-  server?: string;
-  port?: number;
-  ports?: string;
+  'name': string;
+  'type': 'hysteria2';
+  'server'?: string;
+  'port'?: number;
+  'ports'?: string;
   'hop-interval'?: number;
-  protocol?: string;
+  'protocol'?: string;
   'obfs-protocol'?: string;
-  up?: string;
-  down?: string;
-  password?: string;
-  obfs?: string;
+  'up'?: string;
+  'down'?: string;
+  'password'?: string;
+  'obfs'?: string;
   'obfs-password'?: string;
-  sni?: string;
+  'sni'?: string;
   'skip-cert-verify'?: boolean;
-  fingerprint?: string;
-  alpn?: string[];
-  ca?: string;
+  'fingerprint'?: string;
+  'alpn'?: string[];
+  'ca'?: string;
   'ca-str'?: string;
-  cwnd?: number;
+  'cwnd'?: number;
   'udp-mtu'?: number;
 }
 // shadowsocks
 interface IProxyShadowsocksConfig extends IProxyBaseConfig {
-  name: string;
-  type: 'ss';
-  server?: string;
-  port?: number;
-  password?: string;
-  cipher?: CipherType;
-  udp?: boolean;
-  plugin?: 'obfs' | 'v2ray-plugin' | 'shadow-tls' | 'restls';
+  'name': string;
+  'type': 'ss';
+  'server'?: string;
+  'port'?: number;
+  'password'?: string;
+  'cipher'?: CipherType;
+  'udp'?: boolean;
+  'plugin'?: 'obfs' | 'v2ray-plugin' | 'shadow-tls' | 'restls';
   'plugin-opts'?: {
-    mode?: string;
-    host?: string;
-    password?: string;
-    path?: string;
-    tls?: string;
-    fingerprint?: string;
-    headers?: {
+    'mode'?: string;
+    'host'?: string;
+    'password'?: string;
+    'path'?: string;
+    'tls'?: string;
+    'fingerprint'?: string;
+    'headers'?: {
       [key: string]: string;
     };
     'skip-cert-verify'?: boolean;
-    version?: number;
-    mux?: boolean;
+    'version'?: number;
+    'mux'?: boolean;
     'v2ray-http-upgrade'?: boolean;
     'v2ray-http-upgrade-fast-open'?: boolean;
     'version-hint'?: string;
@@ -343,21 +343,21 @@ interface IProxyShadowsocksConfig extends IProxyBaseConfig {
   'udp-over-tcp'?: boolean;
   'udp-over-tcp-version'?: number;
   'client-fingerprint'?: ClientFingerprint;
-  smux?: boolean | SmuxOptions;
+  'smux'?: boolean | SmuxOptions;
 }
 // shadowsocksR
 interface IProxyshadowsocksRConfig extends IProxyBaseConfig {
-  name: string;
-  type: 'ssr';
-  server?: string;
-  port?: number;
-  password?: string;
-  cipher?: CipherType;
-  obfs?: string;
+  'name': string;
+  'type': 'ssr';
+  'server'?: string;
+  'port'?: number;
+  'password'?: string;
+  'cipher'?: CipherType;
+  'obfs'?: string;
   'obfs-param'?: string;
-  protocol?: string;
+  'protocol'?: string;
   'protocol-param'?: string;
-  udp?: boolean;
+  'udp'?: boolean;
 }
 // sing-mux
 interface IProxySmuxConfig {
@@ -376,23 +376,23 @@ interface IProxySnellConfig extends IProxyBaseConfig {
 // @ts-expect-error 类型不兼容，但我知道我在做什么
 interface IProxyConfig
   extends
-    IProxyBaseConfig,
-    IProxyDirectConfig,
-    IProxyDnsConfig,
-    IProxyHttpConfig,
-    IProxySocks5Config,
-    IProxySshConfig,
-    IProxyTrojanConfig,
-    IProxyTuicConfig,
-    IProxyVlessConfig,
-    IProxyVmessConfig,
-    IProxyWireguardConfig,
-    IProxyHysteriaConfig,
-    IProxyHysteria2Config,
-    IProxyShadowsocksConfig,
-    IProxyshadowsocksRConfig,
-    IProxySmuxConfig,
-    IProxySnellConfig {
+  IProxyBaseConfig,
+  IProxyDirectConfig,
+  IProxyDnsConfig,
+  IProxyHttpConfig,
+  IProxySocks5Config,
+  IProxySshConfig,
+  IProxyTrojanConfig,
+  IProxyTuicConfig,
+  IProxyVlessConfig,
+  IProxyVmessConfig,
+  IProxyWireguardConfig,
+  IProxyHysteriaConfig,
+  IProxyHysteria2Config,
+  IProxyShadowsocksConfig,
+  IProxyshadowsocksRConfig,
+  IProxySmuxConfig,
+  IProxySnellConfig {
   type:
     | 'ss'
     | 'ssr'
@@ -412,20 +412,20 @@ interface IProxyConfig
   reality?: RealityOptions;
 }
 
-type ClientFingerprint =
-  | 'chrome'
-  | 'firefox'
-  | 'safari'
-  | 'iOS'
-  | 'android'
-  | 'edge'
-  | '360'
-  | 'qq'
-  | 'random';
-type NetworkType = 'ws' | 'http' | 'h2' | 'grpc' | 'tcp';
+type ClientFingerprint
+  = | 'chrome'
+    | 'firefox'
+    | 'safari'
+    | 'iOS'
+    | 'android'
+    | 'edge'
+    | '360'
+    | 'qq'
+    | 'random';
+type NetworkType = 'ws' | 'http' | 'h2' | 'grpc' | 'tcp' | 'xhttp';
 interface WsOptions {
-  path?: string;
-  headers?: {
+  'path'?: string;
+  'headers'?: {
     [key: string]: string;
   };
   'max-early-data'?: number;
@@ -441,7 +441,7 @@ interface RealityOptions {
   'short-id'?: string;
   'spider-x'?: string;
   'mldsa65-verify'?: string;
-  ech?: string;
+  'ech'?: string;
 }
 
 type ClashOutputMode = 'proxies' | 'payload' | 'none';

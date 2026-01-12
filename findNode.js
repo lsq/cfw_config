@@ -1,8 +1,9 @@
-const { exec, execSync } = require('child_process');
-const fs = require('fs');
-const util = require('util');
+const { exec, execSync } = require('node:child_process');
+const fs = require('node:fs');
+const util = require('node:util');
+
 const execAsync = util.promisify(exec);
-const fsA = require('fs/promises');
+const fsA = require('node:fs/promises');
 
 async function getNodeFromPath() {
   try {
@@ -13,8 +14,9 @@ async function getNodeFromPath() {
     return stdout
       .trim()
       .split(/\r?\n/)
-      .filter((p) => p.trim() !== '');
-  } catch (err) {
+      .filter(p => p.trim() !== '');
+  }
+  catch (err) {
     return [];
   }
 }
@@ -36,9 +38,9 @@ async function findAllNodePaths() {
   // 4. PATH
   const fromPath = await getNodeFromPath();
   // console.log("fromPath: ", fromPath);
-  fromPath.forEach((p) => set.add(p));
+  fromPath.forEach(p => set.add(p));
 
-  return Array.from(set).filter((p) => fs.existsSync(p));
+  return Array.from(set).filter(p => fs.existsSync(p));
 }
 
 async function updateUrl() {
@@ -59,7 +61,8 @@ async function updateUrl() {
       return ret;
     }
     return null;
-  } catch (err) {
+  }
+  catch (err) {
     console.error('Script failed:', err);
     return null;
   }

@@ -1,4 +1,5 @@
 # [xpath 匹配](https://www.qianwen.com/chat/a1d7d1d86fc04cc7aecb9401e8a672d2)
+
 要使用 XPath 匹配如下两种结构中的文本内容：
 
 1. `<p><code><code>text1</code></code></p>`
@@ -56,11 +57,13 @@
 ```
 
 解释：
+
 - `//p[descendant::code]`：选中包含 `<code>` 后代的 `<p>`。
 - `/descendant::code[last()]`：在该 `<p>` 下，取最深层（最后一个嵌套层级）的 `<code>`（对两层嵌套取内层，对单层就取它自己）。
 - `/text()[normalize-space()]`：取非空白文本。
 
 ✅ 这个表达式能正确处理：
+
 - `<p><code>text2</code></p>` → `text2`
 - `<p><code><code>text1</code></code></p>` → `text1`
 
@@ -69,19 +72,27 @@
 ### 示例验证
 
 HTML 片段：
+
 ```html
-<p><code><code>text1</code></code></p>
+<p>
+  <code><code>text1</code></code>
+</p>
 <p><code>text2</code></p>
 <p>普通段落</p>
-<p><code> <em>带标签的</em> </code></p> <!-- 不匹配纯文本 -->
+<p>
+  <code> <em>带标签的</em> </code>
+</p>
+<!-- 不匹配纯文本 -->
 ```
 
 使用：
+
 ```xpath
 //p[descendant::code]/descendant::code[last()]/text()[normalize-space()]
 ```
 
 结果：
+
 - `text1`
 - `text2`
 

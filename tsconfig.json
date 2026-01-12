@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "commonjs",
-    "outDir": "./lib",
     "rootDir": "./utils",
+    "module": "commonjs",
+    "types": ["emscripten"],
     "declaration": false,
-    "sourceMap": false,
-    "types": ["emscripten"]
+    "outDir": "./lib",
+    "sourceMap": false
   },
   "include": ["utils", "utils/types"]
 }

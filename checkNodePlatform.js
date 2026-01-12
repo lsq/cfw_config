@@ -1,5 +1,6 @@
-const os = require('os');
+const os = require('node:os');
 const { platform, arch, report } = require('node:process');
+
 console.log(os.type());
 console.log(report.getReport().header.osName);
 console.log(report.getReport().header.osName.startsWith('MINGW32_NT'));

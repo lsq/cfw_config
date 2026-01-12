@@ -1,40 +1,44 @@
+const path = require('node:path');
+const { webcrack } = require('@bratel/webcrack');
+const { DOMParser } = require('@xmldom/xmldom');
 // ref: https://blog.csdn.net/2301_81155391/article/details/148168945
 // https://webcrack.netlify.app/
 // https://obf-io.deobfuscate.io/
 // https://lelinhtinh.github.io/de4js/
 //
 const axios = require('axios');
-const { webcrack } = require('@bratel/webcrack');
-const { DOMParser } = require('@xmldom/xmldom');
+const yaml = require('js-yaml');
+const xpath = require('xpath');
+
 // const { DOMParser } = require("xmldom");
 const { linkToClash } = require('./lib/converter');
-const yaml = require('js-yaml');
+const fs = require('node:fs').promises;
 
-const xpath = require('xpath');
-const fs = require('fs').promises;
 const parser = new DOMParser();
 const url = 'https://fan2.194529.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/';
 // const uriPath = "ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/";
-const amazoneUrl =
-  'https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/ss.html';
-const xpathHtml = (parseString, doc) =>
-  xpath.parse(parseString).select({ node: doc, isHtml: true });
+const amazoneUrl
+  = 'https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/ss.html';
+function xpathHtml(parseString, doc) {
+  return xpath.parse(parseString).select({ node: doc, isHtml: true });
+}
 
-const isValidUrl = (str) => {
+function isValidUrl(str) {
   try {
-    new URL(str);
+    const turl = new URL(str);
     return true;
-  } catch {
+  }
+  catch {
     return false;
   }
-};
+}
 //
 async function update_uri() {
   const amazoneResponse = await axios.get(amazoneUrl);
   // saveTextToFile("amazoneInfo.html", amazoneResponse.data);
   const retDoc = parser.parseFromString(amazoneResponse.data, 'text/html');
   // const uriNode = xpath.parse("//link[@rel='icon']/@href").select({node: retDoc, isHtml: true})
-  const uriNode = xpathHtml("//link[@rel='icon']/@href", retDoc);
+  const uriNode = xpathHtml('//link[@rel=\'icon\']/@href', retDoc);
   // console.log(uriNode);
   const faviconUri = uriNode[0].nodeValue;
   const retUri = faviconUri.slice(0, faviconUri.lastIndexOf('/') + 1);
@@ -43,8 +47,8 @@ async function update_uri() {
     return retUri;
   }
   const jsDataNode = xpathHtml(
-    "//script[contains(text(), '(function')]",
-    retDoc
+    '//script[contains(text(), \'(function\')]',
+    retDoc,
   );
   // console.log(jsDataNode)
   if (jsDataNode) {
@@ -61,9 +65,9 @@ async function update_uri() {
         if (isValidUrl(match[1])) {
           console.log('Extracted src:', match[1]);
           saveTextToFile(
-            __dirname + '/ssUrl.log',
-            new Date().toLocaleString() + 'Extracted src: ' + match[1] + '\n',
-            { f: 'a' }
+            path.join(__dirname, 'ssUrl.log'),
+            `${new Date().toLocaleString()}Extracted src: ${match[1]}\n`,
+            { f: 'a' },
           );
           return match[1];
         }
@@ -72,8 +76,8 @@ async function update_uri() {
   }
 }
 // 原始字符串
-const inputString =
-  '节点：92.118.205.61 端口：22222 密码： dongtaiwang.com  加密方式：aes-256-gcm';
+const inputString
+  = '节点：92.118.205.61 端口：22222 密码： dongtaiwang.com  加密方式：aes-256-gcm';
 // const inputString = `ipv4 节点：92.118.205.61 端口：22222 密码： dongtaiwang.com  加密方式：aes-256-gcm
 //
 // ipv6 节点：2001:bc8:32d7:30b::202 端口：13355 密码： dongtaiwang.com  加密方式：aes-256-gcm`;
@@ -85,7 +89,7 @@ function parseNodes(input) {
 
   return lines.map((line) => {
     // 匹配各个字段
-    const typeMatch = line.match(/(ipv[46]\s+)?节点：([^\s]+)/);
+    const typeMatch = line.match(/(ipv[46]\s+)?节点：(\S+)/);
     const portMatch = line.match(/端口：(\d+)/);
     const passwordMatch = line.match(/密码：\s*([^ ]+)/);
     const encryptionMatch = line.match(/加密方式：([^ ]+)/);
@@ -97,11 +101,11 @@ function parseNodes(input) {
       // if (className === "ssr") {
       return {
         name: typeMatch
-          ? 'new-pac-' + className + '-' + (typeMatch[1] ?? '节点').trim()
+          ? `new-pac-${className}-${(typeMatch[1] ?? '节点').trim()}`
           : null,
         type: className,
         server: typeMatch ? typeMatch[2] : null,
-        port: portMatch ? parseInt(portMatch[1], 10) : null,
+        port: portMatch ? Number.parseInt(portMatch[1], 10) : null,
         password: passwordMatch ? passwordMatch[1] : null,
         cipher: encryptionMatch ? encryptionMatch[1] : null,
         ...(protocolMatch != null && { protocol: protocolMatch[1] }),
@@ -131,7 +135,8 @@ async function saveTextToFile(filename, content, options = {}) {
   const { e = 'utf8', f = 'w' } = options;
   try {
     await fs.writeFile(filename, content, { encoding: e, flag: f });
-  } catch (err) {
+  }
+  catch (err) {
     console.error('保存文件时出错:', err);
   }
 }
@@ -175,7 +180,10 @@ async function parse_data() {
         //   doc,
         // );
         // const node = xpathHtml('//p/code/text()', doc);
-        const node = xpathHtml('//p[.//code]//code//text()[normalize-space()]', doc);
+        const node = xpathHtml(
+          '//p[.//code]//code//text()[normalize-space()]',
+          doc,
+        );
         /*
           xpath
       .parse("//code[preceding::*[contains(text(),'SS节点')]]")
@@ -203,7 +211,7 @@ async function parse_data() {
             console.log(`nvalue: ${nvalue}`);
             return nvalue;
           })
-          .filter((p) => p !== null);
+          .filter(p => p !== null);
         console.log(new_pac_link);
         console.log(`link2Clash: ${JSON.stringify(linkToClash(new_pac_link))}`);
         const config_data = parseProxies(linkToClash(new_pac_link));
@@ -220,26 +228,27 @@ async function parse_data() {
     }]
     */
         return config_data;
-      })
+      }),
     );
     const new_pac = ret
       .map((result) => {
         if (result.status === 'fulfilled') {
           return result.value;
-        } else {
+        }
+        else {
           saveTextToFile(
-            __dirname + '/ssUrl.log',
-            new Date().toLocaleString() +
-              `Fetch error: ${result.reason}` +
-              '\n',
-            { f: 'a' }
+            path.join(__dirname, 'ssUrl.log'),
+            `${new Date().toLocaleString()}Fetch error: ${result.reason}`
+            + `\n`,
+            { f: 'a' },
           );
           throw result.reason;
         }
       })
       .flat();
     return new_pac;
-  } catch (e) {
+  }
+  catch (e) {
     console.log(e);
   }
 }
@@ -261,13 +270,14 @@ function parseProxies(response) {
         n.name !== null && n.server && n.name !== 'Unnamed' && n.server !== null
       );
     });
-  } catch (err) {
+  }
+  catch (err) {
     console.error('YAML parse error:', err.message);
     throw err;
   }
 }
 
-parse_data().then((data) => console.log(data));
+parse_data().then(data => console.log(data));
 /*
 module.exports.parse = async (raw, { axios, yaml, notify, console }, { name, url, interval, selected }) => {
   const obj = yaml.parse(raw)
@@ -284,8 +294,9 @@ module.exports.parse = async (raw, { axios, yaml, notify, console }, { name, url
   return yaml.stringify(obj)
 }
 */
-const pickDefined = (obj) =>
-  Object.fromEntries(Object.entries(obj).filter(([, v]) => v != null));
+function pickDefined(obj) {
+  return Object.fromEntries(Object.entries(obj).filter(([, v]) => v != null));
+}
 
 // 使用
 const ret = pickDefined({ a: 1, b: null, c: undefined, d: 4 }); // { a: 1, d: 4 }

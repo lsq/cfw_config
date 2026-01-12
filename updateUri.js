@@ -1,40 +1,46 @@
-const axiosN = require('axios');
-const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
-const fs = require('fs/promises');
-const xpath = require('xpath');
+const fs = require('node:fs/promises');
+const path = require('node:path');
 const { webcrack } = require('@bratel/webcrack');
+const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
+const axiosN = require('axios');
+const xpath = require('xpath');
 
-const amazoneUrl =
-  'https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/ss.html';
+const amazoneUrl
+  = 'https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/ss.html';
 const parser = new DOMParser();
-const xpathHtml = (parseString, doc) =>
-  xpath.parse(parseString).select({ node: doc, isHtml: true });
+function xpathHtml(parseString, doc) {
+  return xpath.parse(parseString).select({ node: doc, isHtml: true });
+}
 
 async function saveTextToFile(filename, content, options = {}) {
   const { e = 'utf8', f = 'w' } = options;
   try {
     await fs.writeFile(filename, content, { encoding: e, flag: f });
-  } catch (err) {
+  }
+  catch (err) {
     console.error('保存文件时出错:', err);
   }
 }
 
-const isValidUrl = (str) => {
+function isValidUrl(str) {
   try {
-    new URL(str);
+    const turl = new URL(str);
     return true;
-  } catch {
+  }
+  catch {
     return false;
   }
-};
+}
 
 async function update_uri() {
   try {
-    const amazoneResponse = await axiosN.get(amazoneUrl);
-    // saveTextToFile("amazoneInfo.html", amazoneResponse.data);
+    const amazoneResponse = await axiosN.get(amazoneUrl, {
+      proxy: { host: '127.0.0.1', port: 7890, protocol: 'http' },
+    });
+    // saveTextToFile("amazoneInfo-log.html", amazoneResponse.data);
     const retDoc = parser.parseFromString(amazoneResponse.data, 'text/html');
     // const uriNode = xpath.parse("//link[@rel='icon']/@href").select({node: retDoc, isHtml: true})
-    const uriNode = xpathHtml("//link[@rel='icon']/@href", retDoc);
+    const uriNode = xpathHtml('//link[@rel=\'icon\']/@href', retDoc);
     // console.log(uriNode)
     if (uriNode.length > 0) {
       const faviconUri = uriNode[0].nodeValue;
@@ -44,32 +50,42 @@ async function update_uri() {
       }
     }
     const jsDataNode = xpathHtml(
-      "//script[contains(text(), '(function')]",
-      retDoc
+      '//script[contains(text(), \'(function\')]',
+      retDoc,
     );
-    // console.log(jsDataNode)
+    // console.log(`jsDataNode: ${jsDataNode}`)
     if (jsDataNode.length > 0) {
       // console.log('-----------------------')
       // console.log(jsDataNode[0].firstChild.nodeValue)
-      const jsData =
-        jsDataNode[0].textContent || jsDataNode[0].firstChild?.nodeValue;
+      const jsData
+        = jsDataNode[0].textContent || jsDataNode[0].firstChild?.nodeValue;
       // console.log("-----------------------");
-      // console.log(jsData);
+      // console.log(`jsData:${jsData}`);
       if (jsData) {
         const result = await webcrack(jsData);
         const code = result.code;
         if (code) {
-          const match = code.match(/\.src\s*=\s*["']([^"']+)["']/);
-          if (match && isValidUrl(match[1])) {
-            const extractedUrl = match[1];
+          // const match = code.match(/\.src\s*=\s*["']([^"']+)["']/);
+          const match = code.match(
+            /https:\/\/fan2\.[^.]+\.xyz\/[^\s'"]+\//,
+          )?.[0];
+          // console.log(`match: ${match}`)
+          /*
+          try {
+              const urlhref = (new URL(match)).href
+          // console.log(`URL(match): ${(new URL(match)).href}`)
+          console.log(`isValidUrl: ${isValidUrl(urlhref)}`)
+          } catch (err) {
+              console.error(`Invalid url: ${err}`)
+          }
+          */
+          if (match && isValidUrl(match)) {
+            const extractedUrl = match;
             // console.log("Extracted src:", extractedUrl);
             await saveTextToFile(
-              __dirname + '/ssUrl.log',
-              new Date().toLocaleString() +
-                'Extracted src: ' +
-                extractedUrl +
-                '\n',
-              { f: 'a' }
+              path.join(__dirname, 'ssUrl.log'),
+              `${new Date().toLocaleString()}Extracted src: ${extractedUrl}\n`,
+              { f: 'a' },
             );
             return extractedUrl;
           }
@@ -77,7 +93,14 @@ async function update_uri() {
       }
     }
     return null;
-  } catch (err) {
+  }
+  catch (err) {
+    saveTextToFile(
+      path.join(__dirname, 'ssUrl.log'),
+      `${new Date().toLocaleString()} update_uri() -> Fetch error: ${err}`
+      + `\n`,
+      { f: 'a' },
+    );
     return null;
   }
 }
