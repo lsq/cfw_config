@@ -18,8 +18,10 @@ const ssrUrl = [
 const vlessUrl
   = 'vless://3fb38b37-c636-44d3-ab0c-897fab438bf1@62.210.8.152:18877?path=%2Fgithub.com%2FAlvin9999&security=reality&encryption=none&pbk=DZj1qrLAm6EJfPkVRPpSCgoQN8sM8Rbio0jpsS1A3FM&fp=chrome&spx=%2F&type=xhttp&sni=mxj.myanimelist.net&sid=288132e297984d34#VLESS%E8%8A%82%E7%82%B91-xhttp-reality';
 // const ret = linkToClash(ssrUrl);
+const ssUrl
+  = 'ss://YWVzLTI1Ni1nY206YWx2aW45OTk5LmNvbQ@[2a14:7584:d0a1::a]:12345#SS%E8%8A%82%E7%82%B9-ipv6';
 // const ret = linkToClash([vlessUrl]);
-const ret = linkToClash([vmessUrl]);
+const ret = linkToClash([ssUrl]);
 console.log('解析结果为：', ret);
 const proxy = yaml.load(ret.data);
 const node = proxy.proxies;

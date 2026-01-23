@@ -6,7 +6,7 @@ const axiosN = require('axios');
 const xpath = require('xpath');
 
 const amazoneUrl
-  = 'https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/ss.html';
+  = 'https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html';
 const parser = new DOMParser();
 function xpathHtml(parseString, doc) {
   return xpath.parse(parseString).select({ node: doc, isHtml: true });
@@ -34,9 +34,10 @@ function isValidUrl(str) {
 
 async function update_uri() {
   try {
-    const amazoneResponse = await axiosN.get(amazoneUrl, {
-      proxy: { host: '127.0.0.1', port: 7890, protocol: 'http' },
-    });
+    const amazoneResponse = await axiosN.get(amazoneUrl);
+    // {
+    // proxy: { host: '127.0.0.1', port: 7890, protocol: 'http' },
+    // });
     // saveTextToFile("amazoneInfo-log.html", amazoneResponse.data);
     const retDoc = parser.parseFromString(amazoneResponse.data, 'text/html');
     // const uriNode = xpath.parse("//link[@rel='icon']/@href").select({node: retDoc, isHtml: true})
@@ -67,8 +68,8 @@ async function update_uri() {
         if (code) {
           // const match = code.match(/\.src\s*=\s*["']([^"']+)["']/);
           const match = code.match(
-            /https:\/\/fan2\.[^.]+\.xyz\/[^\s'"]+\//,
-          )?.[0];
+            /id",\s*"(https:\/\/(?:[^\n\r/\u2028\u2029]*\/[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF])*[^\n\r/\u2028\u2029]*\/[^\s"']+(?:[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF](?:[^\n\r/\u2028\u2029]*\/[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF])*[^\n\r/\u2028\u2029]*\/[^\s"']+)*\/)"/,
+          )?.[1];
           // console.log(`match: ${match}`)
           /*
           try {

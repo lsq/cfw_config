@@ -87,7 +87,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function parse_data() {
   try {
     const newUri = (await updateUrl()) || fixedurl;
-    const v2rayUri = newUri.replace('/ss', '/v2ray');
+    const v2rayUri = newUri.replace('/v2ray', '/ss');
     // await sleep(3000)
     // const input = await fsA.readFile("./ssrurl.txt", "utf8");
     // const newUri = input?.trim()

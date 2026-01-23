@@ -18,7 +18,7 @@ const parser = new DOMParser();
 const url = 'https://fan2.194529.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/';
 // const uriPath = "ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/";
 const amazoneUrl
-  = 'https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/ss.html';
+  = 'https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html';
 function xpathHtml(parseString, doc) {
   return xpath.parse(parseString).select({ node: doc, isHtml: true });
 }
@@ -60,16 +60,19 @@ async function update_uri() {
     const result = await webcrack(jsData);
     const code = result.code;
     if (code) {
-      const match = code.match(/\.src\s*=\s*["']([^"']+)["']/);
+      // const match = code.match(/\.src\s*=\s*["']([^"']+)["']/);
+    const match = code.match(
+      /id",\s*"(https:\/\/(?:[^\n\r/\u2028\u2029]*\/[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF])*[^\n\r/\u2028\u2029]*\/[^\s"']+(?:[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF](?:[^\n\r/\u2028\u2029]*\/[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF])*[^\n\r/\u2028\u2029]*\/[^\s"']+)*\/)"/,
+      )?.[1];
       if (match) {
-        if (isValidUrl(match[1])) {
-          console.log('Extracted src:', match[1]);
+        if (isValidUrl(match)) {
+          console.log('Extracted src:', match);
           saveTextToFile(
             path.join(__dirname, 'ssUrl.log'),
             `${new Date().toLocaleString()}Extracted src: ${match[1]}\n`,
             { f: 'a' },
           );
-          return match[1];
+          return match;
         }
       }
     }
@@ -145,7 +148,7 @@ async function parse_data() {
   try {
     const newUri = (await update_uri()) || url;
     // const url = newUri + uriPath;
-    const v2rayUri = newUri.replace('/ss', '/v2ray');
+    const v2rayUri = newUri.replace('/v2ray', '/ss');
     const ret = await Promise.allSettled(
       [newUri, v2rayUri].map(async (link) => {
         const response = await axios.get(link, {

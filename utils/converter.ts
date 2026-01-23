@@ -261,6 +261,7 @@ function URI_SS(line: string): IProxyShadowsocksConfig {
   content = content.split('#')[0]; // strip proxy name
   // handle IPV4 and IPV6
   let serverAndPortArray = content.match(/@([^/]*)(\/|$)/);
+  // console.log("serverAndPortArray:", serverAndPortArray)
   let userInfoStr = decodeBase64OrOriginal(content.split('@')[0]);
   let query = '';
   if (!serverAndPortArray) {
@@ -287,8 +288,10 @@ function URI_SS(line: string): IProxyShadowsocksConfig {
     serverAndPortArray = content.match(/@([^/]*)(\/|$)/);
   }
   const serverAndPort = serverAndPortArray?.[1];
+  // console.log(`serverAndPort: ${serverAndPort}`)
   const portIdx = serverAndPort?.lastIndexOf(':') ?? 0;
-  proxy.server = serverAndPort?.substring(0, portIdx) ?? '';
+  proxy.server
+    = serverAndPort?.substring(0, portIdx)?.replace(/^\[|\]$/g, '') ?? '';
   proxy.port = Number.parseInt(
     `${serverAndPort?.substring(portIdx + 1)}`.match(/\d+/)?.[0] ?? '',
   );
@@ -889,7 +892,7 @@ function URI_Hysteria2(line: string): IProxyHysteria2Config {
   const colonIndex = addr.lastIndexOf(':');
   if (colonIndex === -1)
     throw new Error('No password (auth) found in hysteria2 link');
-  const server = addr.slice(0, colonIndex);
+  const server = addr.slice(0, colonIndex)?.replace(/^\[|\]$/g, '');
   const port = Number.parseInt(addr.slice(colonIndex + 1)) || 443;
 
   const proxy: IProxyHysteria2Config = {
