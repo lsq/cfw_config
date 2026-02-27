@@ -23,6 +23,13 @@ const process = require('node:process');
 // const uriPath = "/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/";
 const fixedurl
   = 'https://fan2.380227.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/';
+const ssIpv6 = `- name: newpac-SS-ipv6
+  type: ss
+  server: 2a14:7584:d0a1::a
+  port: 12345
+  password: fan3.380227.xyz
+  cipher: aes-256-gcm`;
+// password: alvin9999.com
 function xpathHtml(parseString, doc) {
   return xpath.parse(parseString).select({ node: doc, isHtml: true });
 }
@@ -84,6 +91,63 @@ async function saveTextToFile(filename, content, options = {}) {
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+// 1. 解码 Cloudflare 邮箱
+function decodeCFEmail(encoded) {
+  const r = Number.parseInt(encoded.substr(0, 2), 16);
+  let email = '';
+  for (let i = 2; i < encoded.length; i += 2) {
+    email += String.fromCharCode(Number.parseInt(encoded.substr(i, 2), 16) ^ r);
+  }
+  return email;
+}
+
+const cfEmailRegex
+  = /<a[^>]*class="__cf_email__"[^>]*data-cfemail="([a-fA-F0-9]+)"[^>]*>.*?<\/a>/g;
+
+function replaceCFEmailWithReal(htmlString) {
+  return htmlString.replace(cfEmailRegex, (match, encodedEmail) => {
+    try {
+      return decodeCFEmail(encodedEmail);
+    }
+    catch (e) {
+      console.warn('Failed to decode CF email:', match);
+      return '[email protected]'; // fallback
+    }
+  });
+}
+
+function createParseProxies() {
+  let hasAppended = false;
+  return function parseProxies(response) {
+    if (!response.success) {
+      throw new Error('Response not successful');
+    }
+
+    const data = response.data;
+
+    // 方法 1：直接用 YAML 解析整个 data（推荐）
+    // 因为 "proxies:" 是合法的 YAML 映射键，值是一个列表
+    try {
+      const parsed = yaml.load(
+        hasAppended ? data : ((hasAppended = true), `${data}\n${ssIpv6}`),
+      );
+      // parsed 是 { proxies: [ {...}, {...} ] }
+      return parsed.proxies.filter((n) => {
+        return (
+          n.name !== null
+          && n.server
+          && n.name !== 'Unnamed'
+          && n.server !== null
+        );
+      });
+    }
+    catch (err) {
+      console.error('YAML parse error:', err.message);
+      throw err;
+    }
+  };
+}
+
 async function parse_data() {
   try {
     const newUri = (await updateUrl()) || fixedurl;
@@ -94,6 +158,7 @@ async function parse_data() {
     // if (newUri) {
     // await fsA.rm("ssrurl.txt");
     // }
+    const parseProxies = createParseProxies();
     const ret = await Promise.allSettled(
       [newUri, v2rayUri].map(async (link) => {
         saveTextToFile(
@@ -103,7 +168,16 @@ async function parse_data() {
           { f: 'a' },
         );
         const response = await axiosN.get(link);
-        const data = response.data;
+        // const data = response.data;
+        const orig_data = response.data;
+        const codeContentRegex = /(<code[^>]*>)(.*?)(<\/code>)/gs;
+        const data = orig_data.replace(
+          codeContentRegex,
+          (match, openTag, content, closeTag) => {
+            const cleanedContent = replaceCFEmailWithReal(content);
+            return openTag + cleanedContent + closeTag;
+          },
+        );
         // console.log(data)
         const doc = parser.parseFromString(data, 'text/html');
         // const node = xpath.select('/html/body/div/div[2]/div/div/article/div/div/pre[2]/code', doc)
@@ -128,6 +202,7 @@ async function parse_data() {
 
         const node = xpathHtml(
           '//p[.//code]//code//text()[normalize-space()]',
+          // '//p[.//code]//code',
           doc,
         );
 
@@ -188,7 +263,7 @@ async function parse_data() {
   }
 }
 
-function parseProxies(response) {
+function o_parseProxies(response) {
   if (!response.success) {
     throw new Error('Response not successful');
   }
@@ -353,6 +428,12 @@ async function updateUrl() {
     protocol: tls
     sni: apple.com
     insecure: true
+- name: SS节点-ipv6
+    type: ss
+    server: 2a14:7584:d0a1::a
+    port: 12345
+    password: alvin9999.com
+    cipher: aes-256-gcm
 */
 
 module.exports.parse = async (

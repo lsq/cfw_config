@@ -34,7 +34,9 @@ function isValidUrl(str) {
 }
 //
 async function update_uri() {
-  const amazoneResponse = await axios.get(amazoneUrl);
+  const amazoneResponse = await axios.get(amazoneUrl, {
+    proxy: { host: '127.0.0.1', port: 7890, protocol: 'http' },
+  });
   // saveTextToFile("amazoneInfo.html", amazoneResponse.data);
   const retDoc = parser.parseFromString(amazoneResponse.data, 'text/html');
   // const uriNode = xpath.parse("//link[@rel='icon']/@href").select({node: retDoc, isHtml: true})
@@ -61,8 +63,8 @@ async function update_uri() {
     const code = result.code;
     if (code) {
       // const match = code.match(/\.src\s*=\s*["']([^"']+)["']/);
-    const match = code.match(
-      /id",\s*"(https:\/\/(?:[^\n\r/\u2028\u2029]*\/[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF])*[^\n\r/\u2028\u2029]*\/[^\s"']+(?:[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF](?:[^\n\r/\u2028\u2029]*\/[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF])*[^\n\r/\u2028\u2029]*\/[^\s"']+)*\/)"/,
+      const match = code.match(
+        /id",\s*"(https:\/\/(?:[^\n\r/\u2028\u2029]*\/[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF])*[^\n\r/\u2028\u2029]*\/[^\s"']+(?:[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF](?:[^\n\r/\u2028\u2029]*\/[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF])*[^\n\r/\u2028\u2029]*\/[^\s"']+)*\/)"/,
       )?.[1];
       if (match) {
         if (isValidUrl(match)) {
@@ -86,6 +88,13 @@ const inputString
 // ipv6 节点：2001:bc8:32d7:30b::202 端口：13355 密码： dongtaiwang.com  加密方式：aes-256-gcm`;
 
 // 解析函数
+const ssIpv6 = `- name: newpac-SS-ipv6
+  type: ss
+  server: 2a14:7584:d0a1::a
+  port: 12345
+  password: fan3.380227.xyz
+  cipher: aes-256-gcm`;
+// password: alvin9999.com
 function parseNodes(input) {
   // 按空行分割成两行
   const lines = input.trim().split(/\n\s*\n/);
@@ -144,17 +153,55 @@ async function saveTextToFile(filename, content, options = {}) {
   }
 }
 
+// 1. 解码 Cloudflare 邮箱
+function decodeCFEmail(encoded) {
+  const r = Number.parseInt(encoded.substr(0, 2), 16);
+  let email = '';
+  for (let i = 2; i < encoded.length; i += 2) {
+    email += String.fromCharCode(Number.parseInt(encoded.substr(i, 2), 16) ^ r);
+  }
+  return email;
+}
+
+const cfEmailRegex
+  = /<a[^>]*class="__cf_email__"[^>]*data-cfemail="([a-fA-F0-9]+)"[^>]*>.*?<\/a>/g;
+
+function replaceCFEmailWithReal(htmlString) {
+  return htmlString.replace(cfEmailRegex, (match, encodedEmail) => {
+    try {
+      return decodeCFEmail(encodedEmail);
+    }
+    catch (e) {
+      console.warn('Failed to decode CF email:', match);
+      return '[email protected]'; // fallback
+    }
+  });
+}
+
+// const output = replaceCFEmailWithReal(html);
+// console.log(output);
+
 async function parse_data() {
   try {
     const newUri = (await update_uri()) || url;
     // const url = newUri + uriPath;
     const v2rayUri = newUri.replace('/v2ray', '/ss');
+    const parseProxies = createParseProxies();
     const ret = await Promise.allSettled(
       [newUri, v2rayUri].map(async (link) => {
         const response = await axios.get(link, {
           proxy: { host: '127.0.0.1', port: 7890, protocol: 'http' },
         });
-        const data = response.data;
+        const orig_data = response.data;
+        const codeContentRegex = /(<code[^>]*>)(.*?)(<\/code>)/gs;
+        const data = orig_data.replace(
+          codeContentRegex,
+          (match, openTag, content, closeTag) => {
+            const cleanedContent = replaceCFEmailWithReal(content);
+            return openTag + cleanedContent + closeTag;
+          },
+        );
+
         // console.log(data);
         // await saveTextToFile("ssInfo.html", data, { f: "a" });
         // const parser = new xmldom.DOMParser();
@@ -184,7 +231,9 @@ async function parse_data() {
         // );
         // const node = xpathHtml('//p/code/text()', doc);
         const node = xpathHtml(
-          '//p[.//code]//code//text()[normalize-space()]',
+          // '//p[.//code]//code//text()[normalize-space()]',
+          '//p[.//code]//code',
+          // "//p[.//code]//code//text()[normalize-space()]/replace(replace(., '\n', ' '), '\s+', ' ')", //xpath 2.0
           doc,
         );
         /*
@@ -210,7 +259,12 @@ async function parse_data() {
           .map((info) => {
             // const nvalue = info.firstChild.nodeValue;
             // return parseNodes(nvalue);
-            const nvalue = info.nodeValue;
+            // console.log(info)
+            const text = info.textContent;
+            // const nvalue = info.nodeValue;
+            const nvalue = text.trim()
+              ? text.replace(/\s+/g, ' ').trim()
+              : null;
             console.log(`nvalue: ${nvalue}`);
             return nvalue;
           })
@@ -256,28 +310,36 @@ async function parse_data() {
   }
 }
 
-function parseProxies(response) {
-  if (!response.success) {
-    throw new Error('Response not successful');
-  }
+function createParseProxies() {
+  let hasAppended = false;
+  return function parseProxies(response) {
+    if (!response.success) {
+      throw new Error('Response not successful');
+    }
 
-  const data = response.data;
+    const data = response.data;
 
-  // 方法 1：直接用 YAML 解析整个 data（推荐）
-  // 因为 "proxies:" 是合法的 YAML 映射键，值是一个列表
-  try {
-    const parsed = yaml.load(data);
-    // parsed 是 { proxies: [ {...}, {...} ] }
-    return parsed.proxies.filter((n) => {
-      return (
-        n.name !== null && n.server && n.name !== 'Unnamed' && n.server !== null
+    // 方法 1：直接用 YAML 解析整个 data（推荐）
+    // 因为 "proxies:" 是合法的 YAML 映射键，值是一个列表
+    try {
+      const parsed = yaml.load(
+        hasAppended ? data : ((hasAppended = true), `${data}\n${ssIpv6}`),
       );
-    });
-  }
-  catch (err) {
-    console.error('YAML parse error:', err.message);
-    throw err;
-  }
+      // parsed 是 { proxies: [ {...}, {...} ] }
+      return parsed.proxies.filter((n) => {
+        return (
+          n.name !== null
+          && n.server
+          && n.name !== 'Unnamed'
+          && n.server !== null
+        );
+      });
+    }
+    catch (err) {
+      console.error('YAML parse error:', err.message);
+      throw err;
+    }
+  };
 }
 
 parse_data().then(data => console.log(data));
