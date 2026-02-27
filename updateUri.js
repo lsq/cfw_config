@@ -34,10 +34,13 @@ function isValidUrl(str) {
 
 async function update_uri() {
   try {
-    const amazoneResponse = await axiosN.get(amazoneUrl);
-    // {
-    // proxy: { host: '127.0.0.1', port: 7890, protocol: 'http' },
-    // });
+    const amazoneResponse = await axiosN.get(
+      amazoneUrl,
+      // );
+      {
+        proxy: { host: '127.0.0.1', port: 7890, protocol: 'http' },
+      },
+    );
     // saveTextToFile("amazoneInfo-log.html", amazoneResponse.data);
     const retDoc = parser.parseFromString(amazoneResponse.data, 'text/html');
     // const uriNode = xpath.parse("//link[@rel='icon']/@href").select({node: retDoc, isHtml: true})
