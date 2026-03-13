@@ -21,7 +21,7 @@ export default antfu({
       */
     ],
   },
-  ignores: ['strTest*.js', '*.log', 'if*.js', 'lib/**', '*.md'],
+  ignores: ['strTest*.js', '*.log', 'if*.js', 'lib/**', '*.md', 'pnpm-lock.yaml'],
   gitignore: true,
   stylistic: {
     indent: 2,
