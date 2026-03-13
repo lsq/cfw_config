@@ -1,10 +1,12 @@
-ignoredBuiltDependencies:
-  - ts-punycode
 # patchedDependencies:
 # ts-punycode@0.1.0: patches/ts-punycode@0.1.0.patch
-onlyBuiltDependencies:
-  - isolated-vm
-  - ts-punycode
 shellEmulator: true
 
 trustPolicy: no-downgrade
+patchedDependencies:
+  ts-punycode@0.1.2: patches/ts-punycode@0.1.2.patch
+ignoredBuiltDependencies:
+  - ts-punycode
+onlyBuiltDependencies:
+  - isolated-vm
+  - ts-punycode

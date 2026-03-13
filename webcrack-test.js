@@ -43,7 +43,7 @@ async function findAllNodePaths() {
   console.log('fromPath: ', fromPath);
   fromPath.forEach(p => set.add(p));
 
-  return Array.from(set).filter(p => require('node:fs').existsSync(p));
+  return [...set].filter(p => require('node:fs').existsSync(p));
 }
 
 const code = fs.readFileSync('./iframe.js', 'utf8');

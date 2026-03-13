@@ -5,6 +5,8 @@ const util = require('node:util');
 const execAsync = util.promisify(exec);
 const fsA = require('node:fs/promises');
 
+const lineEnd = /\r?\n/;
+
 async function getNodeFromPath() {
   try {
     // console.log("std-------");
@@ -13,7 +15,7 @@ async function getNodeFromPath() {
     // console.log("stdout-------", stdout);
     return stdout
       .trim()
-      .split(/\r?\n/)
+      .split(lineEnd)
       .filter(p => p.trim() !== '');
   }
   catch (err) {
@@ -40,7 +42,7 @@ async function findAllNodePaths() {
   // console.log("fromPath: ", fromPath);
   fromPath.forEach(p => set.add(p));
 
-  return Array.from(set).filter(p => fs.existsSync(p));
+  return [...set].filter(p => fs.existsSync(p));
 }
 
 async function updateUrl() {

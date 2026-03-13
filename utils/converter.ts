@@ -541,17 +541,20 @@ function URI_VMESS(line: string): IProxyVmessConfig {
     }
 
     if (proxy.network) {
-      let transportHost = params.host ?? params.obfsParam;
-      try {
-        const parsedObfs = JSON.parse(transportHost);
-        const parsedHost = parsedObfs?.Host;
-        if (parsedHost) {
-          transportHost = parsedHost;
+      let transportHost
+        = typeof params.host === 'string' ? params.host.trim() : '';
+      if (!transportHost && typeof params.obfsParam === 'string') {
+        try {
+          const parsedObfs = JSON.parse(transportHost);
+          const parsedHost = parsedObfs?.Host;
+          if (parsedHost) {
+            transportHost = parsedHost;
+          }
         }
-      }
-      catch (e) {
-        console.warn('[URI_VMESS] transportHost JSON.parse failed:', e);
-        // ignore JSON parse errors
+        catch (e) {
+          console.warn('[URI_VMESS] transportHost JSON.parse failed:', e);
+          // ignore JSON parse errors
+        }
       }
 
       let transportPath = params.path;
@@ -1444,7 +1447,7 @@ export function generateUri(node: any): string {
         alpn: node.alpn?.join(',') || '',
         fp: node.fingerprint || node['client-fingerprint'] || '',
       };
-      return `vmess://${btoa(JSON.stringify(vmess))}#${name}`;
+      return `vmess://${Buffer.from(JSON.stringify(vmess), 'utf8').toString('base64')}#${name}`;
 
     case 'vless':
       const link = `vless://${node.uuid}@${server}:${port}`;

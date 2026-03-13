@@ -17,9 +17,9 @@ function decodeBase64OrOriginal(str: string): Uint8Array {
 }
 
 function bytesToHex(bytes: Uint8Array): string {
-  return Array.from(bytes)
-    .map(byte => byte.toString(16).padStart(2, '0'))
-    .join(' ');
+  return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join(
+    ' ',
+  );
 }
 
 function utf8BytesEqual(str1: string, str2: string): boolean {

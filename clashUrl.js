@@ -21,7 +21,8 @@ const vlessUrl
 const ssUrl
   = 'ss://YWVzLTI1Ni1nY206YWx2aW45OTk5LmNvbQ@[2a14:7584:d0a1::a]:12345#SS%E8%8A%82%E7%82%B9-ipv6';
 // const ret = linkToClash([vlessUrl]);
-const ret = linkToClash([ssUrl]);
+// const ret = linkToClash([ssUrl]);
+const ret = linkToClash([vmessUrl]);
 console.log('解析结果为：', ret);
 const proxy = yaml.load(ret.data);
 const node = proxy.proxies;

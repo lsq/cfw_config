@@ -3,7 +3,7 @@
     "target": "ES2020",
     "rootDir": "./utils",
     "module": "commonjs",
-    "types": ["emscripten"],
+    "types": ["emscripten", "node"],
     "declaration": false,
     "outDir": "./lib",
     "sourceMap": false

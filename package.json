@@ -37,11 +37,13 @@
   "devDependencies": {
     "@antfu/eslint-config": "^7.7.2",
     "@types/emscripten": "^1.41.5",
+    "@types/node": "^25.5.0",
+    "@xmldom/xmldom": "^0.8.0",
     "eslint": "^10.0.3",
     "prettier": "3.8.1",
     "prettier-eslint": "^16.4.2"
   },
   "overrides": {
-      "semver": "^7.5.4"
+    "semver": "^7.5.4"
   }
 }

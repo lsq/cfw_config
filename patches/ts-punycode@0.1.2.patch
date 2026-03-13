@@ -1,0 +1,60 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+deleted file mode 100644
+index 1f289eb17c73efb39ae39148cbd0faaef05d4566..0000000000000000000000000000000000000000
+diff --git a/dist/index.js b/dist/index.js
+index c0792c9c37e339fdf90a5396d2e665d0565a1d7b..2a11dbcc0ca741c8253cc1924c046722336fbf01 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -224,7 +224,7 @@ var punycode_default = punycode;
+ 
+ // src/index.ts
+ var src_default = punycode_default;
+-export {
++module.export = {
+   ucs2encode,
+   ucs2decode,
+   toUnicode,
+@@ -236,7 +236,7 @@ export {
+   error,
+   encode,
+   digitToBasic,
+-  src_default as default,
++  default: src_default,
+   decode,
+   basicToDigit,
+   adapt,
+diff --git a/package.json b/package.json
+index 851c1ad6af47e30fc0b4b3d803aed4bbe1feb3be..327f239166b6c4f955bd2c8a43c932108ffcf595 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "ts-punycode",
+-  "type": "module",
++  "type": "commonjs",
+   "version": "0.1.2",
+   "description": "A modern TypeScript implementation of Punycode (RFC 3492) with full RFC 5891 support.",
+   "author": "Chris Breuer <chris@stacksjs.org>",
+@@ -24,10 +24,12 @@
+   "exports": {
+     ".": {
+       "types": "./dist/index.d.ts",
+-      "import": "./dist/index.js"
++      "import": "./dist/index.js",
++      "require": "./dist/index.js"
+     },
+     "./*": {
+-      "import": "./dist/*"
++      "import": "./dist/*",
++      "require": "./dist/*"
+     }
+   },
+   "module": "./dist/index.js",
+@@ -48,7 +50,6 @@
+     "changelog": "bunx --bun logsmith --verbose",
+     "changelog:generate": "bunx --bun logsmith --output CHANGELOG.md",
+     "release": "bun run changelog:generate && bunx --bun bumpx prompt --recursive",
+-    "postinstall": "bunx git-hooks",
+     "dev:docs": "bun --bun vitepress dev docs",
+     "build:docs": "bun --bun vitepress build docs",
+     "preview:docs": "bun --bun vitepress preview docs",
