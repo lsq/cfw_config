@@ -33,12 +33,21 @@ function isValidUrl(str) {
 }
 
 async function update_uri() {
+  const isWindows = process.platform === 'win32';
+  const proxyConfig = isWindows
+    ? {
+        host: '127.0.0.1',
+        port: 7890,
+        protocol: 'http', // 如果你的代理是 HTTPS，请改为 'https'
+      }
+    : false;
   try {
+    // console.log(`正在从${amazoneUrl}...\n`)
     const amazoneResponse = await axiosN.get(
       amazoneUrl,
       // );
       {
-        proxy: { host: '127.0.0.1', port: 7890, protocol: 'http' },
+        proxy: proxyConfig,
       },
     );
     // saveTextToFile("amazoneInfo-log.html", amazoneResponse.data);

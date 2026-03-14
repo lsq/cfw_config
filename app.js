@@ -2,7 +2,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { DOMParser } = require('@xmldom/xmldom');
 const xpath = require('xpath');
-const { getPublicNodeset, mergeData, parseData, restartMihomo } = require('./get_newpac');
+const { getPublicNodeset, mergeData, parseData, restartMihomo, exportData } = require('./get_newpac');
 const math = require('./math');
 
 const html = `<code>abc\nbcb13ecb-4f63-4257-ae01-ec5aeaa613a5@157.254.223.64\ndef</code>`;
@@ -33,6 +33,7 @@ console.log(processArray(['a', 'b'])); // ["ahaha", "b"]
 
 const giturl
   = 'https://gh-proxy.com/https://raw.githubusercontent.com/chengaopan/AutoMergePublicNodes/master/list.yml';
+const newpacData = path.join(__dirname, 'newpac.yaml');
 const mhdir = path.join(getHomeDir(), '.config/mihomo/config.yaml');
 console.log(`mihomo config path: ${mhdir}`);
 
@@ -56,8 +57,14 @@ function getHomeDir() {
 const getNodesetForUrl = url => () => getPublicNodeset(url);
 (async () => {
   await mergeData(getNodesetForUrl(giturl), parseData, outputPath);
+  // ----- test exportData ----------
+  // const rest = await parseData();
+  // await exportData(newpacData, rest);
+  // ----- test exportData ----------
+  // ----- test  reload mihomo config ----------
   const restartOrNot = await restartMihomo();
   if (restartOrNot) {
     console.log('重载mihomo配置成功！');
   }
+  // ----- test  reload mihomo config ----------
 })();

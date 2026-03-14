@@ -150,72 +150,175 @@ function createParseProxies() {
   };
 }
 
-async function parse_data() {
+async function rparse_data(consoleObj) {
+  const msg = `  ${new Date().toLocaleString()}: newUri -> (Test Write)`;
+
+  // 1. 正常打印
+  consoleObj.log(msg);
+
+  // 2. 【关键】强制刷新 stdout 缓冲区
+  // 很多 Node 环境日志丢失是因为进程退出太快，缓冲区没写完
+  if (process && process.stdout) {
+    // 尝试强制同步写入一个空字符，触发 flush
+    // 注意：某些沙箱环境可能禁止同步 IO，如果报错请去掉 try-catch 外的逻辑
+    try {
+      process.stdout.write('');
+    }
+    catch (e) {
+      // 如果无法强制刷新，至少我们尝试了
+    }
+  }
+
+  const rmsg = `  ${new Date().toLocaleString()}: newUri -> (return)`;
+  return rmsg;
+}
+
+async function ttparse_data(consoleObj) {
+  // --- 诊断开始 ---
+
+  // 1. 检查对象是否存在
+  const exists = consoleObj !== undefined && consoleObj !== null;
+
+  // 2. 检查是否有 log 方法
+  const hasLog = exists && typeof consoleObj.log === 'function';
+
+  // 3. 获取构造函数名称 (判断是否为原生 console 还是框架特供)
+  const constructorName = exists ? consoleObj.constructor.name : 'NULL';
+
+  // 4. 获取原型链上的关键属性 (尝试寻找框架特有的属性，不同框架可能不同，常见如 _path, _ctx 等，这里列出通用检查)
+  const ownKeys = exists ? Object.getOwnPropertyNames(consoleObj).join(',') : 'NULL';
+  const protoKeys = exists ? Object.getOwnPropertyNames(Object.getPrototypeOf(consoleObj) || {}).join(',') : 'NULL';
+
+  // 5. 尝试判断是否是原生 Node Console (原生通常不会自动写文件到特定路径)
+  // 框架注入的对象通常不是 "Console" 类，或者是经过包装的
+  const isNative = exists && consoleObj.constructor.name === 'Console';
+
+  // 构建诊断报告字符串
+  const diagnosticReport = `
+  [DIAGNOSTIC REPORT]
+  Time: ${new Date().toLocaleString()}
+  Object Exists: ${exists}
+  Has .log(): ${hasLog}
+  Constructor Name: ${constructorName}
+  Is Likely Native: ${isNative}
+  Own Properties: ${ownKeys}
+  Prototype Properties: ${protoKeys}
+  ---------------------
+  `;
+
+  // --- 尝试输出 ---
+  if (hasLog) {
+    // 如果 log 方法存在，尝试输出诊断信息
+    // 注意：如果这里的 log 依然不写文件，说明这个对象确实失去了文件写入的上下文
+    consoleObj.log(diagnosticReport);
+
+    // 尝试执行实际的日志写入
+    consoleObj.log(`  ${new Date().toLocaleString()}: newUri -> (Test Write)`);
+  }
+  else {
+    // 如果连 log 都没有，抛出错误让主模块捕获
+    throw new Error(`Received invalid console object: ${diagnosticReport}`);
+  }
+
+  return diagnosticReport; // 返回报告给主模块处理
+}
+async function getFromGitHub() {
+  const giturl
+    = 'https://gh-proxy.com/https://github.com/YouAreHuman/updatePac/raw/refs/heads/master/newpac.yaml';
+  const gData = await getPublicNodeset(giturl);
+  return gData;
+}
+async function parse_data(options = {}) {
+  const {
+    consoleObj = console,
+    url, // 先解构出来，不设置默认值
+    // timeout = 5000
+  } = options;
+  let shouldFetch = false;
+  let newUri = null;
   try {
-    const newUri = (await updateUrl()) || fixedurl;
-    const v2rayUri = newUri.replace('/v2ray', '/ss');
-    // await sleep(3000)
-    // const input = await fsA.readFile("./ssrurl.txt", "utf8");
-    // const newUri = input?.trim()
-    // if (newUri) {
-    // await fsA.rm("ssrurl.txt");
-    // }
-    const parseProxies = createParseProxies();
-    const ret = await Promise.allSettled(
-      [newUri, v2rayUri].map(async (link) => {
-        saveTextToFile(
-          path.join(__dirname, 'ssUrl.log'),
-          // new Date().toLocaleString() + ": " + (newUri || url) + (JSON.stringify(newUri)) + "\n",
-          `${new Date().toLocaleString()}: parse_data() -> ${link}\n`,
-          { f: 'a' },
-        );
-        const response = await axiosN.get(link);
-        // const data = response.data;
-        const orig_data = response.data;
-        const codeContentRegex = /(<code[^>]*>)(.*?)(<\/code>)/gs;
-        const data = orig_data.replace(
-          codeContentRegex,
-          (match, openTag, content, closeTag) => {
-            const cleanedContent = replaceCFEmailWithReal(content);
-            return openTag + cleanedContent + closeTag;
-          },
-        );
-        // console.log(data)
-        const doc = parser.parseFromString(data, 'text/html');
-        // const node = xpath.select('/html/body/div/div[2]/div/div/article/div/div/pre[2]/code', doc)
-        // const node = xpath.select('/html/body/div/div[2]/div/div/article/div/div/pre[2]/code/text()', doc)
-        // const node = xpath.select("//code/text()", doc);
-        // console.log(node.nodeValue)
-        // console.log(node[2].nodeValue)
-        // console.log(doc.querySelector('.wp-block-code'))
-        // const info = node[2].nodeValue;
-        /* for xmldom
+    if (url) {
+      shouldFetch = true;
+      newUri = url;
+    }
+    else {
+      const udUrl = await updateUrl(consoleObj);
+      if (udUrl) {
+        shouldFetch = true;
+        newUri = udUrl;
+      }
+      else {
+        shouldFetch = false;
+        const ret = await getFromGitHub();
+        return ret;
+      }
+    }
+    if (shouldFetch) {
+      consoleObj.log('开始更新....');
+      const v2rayUri = newUri.replace('/v2ray', '/ss');
+      consoleObj.log(` ${new Date().toLocaleString()}: newUri -> ${newUri}\n v2rayUri -> ${v2rayUri}\n`);
+      // await sleep(3000)
+      // const input = await fsA.readFile("./ssrurl.txt", "utf8");
+      // const newUri = input?.trim()
+      // if (newUri) {
+      // await fsA.rm("ssrurl.txt");
+      // }
+      const parseProxies = createParseProxies();
+      const ret = await Promise.allSettled(
+        [newUri, v2rayUri].map(async (link) => {
+          saveTextToFile(
+            path.join(__dirname, 'ssUrl.log'),
+            // new Date().toLocaleString() + ": " + (newUri || url) + (JSON.stringify(newUri)) + "\n",
+            `${new Date().toLocaleString()}: parse_data() -> ${link}\n`,
+            { f: 'a' },
+          );
+          const response = await axiosN.get(link);
+          // const data = response.data;
+          const orig_data = response.data;
+          const codeContentRegex = /(<code[^>]*>)(.*?)(<\/code>)/gs;
+          const data = orig_data.replace(
+            codeContentRegex,
+            (match, openTag, content, closeTag) => {
+              const cleanedContent = replaceCFEmailWithReal(content);
+              return openTag + cleanedContent + closeTag;
+            },
+          );
+          // console.log(data)
+          const doc = parser.parseFromString(data, 'text/html');
+          // const node = xpath.select('/html/body/div/div[2]/div/div/article/div/div/pre[2]/code', doc)
+          // const node = xpath.select('/html/body/div/div[2]/div/div/article/div/div/pre[2]/code/text()', doc)
+          // const node = xpath.select("//code/text()", doc);
+          // console.log(node.nodeValue)
+          // console.log(node[2].nodeValue)
+          // console.log(doc.querySelector('.wp-block-code'))
+          // const info = node[2].nodeValue;
+          /* for xmldom
     const node = xpath.select(
       "//code[preceding::*[contains(text(),'SS节点')]]",
       doc,
     );
     */
-        /* for @xmldom
+          /* for @xmldom
          */
-        // const node = xpath
-        //   .parse("//code[preceding::*[contains(text(),'SSR节点')]]")
-        //   .select({ node: doc, isHtml: true });
-        // const info = node[0].firstChild?.nodeValue;
+          // const node = xpath
+          //   .parse("//code[preceding::*[contains(text(),'SSR节点')]]")
+          //   .select({ node: doc, isHtml: true });
+          // const info = node[0].firstChild?.nodeValue;
 
-        const node = xpathHtml(
-          '//p[.//code]//code//text()[normalize-space()]',
-          // '//p[.//code]//code',
-          doc,
-        );
+          const node = xpathHtml(
+            '//p[.//code]//code//text()[normalize-space()]',
+            // '//p[.//code]//code',
+            doc,
+          );
 
-        const new_pac_link = node
-          .map((info) => {
-            return info.nodeValue;
-          })
-          .filter(item => item !== null);
-        const config_data = parseProxies(linkToClash(new_pac_link));
-        // console.log(info)
-        /*
+          const new_pac_link = node
+            .map((info) => {
+              return info.nodeValue;
+            })
+            .filter(item => item !== null);
+          const config_data = parseProxies(linkToClash(new_pac_link));
+          // console.log(info)
+          /*
     const jsonStr =
       '{"' +
       info
@@ -237,28 +340,29 @@ async function parse_data() {
       },
     ];
     */
-        // const new_pac = parseNodes(info);
+          // const new_pac = parseNodes(info);
 
-        return config_data;
-      }),
-    );
-    const new_pac = ret
-      .map((result) => {
-        if (result.status === 'fulfilled') {
-          return result.value;
-        }
-        else {
-          saveTextToFile(
-            path.join(__dirname, 'ssUrl.log'),
-            `${new Date().toLocaleString()}: parse.js -> Fetch error: ${result.reason}`
-            + `\n`,
-            { f: 'a' },
-          );
-          throw result.reason;
-        }
-      })
-      .flat();
-    return new_pac;
+          return config_data;
+        }),
+      );
+      const new_pac = ret
+        .map((result) => {
+          if (result.status === 'fulfilled') {
+            return result.value;
+          }
+          else {
+            saveTextToFile(
+              path.join(__dirname, 'ssUrl.log'),
+              `${new Date().toLocaleString()}: parse.js -> Fetch error: ${result.reason}`
+              + `\n`,
+              { f: 'a' },
+            );
+            throw result.reason;
+          }
+        })
+        .flat();
+      return new_pac;
+    }
   }
   catch (e) {
     console.log(e);
@@ -357,82 +461,88 @@ async function findLocaleNode() {
   );
   return validPath;
 }
-async function updateUrl() {
+async function updateUrl(consoleObj = console) {
   // setTimeout(()=>{
   //     console('haha..')
   // }, 3000)
 
   let nodePath;
-  console.log(`正在更新URL...`);
-  if (process.report.getReport().header.osName === 'win32') {
-    const output = execSync('where.exe node', { encoding: 'utf8' });
-    const pathArr = output.split(/\r?\n/).filter(p => p.trim() !== '');
-    // saveTextToFile( __dirname + "/ssUrl.log",
-    // new Date().toLocaleString() + `✅ ${Array.isArray(pathArr)}-> ` + pathArr + "\n",
-    // { f: "a" },);
-    // const validPath = await findLocaleNode()
+  consoleObj.log(`正在更新URL...`);
+  try {
+    if (process.platform === 'win32') {
+      const output = execSync('where.exe node', { encoding: 'utf8' });
+      const pathArr = output.split(/\r?\n/).filter(p => p.trim() !== '');
+      // saveTextToFile( __dirname + "/ssUrl.log",
+      // new Date().toLocaleString() + `✅ ${Array.isArray(pathArr)}-> ` + pathArr + "\n",
+      // { f: "a" },);
+      // const validPath = await findLocaleNode()
 
-    // const validPath = pathArr.filter((p) => {
-    //   try {
-    //   const stdout = execFileSync(p,
-    //       [ '-p', 'process.report.getReport().header.osName'], {encoding: 'utf8'})
-    // saveTextToFile( __dirname + "/ssUrl.log",
-    //     new Date().toLocaleString() + `✅ ${p} -> ` + stdout + "\n",
-    //   { f: "a" },);
+      // const validPath = pathArr.filter((p) => {
+      //   try {
+      //   const stdout = execFileSync(p,
+      //       [ '-p', 'process.report.getReport().header.osName'], {encoding: 'utf8'})
+      // saveTextToFile( __dirname + "/ssUrl.log",
+      //     new Date().toLocaleString() + `✅ ${p} -> ` + stdout + "\n",
+      //   { f: "a" },);
 
-    //   const nodePlatform = stdout.trim()
-    // const nodePlatform = execSync(`${p.trim()} -p process.report.getReport\(\).header.osName`, {encoding: 'utf8'})
-    // const nodePlatform = execSync(`${p.trim()} -e "const os = require('os'); console.log(os.type())"`, {encoding: 'utf8'})
-    // const nodePlatform = execSync(`${p.trim()} -p process.env.OS`, {encoding: 'utf8'})
+      //   const nodePlatform = stdout.trim()
+      // const nodePlatform = execSync(`${p.trim()} -p process.report.getReport\(\).header.osName`, {encoding: 'utf8'})
+      // const nodePlatform = execSync(`${p.trim()} -e "const os = require('os'); console.log(os.type())"`, {encoding: 'utf8'})
+      // const nodePlatform = execSync(`${p.trim()} -p process.env.OS`, {encoding: 'utf8'})
 
-    // const nodePlatform = stdout.trim()
-    // return !nodePlatform.trim().startsWith('MINGW')
-    // // return nodePlatform.trim().startsWith('Windows')
-    // } catch(e) {
-    //     return false
-    // }
-    // })
+      // const nodePlatform = stdout.trim()
+      // return !nodePlatform.trim().startsWith('MINGW')
+      // // return nodePlatform.trim().startsWith('Windows')
+      // } catch(e) {
+      //     return false
+      // }
+      // })
 
-    const results = await Promise.all(
-      pathArr.map(async (path) => {
-        const nodeInfo = await getNodeOsName(path);
-        return nodeInfo;
-      }),
-    );
-    saveTextToFile(
-      path.join(__dirname, 'ssUrl.log'),
-      `${new Date().toLocaleString()}: nodePaths found in: ${JSON.stringify(results)}\n`,
-      { f: 'a' },
-    );
-    const validPath = results
-      .filter((p) => {
-        return !p.osName.startsWith('MINGW');
-      })
-      .map(item => item.path);
-    saveTextToFile(
-      path.join(__dirname, 'ssUrl.log'),
-      `${new Date().toLocaleString()}: ${validPath}\n`,
-      { f: 'a' },
-    );
-    if (validPath.length > 0) {
-      nodePath = validPath[0];
+      const results = await Promise.all(
+        pathArr.map(async (path) => {
+          const nodeInfo = await getNodeOsName(path);
+          return nodeInfo;
+        }),
+      );
+      saveTextToFile(
+        path.join(__dirname, 'ssUrl.log'),
+        `${new Date().toLocaleString()}: nodePaths found in: ${JSON.stringify(results)}\n`,
+        { f: 'a' },
+      );
+      const validPath = results
+        .filter((p) => {
+          return !p.osName.startsWith('MINGW');
+        })
+        .map(item => item.path);
+      saveTextToFile(
+        path.join(__dirname, 'ssUrl.log'),
+        `${new Date().toLocaleString()}: ${validPath}\n`,
+        { f: 'a' },
+      );
+      if (validPath.length > 0) {
+        nodePath = validPath[0];
+      }
     }
+    else {
+      nodePath = process.execPath;
+    }
+    consoleObj.log(`nodePath: ${nodePath}\n`);
+
+    const nodeOutput = execSync(
+      `${nodePath.trim()} ${path.join(__dirname, 'updateUri.js')}`,
+      { encoding: 'utf8' },
+    );
+    consoleObj.log(`${new Date().toLocaleString()}: getting new Url ->  ${nodeOutput}\n`);
+    saveTextToFile(
+      path.join(__dirname, 'ssUrl.log'),
+      `${new Date().toLocaleString()}: getting new Url ->  ${nodeOutput}`,
+      { f: 'a' },
+    );
+    return nodeOutput?.trim() === 'null' ? null : nodeOutput?.trim();
   }
-  else {
-    nodePath = process.execPath;
-    console.log(`nodePath: ${nodePath}`);
+  catch (e) {
+    consoleObj.log(`execSync updateUri.js error: ${e.message}\n`);
   }
-  const nodeOutput = execSync(
-    `${nodePath.trim()} ${path.join(__dirname, 'updateUri.js')}`,
-    { encoding: 'utf8' },
-  );
-  console.log(`${new Date().toLocaleString()}: getting new Url ->  ${nodeOutput}`);
-  saveTextToFile(
-    path.join(__dirname, 'ssUrl.log'),
-    `${new Date().toLocaleString()}: getting new Url ->  ${nodeOutput}`,
-    { f: 'a' },
-  );
-  return nodeOutput?.trim() === 'null' ? null : nodeOutput?.trim();
 }
 /*
 - name: new-pac-hysteria2
@@ -456,8 +566,8 @@ async function updateUrl() {
 // update-yaml.js
 
 // 目标 URL（注意：GitHub raw 内容应使用 raw.githubusercontent.com，但这里按你给的代理链接）
-const giturl
-  = 'https://gh-proxy.com/https://raw.githubusercontent.com/chengaopan/AutoMergePublicNodes/master/list.yml';
+// const giturl
+// = 'https://gh-proxy.com/https://raw.githubusercontent.com/chengaopan/AutoMergePublicNodes/master/list.yml';
 
 // 本地保存路径
 const outputPath = path.join(__dirname, 't_modified.yaml');
@@ -467,7 +577,7 @@ const outputPath = path.join(__dirname, 't_modified.yaml');
 
 async function getPublicNodeset(giturl) {
   try {
-    console.log('正在获取 YAML 文件...');
+    console.log(`正在获取 YAML 文件...\nFrom ${giturl}`);
 
     // 注意：GitHub 的 blob 页面是 HTML，不是原始文件！
     // 必须使用 raw 链接。但你的链接用了 gh-proxy.com 代理 blob，这通常返回网页。
@@ -526,17 +636,10 @@ async function getPublicNodeset(giturl) {
   }
 }
 
-async function mergeData(getFn, parseFn, storePath) {
+async function exportData(storePath, ymlobj) {
   try {
-    const obj = await getFn();
-    const prependProxies = await parseFn();
-    console.log(`Proxies: ${JSON.stringify(prependProxies)}`);
-    const prxoyNames = prependProxies.map(item => item.name);
-    obj.proxies = [...prependProxies, ...obj.proxies];
-    console.log(`Proxies: ${JSON.stringify(obj.proxies)}`);
-    obj['proxy-groups'][0].proxies.push(...prxoyNames);
-    obj['allow-lan'] = true;
-    const newYamlStr = yaml.dump(obj, {
+    // const prependProxies = await parse_data();
+    const newYamlStr = yaml.dump(ymlobj, {
       indent: 2,
       noRefs: true,
       sortKeys: false, // 保持原有顺序
@@ -547,18 +650,56 @@ async function mergeData(getFn, parseFn, storePath) {
     console.log(`✅ 修改后的 YAML 已保存到: ${storePath}`);
   }
   catch (error) {
+    console.error('❌ 写入数据发生错误:', error.message);
+  }
+}
+
+async function mergeData(getFn, parseFn, storePath) {
+  try {
+    const obj = await getFn();
+    const prependProxies = await parseFn();
+    console.log(`Proxies: ${JSON.stringify(prependProxies)}`);
+    const prxoyNames = prependProxies.map(item => item.name);
+    obj.proxies = [...prependProxies, ...obj.proxies];
+    console.log(`Proxies: ${JSON.stringify(obj.proxies)}`);
+    obj['proxy-groups'][0].proxies.push(...prxoyNames);
+    obj['allow-lan'] = true;
+    await exportData(storePath, obj);
+  }
+  catch (error) {
     console.error('❌ 合并数据发生错误:', error.message);
   }
 }
 
 async function restartMihomo() {
-  const res = await fetch('http://127.0.0.1:9090/configs?force=true', {
+  const isWindows = process.platform === 'win32';
+  const port = isWindows ? 56907 : 9090;
+  // 3. 构建基础 Headers
+  const headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Content-Type': 'application/json',
+    // 注意：Sec-Fetch-* 和 Sec-GPC 是浏览器自动添加的安全头，
+    // 在 Node.js 中手动添加通常会被忽略或导致请求被某些服务器拒绝，建议移除。
+    // 如果目标服务器强制校验这些头，可以保留，但通常不需要。
+    'Priority': 'u=0',
+  };
+    // 4. 根据平台决定是否添加 Authorization
+  if (isWindows) {
+    headers.Authorization = 'Bearer 95217e41-622f-4139-a583-f6a228201004';
+  }
+
+  // 5. 请求配置
+  const options = {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
     body: JSON.stringify({ path: '', payload: '' }),
-  });
+    // Node.js fetch 默认行为类似 cors，但不需要显式声明 mode，除非特定库要求
+    // credentials: 'include' 在 Node.js 中通常用于携带 Cookie，需配合 agent 使用，
+    // 如果只是简单的 API 调用且无 Cookie 依赖，可省略。若必须，需确保服务端支持。
+  };
+  const res = await fetch(`http://127.0.0.1:${port}/configs?reload=true`, options);
 
   if (res.status === 204) {
   // 无内容，不要尝试读取 .json() 或 .text()
@@ -578,3 +719,5 @@ exports.parseData = parse_data;
 exports.mergeData = mergeData;
 exports.getPublicNodeset = getPublicNodeset;
 exports.restartMihomo = restartMihomo;
+exports.updateUrl = updateUrl;
+exports.exportData = exportData;

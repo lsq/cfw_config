@@ -6458,3 +6458,177 @@ C:\msys64\ucrt64\bin\node
 2026/3/14 12:30:06: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
 2026/3/14 12:30:06: parse_data() -> https://fan3.206102.xyz/ss免费账号/
 2026/3/14 12:30:06: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:50:10Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:50:10: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:50:10: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:50:10: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 12:59:06Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:59:06: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:59:06: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:59:06: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 13:00:05Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 13:00:05: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 13:00:05: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 13:00:05: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 13:43:55Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 13:43:55: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 13:43:55: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 13:43:55: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 14:01:39 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/3/14 14:01:39: getting new Url ->  null
+2026/3/14 14:01:39: parse_data() -> https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/
+2026/3/14 14:01:39: parse_data() -> https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/
+2026/3/14 15:32:04: parse_data() -> https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/
+2026/3/14 15:32:05: parse_data() -> https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/
+2026/3/14 15:32:05: parse.js -> Fetch error: AxiosError: Network Error
+2026/3/14 15:35:28 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/3/14 15:35:28: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 15:35:28: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 15:35:28: parse_data() -> 正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html获取最新的url...
+null
+2026/3/14 15:35:28: getting new Url ->  正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html获取最新的url...
+null
+2026/3/14 15:35:28: parse.js -> Fetch error: AxiosError: Network Error
+2026/3/14 15:35:28: parse_data() -> 正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/ss.html获取最新的url...
+null
+2026/3/14 15:40:16 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/3/14 16:36:51 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/3/14 16:36:41: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 16:36:41: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 16:36:51: getting new Url ->  正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html获取最新的url...
+
+null
+2026/3/14 16:36:51: parse_data() -> 正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html获取最新的url...
+
+null
+2026/3/14 16:36:51: parse_data() -> 正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/ss.html获取最新的url...
+
+null
+2026/3/14 16:36:51: parse.js -> Fetch error: AxiosError: Network Error
+2026/3/14 16:37:25Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 16:36:54: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 16:36:54: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 16:37:25: getting new Url ->  正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html获取最新的url...
+
+https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 16:37:25: parse_data() -> 正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html获取最新的url...
+
+https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 16:37:25: parse_data() -> 正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/ss.html获取最新的url...
+
+https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 16:37:25: parse.js -> Fetch error: AxiosError: Network Error
+2026/3/14 16:50:20Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 16:50:36Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 16:50:32: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 16:50:32: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 16:50:36: parse_data() -> 正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html获取最新的url...
+
+https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 16:50:36: parse_data() -> 正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/ss.html获取最新的url...
+
+https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 16:50:36: parse.js -> Fetch error: AxiosError: Network Error
+2026/3/14 16:50:36: getting new Url ->  正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html获取最新的url...
+
+https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 17:37:21Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 17:37:11: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 17:37:11: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 17:37:21: getting new Url ->  正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html获取最新的url...
+
+https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 17:37:21: parse_data() -> 正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html获取最新的url...
+
+https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 17:37:21: parse_data() -> 正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/ss.html获取最新的url...
+
+https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 17:37:21: parse.js -> Fetch error: AxiosError: Network Error
+2026/3/14 17:46:54Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 17:46:52: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 17:46:54: getting new Url ->  正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html获取最新的url...
+
+https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 17:46:52: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 17:46:54: parse_data() -> 正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html获取最新的url...
+
+https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 17:46:54: parse_data() -> 正在从https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/ss.html获取最新的url...
+
+https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 17:46:54: parse.js -> Fetch error: TypeError: Invalid URL
+2026/3/14 17:53:00Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 17:52:46: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 17:52:46: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 17:53:00: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 17:53:00: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 17:53:00: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 18:06:17 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/3/14 18:06:12: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 18:06:17: getting new Url ->  null
+2026/3/14 18:06:12: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 18:06:17: parse_data() -> https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/
+2026/3/14 18:06:17: parse_data() -> https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/
+2026/3/14 18:37:09 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/3/14 18:37:04: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 18:37:09: getting new Url ->  null
+2026/3/14 18:37:04: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 18:37:09: parse_data() -> https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/
+2026/3/14 18:37:09: parse_data() -> https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/
+2026/3/14 18:38:32Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 18:38:22: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 18:38:22: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 18:38:32: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 18:38:32: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 18:38:32: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 18:41:18Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 18:41:10: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 18:41:18: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 18:41:10: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 18:41:18: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 18:41:18: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 19:02:28 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/3/14 19:02:23: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 19:02:28: getting new Url ->  null
+2026/3/14 19:02:28: parse_data() -> https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/
+2026/3/14 19:02:23: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 19:02:28: parse_data() -> https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/
+2026/3/14 19:06:12 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/3/14 19:09:27 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/3/14 19:10:01 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/3/14 19:10:26Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 19:10:43Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 19:10:36: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 19:10:43: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 19:10:43: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 19:10:36: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 19:10:43: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 19:39:17Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 19:39:12: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 19:39:12: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 19:39:17: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 19:39:17: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 19:39:17: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 20:40:14Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 20:40:11: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 20:40:11: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 20:40:14: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 20:40:14: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 20:40:14: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 21:23:31: nodePaths found in: [{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 21:23:31: 
+2026/3/14 21:24:03: nodePaths found in: [{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 21:24:03: 
+2026/3/14 21:24:22Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 21:24:13: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 21:24:13: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 21:24:22: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 21:24:22: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 21:24:22: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 21:24:45Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 21:24:42: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 21:24:42: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 21:24:45: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 21:24:45: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 21:24:45: parse_data() -> https://fan3.206102.xyz/ss免费账号/
