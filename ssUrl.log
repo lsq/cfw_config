@@ -6410,3 +6410,51 @@ C:\msys64\ucrt64\bin\node
 2026/3/13 14:48:58: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
 2026/3/13 14:48:58: parse_data() -> https://fan3.206102.xyz/ss免费账号/
 2026/3/13 14:48:58: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/13 21:47:43 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/3/13 21:47:42: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/13 21:47:42: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/13 21:47:43: getting new Url ->  null
+2026/3/13 21:47:43: parse_data() -> https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/
+2026/3/13 21:47:43: parse_data() -> https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/
+2026/3/13 21:47:43: parse.js -> Fetch error: AxiosError: Network Error
+2026/3/13 21:59:35 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/3/13 21:59:35: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/13 21:59:35: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/13 21:59:35: parse_data() -> https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/
+2026/3/13 21:59:35: parse_data() -> https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/
+2026/3/13 21:59:35: getting new Url ->  null
+2026/3/13 21:59:35: parse.js -> Fetch error: AxiosError: Network Error
+2026/3/13 23:17:41Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/13 23:17:37: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/13 23:17:37: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/13 23:17:41: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/13 23:17:41: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/13 23:17:41: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 10:25:08Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 10:25:08: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 10:25:08: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 10:25:08: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 10:46:47Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 10:46:47: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 10:46:47: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 10:46:47: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 11:59:13 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/3/14 11:59:13: getting new Url ->  null
+2026/3/14 11:59:13: parse_data() -> https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/
+2026/3/14 11:59:13: parse_data() -> https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/
+2026/3/14 12:00:39Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:00:39: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:00:39: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:00:39: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 12:10:13Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:10:13: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:10:13: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:10:13: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 12:28:25Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:28:25: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:28:25: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:28:25: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 12:30:06Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:30:06: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 12:30:06: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 12:30:06: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/

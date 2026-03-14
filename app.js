@@ -1,9 +1,9 @@
+const os = require('node:os');
 const path = require('node:path');
 const { DOMParser } = require('@xmldom/xmldom');
 const xpath = require('xpath');
-const { getPublicNodeset, mergeData, parseData } = require('./get_newpac');
+const { getPublicNodeset, mergeData, parseData, restartMihomo } = require('./get_newpac');
 const math = require('./math');
-const os = require('os');
 
 const html = `<code>abc\nbcb13ecb-4f63-4257-ae01-ec5aeaa613a5@157.254.223.64\ndef</code>`;
 const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -33,7 +33,16 @@ console.log(processArray(['a', 'b'])); // ["ahaha", "b"]
 
 const giturl
   = 'https://gh-proxy.com/https://raw.githubusercontent.com/chengaopan/AutoMergePublicNodes/master/list.yml';
-const outputPath = path.join(__dirname, 't_modified.yaml');
+const mhdir = path.join(getHomeDir(), '.config/mihomo/config.yaml');
+console.log(`mihomo config path: ${mhdir}`);
+
+let outputPath;
+if (require('node:process').platform === 'win32') {
+  outputPath = path.join(__dirname, 't_modified.yaml');
+}
+else {
+  outputPath = mhdir;
+}
 
 function getHomeDir() {
   const home = os.homedir();
@@ -43,9 +52,12 @@ function getHomeDir() {
   return home;
 }
 
-const hdir = path.join(getHomeDir(), '.config');
-console.log(`HOME PATH: ${hdir}`)
-
 // getPublicNodeset(giturl, outputPath);
 const getNodesetForUrl = url => () => getPublicNodeset(url);
-// mergeData(getNodesetForUrl(giturl), parseData, outputPath);
+(async () => {
+  await mergeData(getNodesetForUrl(giturl), parseData, outputPath);
+  const restartOrNot = await restartMihomo();
+  if (restartOrNot) {
+    console.log('重载mihomo配置成功！');
+  }
+})();

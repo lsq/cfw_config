@@ -1,3 +1,4 @@
+// process.env.SHELL = '/bin/bash';
 const {
   exec,
   execSync,
@@ -360,68 +361,78 @@ async function updateUrl() {
   // setTimeout(()=>{
   //     console('haha..')
   // }, 3000)
-  const output = execSync('where.exe node', { encoding: 'utf8' });
-  const pathArr = output.split(/\r?\n/).filter(p => p.trim() !== '');
-  // saveTextToFile( __dirname + "/ssUrl.log",
-  // new Date().toLocaleString() + `✅ ${Array.isArray(pathArr)}-> ` + pathArr + "\n",
-  // { f: "a" },);
-  // const validPath = await findLocaleNode()
 
-  // const validPath = pathArr.filter((p) => {
-  //   try {
-  //   const stdout = execFileSync(p,
-  //       [ '-p', 'process.report.getReport().header.osName'], {encoding: 'utf8'})
-  // saveTextToFile( __dirname + "/ssUrl.log",
-  //     new Date().toLocaleString() + `✅ ${p} -> ` + stdout + "\n",
-  //   { f: "a" },);
+  let nodePath;
+  console.log(`正在更新URL...`);
+  if (process.report.getReport().header.osName === 'win32') {
+    const output = execSync('where.exe node', { encoding: 'utf8' });
+    const pathArr = output.split(/\r?\n/).filter(p => p.trim() !== '');
+    // saveTextToFile( __dirname + "/ssUrl.log",
+    // new Date().toLocaleString() + `✅ ${Array.isArray(pathArr)}-> ` + pathArr + "\n",
+    // { f: "a" },);
+    // const validPath = await findLocaleNode()
 
-  //   const nodePlatform = stdout.trim()
-  // const nodePlatform = execSync(`${p.trim()} -p process.report.getReport\(\).header.osName`, {encoding: 'utf8'})
-  // const nodePlatform = execSync(`${p.trim()} -e "const os = require('os'); console.log(os.type())"`, {encoding: 'utf8'})
-  // const nodePlatform = execSync(`${p.trim()} -p process.env.OS`, {encoding: 'utf8'})
+    // const validPath = pathArr.filter((p) => {
+    //   try {
+    //   const stdout = execFileSync(p,
+    //       [ '-p', 'process.report.getReport().header.osName'], {encoding: 'utf8'})
+    // saveTextToFile( __dirname + "/ssUrl.log",
+    //     new Date().toLocaleString() + `✅ ${p} -> ` + stdout + "\n",
+    //   { f: "a" },);
 
-  // const nodePlatform = stdout.trim()
-  // return !nodePlatform.trim().startsWith('MINGW')
-  // // return nodePlatform.trim().startsWith('Windows')
-  // } catch(e) {
-  //     return false
-  // }
-  // })
+    //   const nodePlatform = stdout.trim()
+    // const nodePlatform = execSync(`${p.trim()} -p process.report.getReport\(\).header.osName`, {encoding: 'utf8'})
+    // const nodePlatform = execSync(`${p.trim()} -e "const os = require('os'); console.log(os.type())"`, {encoding: 'utf8'})
+    // const nodePlatform = execSync(`${p.trim()} -p process.env.OS`, {encoding: 'utf8'})
 
-  const results = await Promise.all(
-    pathArr.map(async (path) => {
-      const nodeInfo = await getNodeOsName(path);
-      return nodeInfo;
-    }),
-  );
-  saveTextToFile(
-    path.join(__dirname, 'ssUrl.log'),
-    `${new Date().toLocaleString()}: nodePaths found in: ${JSON.stringify(results)}\n`,
-    { f: 'a' },
-  );
-  const validPath = results
-    .filter((p) => {
-      return !p.osName.startsWith('MINGW');
-    })
-    .map(item => item.path);
-  saveTextToFile(
-    path.join(__dirname, 'ssUrl.log'),
-    `${new Date().toLocaleString()}: ${validPath}\n`,
-    { f: 'a' },
-  );
-  if (validPath.length > 0) {
-    const nodePath = validPath[0];
-    const nodeOutput = execSync(
-      `${nodePath.trim()} ${path.join(__dirname, 'updateUri.js')}`,
-      { encoding: 'utf8' },
+    // const nodePlatform = stdout.trim()
+    // return !nodePlatform.trim().startsWith('MINGW')
+    // // return nodePlatform.trim().startsWith('Windows')
+    // } catch(e) {
+    //     return false
+    // }
+    // })
+
+    const results = await Promise.all(
+      pathArr.map(async (path) => {
+        const nodeInfo = await getNodeOsName(path);
+        return nodeInfo;
+      }),
     );
     saveTextToFile(
       path.join(__dirname, 'ssUrl.log'),
-      `${new Date().toLocaleString()}: getting new Url ->  ${nodeOutput}`,
+      `${new Date().toLocaleString()}: nodePaths found in: ${JSON.stringify(results)}\n`,
       { f: 'a' },
     );
-    return nodeOutput?.trim() === 'null' ? null : nodeOutput?.trim();
+    const validPath = results
+      .filter((p) => {
+        return !p.osName.startsWith('MINGW');
+      })
+      .map(item => item.path);
+    saveTextToFile(
+      path.join(__dirname, 'ssUrl.log'),
+      `${new Date().toLocaleString()}: ${validPath}\n`,
+      { f: 'a' },
+    );
+    if (validPath.length > 0) {
+      nodePath = validPath[0];
+    }
   }
+  else {
+    nodePath = process.execPath;
+    console.log(`nodePath: ${nodePath}`);
+  }
+  const nodeOutput = execSync(
+    `${nodePath.trim()} ${path.join(__dirname, 'updateUri.js')}`,
+    { encoding: 'utf8' },
+  );
+  console.log(`${new Date().toLocaleString()}: getting new Url ->  ${nodeOutput}`);
+  saveTextToFile(
+    path.join(__dirname, 'ssUrl.log'),
+    `${new Date().toLocaleString()}: getting new Url ->  ${nodeOutput}`,
+    { f: 'a' },
+  );
+  return nodeOutput?.trim() === 'null' ? null : nodeOutput?.trim();
 }
 /*
 - name: new-pac-hysteria2
@@ -453,8 +464,6 @@ const outputPath = path.join(__dirname, 't_modified.yaml');
 
 // 要修改的字段（示例：假设 YAML 中有 key: value，我们修改某个 key）
 // 如果你不知道结构，可以先打印 data 查看
-const modifyField = 'someKey'; // ← 替换为你想修改的字段名
-const newFieldValue = 'newValue'; // ← 替换为你想要的新值
 
 async function getPublicNodeset(giturl) {
   try {
@@ -497,6 +506,7 @@ async function getPublicNodeset(giturl) {
 
       // 你也可以根据实际需求修改其他字段
       // 例如：data.settings.theme = 'dark';
+      console.log('解析YAML完成返回...');
       return data;
     }
     else {
@@ -541,6 +551,30 @@ async function mergeData(getFn, parseFn, storePath) {
   }
 }
 
+async function restartMihomo() {
+  const res = await fetch('http://127.0.0.1:9090/configs?force=true', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ path: '', payload: '' }),
+  });
+
+  if (res.status === 204) {
+  // 无内容，不要尝试读取 .json() 或 .text()
+    console.log('Success, no response body');
+    return true;
+  }
+  else if (res.ok) {
+  // 可能有内容
+    const data = await res.json(); // 或 .text()
+    console.log('Response:', data);
+    return true;
+  }
+  return false;
+}
+
 exports.parseData = parse_data;
 exports.mergeData = mergeData;
 exports.getPublicNodeset = getPublicNodeset;
+exports.restartMihomo = restartMihomo;

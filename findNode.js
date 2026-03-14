@@ -11,7 +11,7 @@ async function getNodeFromPath() {
   try {
     // console.log("std-------");
     // const path = execSync('which node', {encoding: 'utf8'});
-    const { stdout } = await execAsync('where.exe node');
+    const { stdout } = await execAsync('where node');
     // console.log("stdout-------", stdout);
     return stdout
       .trim()
