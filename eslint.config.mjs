@@ -7,6 +7,7 @@ export default antfu({
     'unused-imports/no-unused-vars': ['off'],
     'regexp/no-unused-capturing-group': ['off'],
     'regexp/no-control-character': ['off'],
+    'node/prefer-global/process': 'off',
     'no-unused-vars': [
       'off',
       /*

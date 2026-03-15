@@ -6632,3 +6632,96 @@ https://fan3.206102.xyz/v2ray免费账号/
 2026/3/14 21:24:45: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
 2026/3/14 21:24:45: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
 2026/3/14 21:24:45: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 21:56:10Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 21:56:06: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 21:56:06: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 21:56:11: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 21:56:11: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 21:56:11: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 21:57:58Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 21:57:25: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 21:57:25: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 21:57:58: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 21:57:58: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 21:57:58: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 22:58:16Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 22:58:11: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 22:58:11: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 22:58:16: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 22:58:16: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 22:58:16: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/14 23:59:16Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 23:59:12: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/14 23:59:12: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/14 23:59:16: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 23:59:16: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/14 23:59:16: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/15 01:00:14Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/15 01:00:10: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/15 01:00:10: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/15 01:00:14: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/15 01:00:14: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/15 01:00:14: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/15 01:11:57 update_uri() -> Fetch error: AggregateError
+2026/3/15 01:12:43 update_uri() -> Fetch error: AggregateError
+2026/3/15 06:59:14 update_uri() -> Fetch error: AggregateError
+2026/3/15 06:59:14: getting new Url ->  null
+2026/3/15 07:59:20 update_uri() -> Fetch error: AggregateError
+2026/3/15 07:59:20: getting new Url ->  null
+2026/3/15 08:00:36 update_uri() -> Fetch error: AggregateError
+2026/3/15 08:00:36: getting new Url ->  null
+2026/3/15 08:59:25 update_uri() -> Fetch error: AggregateError
+2026/3/15 08:59:25: getting new Url ->  null
+2026/3/15 09:00:16 update_uri() -> Fetch error: AggregateError
+2026/3/15 09:00:16: getting new Url ->  null
+2026/3/15 10:01:15 update_uri() -> Fetch error: AggregateError
+2026/3/15 10:01:15: getting new Url ->  null
+2026/3/15 10:02:16 update_uri() -> Fetch error: AggregateError
+2026/3/15 10:02:16: getting new Url ->  null
+2026/3/15 11:01:16 update_uri() -> Fetch error: AggregateError
+2026/3/15 11:01:16: getting new Url ->  null
+2026/3/15 11:02:17 update_uri() -> Fetch error: AggregateError
+2026/3/15 11:02:17: getting new Url ->  null
+2026/3/15 11:12:16 update_uri() -> Fetch error: AggregateError
+2026/3/15 11:12:16: getting new Url ->  null
+2026/3/15 11:32:16 update_uri() -> Fetch error: AggregateError
+2026/3/15 11:32:16: getting new Url ->  null
+2026/3/15 11:52:16 update_uri() -> Fetch error: AggregateError
+2026/3/15 11:52:16: getting new Url ->  null
+2026/3/15 12:01:15 update_uri() -> Fetch error: AggregateError
+2026/3/15 12:01:15: getting new Url ->  null
+2026/3/15 12:02:15 update_uri() -> Fetch error: AggregateError
+2026/3/15 12:02:15: getting new Url ->  null
+2026/3/15 12:12:21 update_uri() -> Fetch error: AggregateError
+2026/3/15 12:12:21: getting new Url ->  null
+2026/3/15 12:30:03 update_uri() -> Fetch error: AggregateError
+2026/3/15 12:30:03: getting new Url ->  null
+2026/3/15 12:52:19 update_uri() -> Fetch error: AggregateError
+2026/3/15 12:52:19: getting new Url ->  null
+2026/3/15 13:01:15 update_uri() -> Fetch error: AggregateError
+2026/3/15 13:01:15: getting new Url ->  null
+2026/3/15 13:02:16 update_uri() -> Fetch error: AggregateError
+2026/3/15 13:02:16: getting new Url ->  null
+2026/3/15 13:59:06 update_uri() -> Fetch error: AggregateError
+2026/3/15 13:59:06: getting new Url ->  null
+2026/3/15 14:00:08 update_uri() -> Fetch error: AggregateError
+2026/3/15 14:00:08: getting new Url ->  null
+2026/3/15 14:10:08 update_uri() -> Fetch error: AggregateError
+2026/3/15 14:10:08: getting new Url ->  null
+2026/3/15 14:30:02 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/15 14:30:02: getting new Url ->  null
+2026/3/15 14:50:03 update_uri() -> Fetch error: AggregateError
+2026/3/15 14:50:03: getting new Url ->  null
+2026/3/15 14:59:04 update_uri() -> Fetch error: AggregateError
+2026/3/15 14:59:04: getting new Url ->  null
+2026/3/15 15:00:07 update_uri() -> Fetch error: AggregateError
+2026/3/15 15:00:07: getting new Url ->  null
+2026/3/15 15:52:06 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/15 15:59:08 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/15 15:59:08: getting new Url ->  null
+2026/3/15 16:00:09 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/15 16:00:09: getting new Url ->  null
+2026/3/15 16:59:08 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/15 16:59:08: getting new Url ->  null
+2026/3/15 17:00:03 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/15 17:00:03: getting new Url ->  null
