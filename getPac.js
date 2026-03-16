@@ -5,7 +5,7 @@ const { env } = require('node:process');
 const yaml = require('js-yaml');
 const lds = require('lodash');
 // 修正：引入标准的 Error 类，不需要从 console 引入
-const { parseData, exportData, updateUrl } = require('./get_newpac');
+const { parseData, exportData, updateUrl, fileExists } = require('./get_newpac');
 
 const newpacData = path.join(__dirname, 'newpac.yaml');
 const rootyml = path.join(__dirname, '/../newpac.yaml');
@@ -25,28 +25,6 @@ function yamlArraysEqual(arr1, arr2) {
   return lds.isEqual(sorted1, sorted2);
 }
 
-async function fileExists(filePath) {
-  try {
-    const stats = await fsA.stat(filePath);
-    if (stats.isFile()) {
-      console.log(filePath, '是一个文件');
-      return true;
-    }
-    else {
-      console.log(filePath, '存在但不是文件（可能是目录）');
-      return false;
-    }
-  }
-  catch (err) {
-    if (err.code === 'ENOENT') {
-      console.log(filePath, '文件不存在');
-      return false;
-    }
-    else {
-      throw err;
-    }
-  }
-}
 async function writeOutPut(num) {
   if (isCI && outputPath) {
     // 🟢 CI 环境：写入 GITHUB_OUTPUT 文件（供后续步骤使用）

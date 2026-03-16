@@ -24,7 +24,19 @@ const process = require('node:process');
 // const uriPath = "/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/";
 const fixedurl
   = 'https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/';
-const ssIpv6 = `- name: newpac-SS-ipv6
+const ssIpv6
+/*
+= `- name: PL【机场推荐：https://a9a.xyz】66
+  type: vless
+  server: pl0.nerpvpn.net
+  port: 443
+  uuid: 79cc33cf-93b4-419b-9e46-33e3edf7057c
+  network: ws
+  skip-cert-verify: false
+  ws-opts:
+    path: /`;
+*/
+= `- name: newpac-SS-ipv6
   type: ss
   server: 2a14:7584:d0a1::a
   port: 12345
@@ -656,8 +668,22 @@ async function exportData(storePath, ymlobj) {
 
 async function mergeData(getFn, parseFn, storePath) {
   try {
+    let prependProxies;
     const obj = await getFn();
-    const prependProxies = await parseFn();
+    prependProxies = await parseFn();
+    const deYaml = path.join(__dirname, './default.yaml');
+    const isDefaultFile = await fileExists(deYaml);
+    if (!isDefaultFile) {
+      console.log('./default.yml 不存在或无法访问');
+    }
+    else {
+      const deData = await fsA.readFile(deYaml, 'utf8');
+      const dData = yaml.load(deData);
+      if (dData) {
+        prependProxies = [...prependProxies, ...dData];
+      }
+    }
+
     console.log(`Proxies: ${JSON.stringify(prependProxies)}`);
     const prxoyNames = prependProxies.map(item => item.name);
     obj.proxies = [...prependProxies, ...obj.proxies];
@@ -699,7 +725,7 @@ async function restartMihomo() {
     // credentials: 'include' 在 Node.js 中通常用于携带 Cookie，需配合 agent 使用，
     // 如果只是简单的 API 调用且无 Cookie 依赖，可省略。若必须，需确保服务端支持。
   };
-  const res = await fetch(`http://127.0.0.1:${port}/configs?reload=true`, options);
+  const res = await fetch(`http://127.0.0.1:${port}/configs?force=true`, options);
 
   if (res.status === 204) {
   // 无内容，不要尝试读取 .json() 或 .text()
@@ -715,9 +741,33 @@ async function restartMihomo() {
   return false;
 }
 
+async function fileExists(filePath) {
+  try {
+    const stats = await fsA.stat(filePath);
+    if (stats.isFile()) {
+      console.log(filePath, '是一个文件');
+      return true;
+    }
+    else {
+      console.log(filePath, '存在但不是文件（可能是目录）');
+      return false;
+    }
+  }
+  catch (err) {
+    if (err.code === 'ENOENT') {
+      console.log(filePath, '文件不存在');
+      return false;
+    }
+    else {
+      throw err;
+    }
+  }
+}
+
 exports.parseData = parse_data;
 exports.mergeData = mergeData;
 exports.getPublicNodeset = getPublicNodeset;
 exports.restartMihomo = restartMihomo;
 exports.updateUrl = updateUrl;
 exports.exportData = exportData;
+exports.fileExists = fileExists;

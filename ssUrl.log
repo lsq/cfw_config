@@ -6725,3 +6725,182 @@ https://fan3.206102.xyz/v2ray免费账号/
 2026/3/15 16:59:08: getting new Url ->  null
 2026/3/15 17:00:03 update_uri() -> Fetch error: Error: read ECONNRESET
 2026/3/15 17:00:03: getting new Url ->  null
+2026/3/15 18:01:18 update_uri() -> Fetch error: AggregateError
+2026/3/15 18:01:18: getting new Url ->  null
+2026/3/15 18:02:18 update_uri() -> Fetch error: AggregateError
+2026/3/15 18:02:18: getting new Url ->  null
+2026/3/15 18:12:15 update_uri() -> Fetch error: AggregateError
+2026/3/15 18:12:15: getting new Url ->  null
+2026/3/15 18:32:17 update_uri() -> Fetch error: AggregateError
+2026/3/15 18:32:17: getting new Url ->  null
+2026/3/15 18:52:20 update_uri() -> Fetch error: AggregateError
+2026/3/15 18:52:20: getting new Url ->  null
+2026/3/15 19:01:13 update_uri() -> Fetch error: AggregateError
+2026/3/15 19:01:16 update_uri() -> Fetch error: AggregateError
+2026/3/15 19:59:29 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/15 19:59:29: getting new Url ->  null
+2026/3/15 20:00:34 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/15 20:00:34: getting new Url ->  null
+2026/3/15 20:10:16 update_uri() -> Fetch error: AggregateError
+2026/3/15 20:10:16: getting new Url ->  null
+2026/3/15 20:34:25 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/3/15 20:34:15: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/15 20:34:15: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/15 20:34:25: getting new Url ->  null
+2026/3/15 21:35:08Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/15 21:35:05: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/15 21:35:05: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/15 21:35:08: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/15 21:35:08: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/15 21:35:08: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/15 22:36:09Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/15 22:36:05: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/15 22:36:05: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/15 22:36:09: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/15 22:36:09: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/15 22:36:09: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/15 23:37:08Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/15 23:37:05: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/15 23:37:05: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/15 23:37:09: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/15 23:37:09: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/15 23:37:09: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/16 00:21:02 update_uri() -> Fetch error: AggregateError
+2026/3/16 00:21:02: getting new Url ->  null
+2026/3/16 00:59:15 update_uri() -> Fetch error: Error: Client network socket disconnected before secure TLS connection was established
+2026/3/16 00:59:15: getting new Url ->  null
+2026/3/16 01:59:19 update_uri() -> Fetch error: AggregateError
+2026/3/16 01:59:19: getting new Url ->  null
+2026/3/16 02:00:10 update_uri() -> Fetch error: AggregateError
+2026/3/16 02:00:10: getting new Url ->  null
+2026/3/16 02:59:15 update_uri() -> Fetch error: AggregateError
+2026/3/16 02:59:15: getting new Url ->  null
+2026/3/16 03:00:22 update_uri() -> Fetch error: AggregateError
+2026/3/16 03:00:22: getting new Url ->  null
+2026/3/16 03:59:20 update_uri() -> Fetch error: AggregateError
+2026/3/16 03:59:20: getting new Url ->  null
+2026/3/16 04:00:18 update_uri() -> Fetch error: AggregateError
+2026/3/16 04:00:19: getting new Url ->  null
+2026/3/16 04:59:11 update_uri() -> Fetch error: AggregateError
+2026/3/16 04:59:11: getting new Url ->  null
+2026/3/16 05:00:18 update_uri() -> Fetch error: AggregateError
+2026/3/16 05:00:18: getting new Url ->  null
+2026/3/16 05:59:30 update_uri() -> Fetch error: AggregateError
+2026/3/16 05:59:30: getting new Url ->  null
+2026/3/16 06:00:20 update_uri() -> Fetch error: AggregateError
+2026/3/16 06:00:20: getting new Url ->  null
+2026/3/16 06:59:25 update_uri() -> Fetch error: AggregateError
+2026/3/16 06:59:25: getting new Url ->  null
+2026/3/16 07:00:19 update_uri() -> Fetch error: AggregateError
+2026/3/16 07:00:19: getting new Url ->  null
+2026/3/16 07:59:05 update_uri() -> Fetch error: AggregateError
+2026/3/16 07:59:05: getting new Url ->  null
+2026/3/16 08:00:07 update_uri() -> Fetch error: AggregateError
+2026/3/16 08:00:08: getting new Url ->  null
+2026/3/16 08:59:05 update_uri() -> Fetch error: AggregateError
+2026/3/16 08:59:05: getting new Url ->  null
+2026/3/16 09:00:06 update_uri() -> Fetch error: AggregateError
+2026/3/16 09:00:06: getting new Url ->  null
+2026/3/16 10:00:05 update_uri() -> Fetch error: AggregateError
+2026/3/16 10:00:05: getting new Url ->  null
+2026/3/16 10:59:02 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/16 10:59:02: getting new Url ->  null
+2026/3/16 11:00:01 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/16 11:00:01: getting new Url ->  null
+2026/3/16 11:59:02 update_uri() -> Fetch error: AggregateError
+2026/3/16 11:59:02: getting new Url ->  null
+2026/3/16 12:00:03 update_uri() -> Fetch error: AggregateError
+2026/3/16 12:00:03: getting new Url ->  null
+2026/3/16 13:16:46 update_uri() -> Fetch error: AggregateError
+2026/3/16 13:17:30 update_uri() -> Fetch error: AggregateError
+2026/3/16 13:17:30: getting new Url ->  null
+2026/3/16 13:58:08 update_uri() -> Fetch error: AggregateError
+2026/3/16 13:58:08: getting new Url ->  null
+2026/3/16 13:59:02 update_uri() -> Fetch error: AggregateError
+2026/3/16 13:59:02: getting new Url ->  null
+2026/3/16 14:00:03 update_uri() -> Fetch error: AggregateError
+2026/3/16 14:00:03: getting new Url ->  null
+2026/3/16 14:59:02 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/16 14:59:02: getting new Url ->  null
+2026/3/16 15:00:02 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/16 15:00:02: getting new Url ->  null
+2026/3/16 15:59:11 update_uri() -> Fetch error: AggregateError
+2026/3/16 15:59:11: getting new Url ->  null
+2026/3/16 16:00:03 update_uri() -> Fetch error: AggregateError
+2026/3/16 16:00:03: getting new Url ->  null
+2026/3/16 16:34:18 update_uri() -> Fetch error: AggregateError
+2026/3/16 16:34:18: getting new Url ->  null
+2026/3/16 17:00:01 update_uri() -> Fetch error: AggregateError
+2026/3/16 17:00:01: getting new Url ->  null
+2026/3/16 17:59:03 update_uri() -> Fetch error: AggregateError
+2026/3/16 17:59:03: getting new Url ->  null
+2026/3/16 18:00:04 update_uri() -> Fetch error: AggregateError
+2026/3/16 18:00:04: getting new Url ->  null
+2026/3/16 18:59:09 update_uri() -> Fetch error: AggregateError
+2026/3/16 18:59:09: getting new Url ->  null
+2026/3/16 19:00:09 update_uri() -> Fetch error: AggregateError
+2026/3/16 19:00:09: getting new Url ->  null
+2026/3/16 20:59:22 update_uri() -> Fetch error: AggregateError
+2026/3/16 20:59:22: getting new Url ->  null
+2026/3/16 21:00:12 update_uri() -> Fetch error: AggregateError
+2026/3/16 21:00:12: getting new Url ->  null
+2026/3/16 22:05:05Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/16 22:05:01: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/16 22:05:01: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/16 22:05:05: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/16 22:05:05: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/16 22:05:05: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/16 23:06:04 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/3/16 23:05:59: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/16 23:06:04: getting new Url ->  null
+2026/3/16 23:05:59: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/17 00:07:01Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/3/17 00:06:58: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/3/17 00:06:58: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/3/17 00:07:01: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/17 00:07:01: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/3/17 00:07:01: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/3/17 01:29:58 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/17 01:29:58: getting new Url ->  null
+2026/3/17 02:00:41 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/17 02:00:41: getting new Url ->  null
+2026/3/17 02:38:08 update_uri() -> Fetch error: AggregateError
+2026/3/17 02:38:08: getting new Url ->  null
+2026/3/17 04:59:11 update_uri() -> Fetch error: AggregateError
+2026/3/17 04:59:11: getting new Url ->  null
+2026/3/17 05:00:15 update_uri() -> Fetch error: AggregateError
+2026/3/17 05:00:15: getting new Url ->  null
+2026/3/17 05:59:12 update_uri() -> Fetch error: AggregateError
+2026/3/17 05:59:12: getting new Url ->  null
+2026/3/17 06:00:19 update_uri() -> Fetch error: AggregateError
+2026/3/17 06:00:19: getting new Url ->  null
+2026/3/17 06:59:05 update_uri() -> Fetch error: AggregateError
+2026/3/17 06:59:05: getting new Url ->  null
+2026/3/17 07:00:14 update_uri() -> Fetch error: AggregateError
+2026/3/17 07:00:14: getting new Url ->  null
+2026/3/17 07:59:11 update_uri() -> Fetch error: AggregateError
+2026/3/17 07:59:11: getting new Url ->  null
+2026/3/17 08:00:06 update_uri() -> Fetch error: AggregateError
+2026/3/17 08:00:06: getting new Url ->  null
+2026/3/17 08:59:12 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/17 08:59:12: getting new Url ->  null
+2026/3/17 09:00:11 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/17 09:00:11: getting new Url ->  null
+2026/3/17 09:59:24 update_uri() -> Fetch error: AggregateError
+2026/3/17 09:59:24: getting new Url ->  null
+2026/3/17 10:00:12 update_uri() -> Fetch error: AggregateError
+2026/3/17 10:00:12: getting new Url ->  null
+2026/3/17 10:39:25 update_uri() -> Fetch error: Error: read ECONNRESET
+2026/3/17 10:39:25: getting new Url ->  null
+2026/3/17 10:59:13 update_uri() -> Fetch error: AggregateError
+2026/3/17 10:59:13: getting new Url ->  null
+2026/3/17 11:00:17 update_uri() -> Fetch error: AggregateError
+2026/3/17 11:00:17: getting new Url ->  null
+2026/3/17 11:59:13 update_uri() -> Fetch error: AggregateError
+2026/3/17 11:59:13: getting new Url ->  null
+2026/3/17 12:00:15 update_uri() -> Fetch error: AggregateError
+2026/3/17 12:00:15: getting new Url ->  null
+2026/3/17 12:59:16 update_uri() -> Fetch error: AggregateError
+2026/3/17 12:59:16: getting new Url ->  null
+2026/3/17 13:00:14 update_uri() -> Fetch error: AggregateError
+2026/3/17 13:00:14: getting new Url ->  null
