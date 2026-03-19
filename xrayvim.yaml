@@ -63,3 +63,19 @@
   cipher: auto
   alterId: 0
   tls: false
+- name: HK【机场推荐：https://a9a.xyz】2
+  type: vmess
+  server: 103.181.164.237
+  port: 34114
+  uuid: 418048af-a293-4b99-9b0c-98ca3580dd24
+  cipher: auto
+  alterId: 64
+  tls: false
+- name: 节点日期：2026-03-18
+  type: vmess
+  server: 103.181.164.145
+  port: 54022
+  uuid: 418048af-a293-4b99-9b0c-98ca3580dd24
+  cipher: auto
+  alterId: 64
+  tls: false

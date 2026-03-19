@@ -36,7 +36,7 @@ const ssIpv6
   ws-opts:
     path: /`;
 */
-= `- name: newpac-SS-ipv6
+  = `- name: newpac-SS-ipv6
   type: ss
   server: 2a14:7584:d0a1::a
   port: 12345
@@ -96,6 +96,7 @@ function parseNodes(input) {
 async function saveTextToFile(filename, content, options = {}) {
   const { e = 'utf8', f = 'w' } = options;
   try {
+    console.log(`正在wrinting ${filename}...`);
     await fsA.writeFile(filename, content, { encoding: e, flag: f });
   }
   catch (err) {
@@ -771,3 +772,4 @@ exports.restartMihomo = restartMihomo;
 exports.updateUrl = updateUrl;
 exports.exportData = exportData;
 exports.fileExists = fileExists;
+exports.saveTextToFile = saveTextToFile;
