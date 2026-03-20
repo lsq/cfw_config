@@ -7074,3 +7074,9 @@ https://fan3.206102.xyz/v2ray免费账号/
 2026/3/20 21:42:32: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
 2026/3/20 21:42:32: parse_data() -> https://fan3.206102.xyz/ss免费账号/
 2026/3/20 21:42:32: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/3/20 22:03:50 update_uri() -> Fetch error: AggregateError
+2026/3/20 22:03:50: getting new Url ->  null
+2026/3/20 23:01:17 update_uri() -> Fetch error: AggregateError
+2026/3/20 23:01:17: getting new Url ->  null
+2026/3/20 23:02:17 update_uri() -> Fetch error: AggregateError
+2026/3/20 23:02:17: getting new Url ->  null

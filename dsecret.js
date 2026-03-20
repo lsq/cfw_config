@@ -4,7 +4,7 @@ const path = require('node:path');
 // const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const fs = require('node:fs').promises;
-const { saveTextToFile } = require('./get_newpac');
+// const { saveTextToFile } = require('./get_newpac');
 
 // 配置区
 const CONFIG = {
@@ -166,7 +166,7 @@ async function redirectRequestWithRetry(redirectPath) {
         break;
       }
 
-      console.log(`${fileName}: 开始解析(第${attempt}次)Html\n`);
+      console.log(`${fileName}: 开始解析Html(第${attempt}次)\n`);
       const result = parseHtmlResult(html);
       if (result.detailHref) {
         console.log(`${fileName} 下载uuid=${result.detailHref}`);
@@ -227,6 +227,8 @@ function extractFileNameFromUrl(url) {
 
 async function downloadWithAria2(links, originalUrl) {
   const fileName = extractFileNameFromUrl(links[0]);
+    // 确保目录存在
+    fs.mkdir(CONFIG.aria2Options.dir, { recursive: true }).catch(() => {});
   const outPath = path.join(CONFIG.aria2Options.dir, fileName);
   console.log(`准备下载${fileName}, 存放路径: ${outPath}`);
   let result;
@@ -304,10 +306,10 @@ async function downloadViaAria2Rpc(uris, fileName, outPath) {
     };
   }
   catch (err) {
-    console.log(`${fileName} 请求失败。。。\nerror-message: ${err.message}`);
+    console.log(`${fileName} RPC 请求失败。。。(${err.message})`);
     return {
       success: false,
-      error: `Aria2 RPC 请求失败: ${err.message}`,
+      error: `Aria2 RPC 请求失败(${err.message})`,
     };
   }
 }
@@ -367,31 +369,32 @@ function withTimeout(promise, ms, errorMsg) {
 async function processSingleTask(downloadUrl) {
   console.log(`\n➡️ 开始处理任务: ${downloadUrl}`);
   const apiUrl = `${CONFIG.baseUri}/api.rb?dl_start`;
+    const fileName = extractFileNameFromUrl(downloadUrl)
 
   const submitRes = await sendDownloadRequest(apiUrl, '', downloadUrl);
   if (submitRes.action !== 'redirect') {
       // console.log("returned action = :", submitRes.action)
-    throw new Error(`提交失败(not redirect): ${submitRes.message}`);
+    throw new Error(`${fileName}提交失败(not redirect): ${submitRes.message}`);
   }
 
   console.log(`\n➡️ 任务已成功提交，正在重定向到: ${submitRes.url}`);
   const redirectRes = await redirectRequestWithRetry(submitRes.url);
   if (!redirectRes.success) {
-    throw new Error(`获取链接失败: ${redirectRes.error}`);
+    throw new Error(`[${fileName}]获取链接失败: ${redirectRes.error}`);
   }
 
-  console.log(`✅ 获取到 ${redirectRes.links.length} 个镜像链接`);
+  console.log(`✅[${fileName}] 获取到 ${redirectRes.links.length} 个镜像链接`);
   const result = await downloadWithAria2(redirectRes.links, downloadUrl);
   if (result.success) {
-    console.log('✅ 下载成功:', result.file);
+    console.log('✅ 任务提交成功:', result.file);
     if (result.gid) {
       console.log('📌 Aria2 GID:', result.gid);
     }
     return result;
   }
   else {
-    console.error('❌ 下载失败:', result.error);
-    throw new Error(`下载失败: ${result.error}`);
+    console.log('❌ 任务失败:', result.error);
+    throw new Error(`任务失败: ${result.error}`);
   }
 }
 
@@ -417,7 +420,7 @@ async function runConcurrentTasks(taskUrls) {
       results.push(result);
     });
 
-    executing.add(promise);
+    executing.add(resultPromise);
 
     resultPromise.finally(() => executing.delete(resultPromise));
 
@@ -449,10 +452,10 @@ async function main() {
   console.log('\n=== 最终结果汇总 ===');
   results.forEach((r) => {
     if (r.status === 'fulfilled') {
-      console.log(`✅ [${r.url}] 下载成功 → ${r.value.file}`);
+      console.log(`✅ [${r.url}] 成功 → ${r.value.file}`);
     }
     else {
-      console.log(`❌ [${r.url}] 失败: ${r.reason}`);
+      console.log(`❌ [${r.url}] ${r.reason}`);
     }
   });
 }
