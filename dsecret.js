@@ -419,7 +419,7 @@ async function runConcurrentTasks(taskUrls) {
 
     executing.add(promise);
 
-    resultPromise.finally(() => executing.delete(promise));
+    resultPromise.finally(() => executing.delete(resultPromise));
 
     if (executing.size >= CONFIG.maxConcurrentTasks) {
       // 等待任意一个完成
