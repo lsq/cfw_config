@@ -5,6 +5,7 @@ const path = require('node:path');
 const cheerio = require('cheerio');
 const fs = require('node:fs').promises;
 // const { saveTextToFile } = require('./get_newpac');
+const downloadsFolder = require('./downloads-folder');
 
 // 配置区
 const CONFIG = {
@@ -19,7 +20,8 @@ const CONFIG = {
   aria2Options: {
     split: 16, // -s
     maxConnectionPerServer: 16, // -x
-    dir: './downloads', // 下载目录
+    // dir: './downloads', // 下载目录
+    dir: downloadsFolder(), // 下载目录
     userAgent: 'Mozilla/5.0 (X11; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0',
   },
 };
@@ -127,14 +129,16 @@ async function sendDownloadRequest(url, uuid, downloadUrl) {
       data = await response.json();
     }
     else {
-      data = JSON.parse(await response.text());
+      const resData = await response.text();
+      console.log(`response data: ${resData}`);
+      data = JSON.parse(resData);
     }
 
     switch (data.messages) {
       case 'download_again':
         return { action: 'redirect', url: data.data };
       case 'danger':
-        return { action: 'error', message: data.data || `${downloadUrl}提交失败`};
+        return { action: 'error', message: data.data || `${downloadUrl}提交失败` };
       default:
         return { action: 'error', message: '未知响应' };
     }
@@ -227,8 +231,8 @@ function extractFileNameFromUrl(url) {
 
 async function downloadWithAria2(links, originalUrl) {
   const fileName = extractFileNameFromUrl(links[0]);
-    // 确保目录存在
-    fs.mkdir(CONFIG.aria2Options.dir, { recursive: true }).catch(() => {});
+  // 确保目录存在
+  fs.mkdir(CONFIG.aria2Options.dir, { recursive: true }).catch(() => {});
   const outPath = path.join(CONFIG.aria2Options.dir, fileName);
   console.log(`准备下载${fileName}, 存放路径: ${outPath}`);
   let result;
@@ -369,11 +373,11 @@ function withTimeout(promise, ms, errorMsg) {
 async function processSingleTask(downloadUrl) {
   console.log(`\n➡️ 开始处理任务: ${downloadUrl}`);
   const apiUrl = `${CONFIG.baseUri}/api.rb?dl_start`;
-    const fileName = extractFileNameFromUrl(downloadUrl)
+  const fileName = extractFileNameFromUrl(downloadUrl);
 
   const submitRes = await sendDownloadRequest(apiUrl, '', downloadUrl);
   if (submitRes.action !== 'redirect') {
-      // console.log("returned action = :", submitRes.action)
+    // console.log("returned action = :", submitRes.action)
     throw new Error(`${fileName}提交失败(not redirect): ${submitRes.message}`);
   }
 
@@ -416,7 +420,7 @@ async function runConcurrentTasks(taskUrls) {
       .catch(reason => ({ url, status: 'rejected', reason: reason.message || reason }));
 
     // 当任务完成时，自动推入 results
-    resultPromise.then(result => {
+    resultPromise.then((result) => {
       results.push(result);
     });
 
@@ -431,18 +435,22 @@ async function runConcurrentTasks(taskUrls) {
   }
 
   // 等待剩余全部完成
-    await Promise.allSettled(executing);
-    return results;
+  await Promise.allSettled(executing);
+  return results;
 }
 
 // ========== 主程序入口 ==========
 
 async function main() {
   const taskUrls = [
-    'https://github.com/MetaCubeX/mihomo/releases/download/v1.19.21/mihomo-windows-amd64-v3-v1.19.22.zip',
-    'https://github.com/MetaCubeX/mihomo/releases/download/v1.19.21/mihomo-windows-amd64-v3-v1.19.21.zip',
-    'https://github.com/obsproject/obs-studio/releases/download/32.1.0/OBS-Studio-32.1.0-Windows-x64-Installer.exe',
-    'https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.10%2B7/OpenJDK21U-jdk_x64_windows_hotspot_21.0.10_7.msi',
+    'https://github.com/Felix3322/Wisdom-Weasel/releases/download/wisdom-weasel-0.17.4.0.cd22bcb/Wisdom-Weasel-0.17.4.0.cd22bcb-bundle.7z',
+    // 'https://github.com/flxzt/rnote/blob/main/crates/rnote-ui/data/screenshots/overview.png'
+    // 'https://github.com/flxzt/rnote/releases/download/v0.13.1/rnote-win-installer-0.13.1-x86_64.exe'
+    // 'https://dev.gentoo.org/~mgorny/binpkg/amd64/kernel/sys-kernel/gentoo-kernel/gentoo-kernel-6.19.9-1.gpkg.tar'
+    // 'https://github.com/MetaCubeX/mihomo/releases/download/v1.19.21/mihomo-windows-amd64-v3-v1.19.22.zip',
+    // 'https://github.com/MetaCubeX/mihomo/releases/download/v1.19.21/mihomo-windows-amd64-v3-v1.19.21.zip',
+    // 'https://github.com/obsproject/obs-studio/releases/download/32.1.0/OBS-Studio-32.1.0-Windows-x64-Installer.exe',
+    // 'https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.10%2B7/OpenJDK21U-jdk_x64_windows_hotspot_21.0.10_7.msi',
     // 可添加更多
   ];
 

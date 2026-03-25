@@ -1,6 +1,7 @@
 const yaml = require('js-yaml');
 const isEqual = require('lodash/isEqual');
-const { exportData } = require('./get_newpac');
+const downloadsFolder = require('./downloads-folder');
+const { exportData, processFiles } = require('./get_newpac');
 const { generateUri, linkToClash } = require('./lib/converter');
 
 const vmessUrl
@@ -58,6 +59,20 @@ const node = proxy.proxies;
   }
 
   console.log(`decodeBase64: ${decodeBase64(vmessUrl[0].split('vmess://')[1])}`);
+  // console.log(`当前系统下载目录：${donwloadsFolder()}`);
+  try {
+    console.log(`当前系统下载目录：`);
+    console.log(`${downloadsFolder()}`);
+  }
+  catch (err) {
+    console.log(`downloads dir err: ${err.message}`);
+  }
+
+  const fileNames = ['sub-tuic.txt', 'sub-hysteria.txt'];
+  // processFiles(fileNames, __dirname)
+  await processFiles(fileNames);
+  // const fileNames = ['tuic.txt', 'hysteria.txt'];
+  // processFiles(fileNames, '/home/lsq/Downloads/Telegram Desktop')
 })();
 
 function parseProxies(response) {

@@ -21,6 +21,8 @@ const { linkToClash } = require('./lib/converter');
 // const url = 'https://dgithub.xyz/Alvin9999/new-pac/wiki/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7'
 const parser = new DOMParser();
 const process = require('node:process');
+
+const newline = /\r?\n/;
 // const uriPath = "/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/";
 const fixedurl
   = 'https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/';
@@ -439,7 +441,7 @@ async function getNodeOsName(nodePath) {
 
 async function findLocaleNode() {
   const output = execSync('where.exe node', { encoding: 'utf8' });
-  const nodePaths = output.split(/\r?\n/).filter(p => p.trim() !== '');
+  const nodePaths = output.split(newline).filter(p => p.trim() !== '');
   const results = await Promise.all(
     nodePaths.map(path => getNodeOsName(path)),
   );
@@ -484,7 +486,7 @@ async function updateUrl(consoleObj = console) {
   try {
     if (process.platform === 'win32') {
       const output = execSync('where.exe node', { encoding: 'utf8' });
-      const pathArr = output.split(/\r?\n/).filter(p => p.trim() !== '');
+      const pathArr = output.split(newline).filter(p => p.trim() !== '');
       // saveTextToFile( __dirname + "/ssUrl.log",
       // new Date().toLocaleString() + `✅ ${Array.isArray(pathArr)}-> ` + pathArr + "\n",
       // { f: "a" },);
@@ -765,6 +767,55 @@ async function fileExists(filePath) {
   }
 }
 
+async function processFiles(fileNames, basedir = __dirname) {
+  // const fileNames = ['a.txt', 'b.txt', 'c.txt'];
+
+  try {
+    // 1. 创建所有读取任务的 Promise 数组
+    const readTasks = fileNames.map(async (fileName) => {
+      const filePath = path.join(basedir, fileName);
+      const fileNameWithOutExt = path.parse(fileName);
+
+      try {
+        // 异步读取文件
+        const content = await fsA.readFile(filePath, 'utf-8');
+
+        // 处理为数组：分割换行符 -> 去除首尾空格 -> 过滤空行
+        const lines = content
+          .split(newline)
+          .map(line => line.trim())
+          .filter(line => line.length > 0);
+
+        // 返回对象以便后续处理（包含文件名和内容）
+        return { fileName: fileNameWithOutExt, data: lines };
+      }
+      catch (err) {
+        console.warn(`⚠️ 读取文件 ${fileName} 失败: ${err.message}`);
+        return { fileName: fileNameWithOutExt, data: [] }; // 出错时返回空数组
+      }
+    });
+
+    // 2. 并发执行所有读取任务
+    const results = await Promise.all(readTasks);
+
+    // 3. 过滤：只保留数组长度大于 0 的结果，并提取数据部分赋值给 arr
+    const arr = results
+      .filter(item => item.data.length > 0) // 核心逻辑：长度为 0 则跳过
+      .map(item => item.data); // 只保留数组内容
+
+    // 4. 打印最终结果
+    console.log('✅ 处理完成，最终变量 arr:');
+    console.log(arr);
+
+    // 验证数据
+    console.log(`\n📊 统计: 原始文件数 ${fileNames.length}, 有效数组数 ${arr.length}`);
+  }
+  catch (error) {
+    console.error('❌ 发生未知错误:', error);
+  }
+}
+
+exports.processFiles = processFiles;
 exports.parseData = parse_data;
 exports.mergeData = mergeData;
 exports.getPublicNodeset = getPublicNodeset;

@@ -1,0 +1,342 @@
+diff --git a/dist/lib/registry.js b/dist/lib/registry.js
+index c509829f06f1bfaacbc96685ba5b12f9ef518b93..5991551eecd6f4c5a61f4ef402ed46f8dfc42a29 100644
+--- a/dist/lib/registry.js
++++ b/dist/lib/registry.js
+@@ -1,9 +1,170 @@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.setValueSafe = exports.setValue = exports.createKeySafe = exports.createKey = exports.enumerateKeysSafe = exports.enumerateKeys = exports.enumerateValuesSafe = exports.enumerateValues = exports.HKEY = exports.RegistryValueType = void 0;
+-const nativeModule = process.platform === 'win32'
+-    ? require('../../build/Release/registry.node')
+-    : null;
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.setValueSafe = exports.setValue = exports.createKeySafe = exports.createKey = exports.enumerateKeysSafe = exports.enumerateKeys = exports.enumerateValuesSafe = exports.enumerateValues = exports.HKEY = exports.RegistryValueType = void 0;
++
++// --- 智能加载 native module ---
++const fs = require('fs');
++const path = require('path');
++const os = require('os');
++const { spawnSync } = require('child_process');
++
++let nativeModule = null;
++
++if (process.platform === 'win32') {
++  const OS_TYPE = os.type();
++  const OS_ARCH = os.arch();
++  const OS_PLATFORM = os.platform();
++
++  let PLATFORM_TAG;
++  if (OS_TYPE === 'Windows_NT') {
++    PLATFORM_TAG = `${OS_PLATFORM}-${OS_ARCH}-msvc`;
++  } else if (OS_TYPE.startsWith('MINGW')) {
++    PLATFORM_TAG = `${OS_PLATFORM}-${OS_ARCH}-gnu`;
++  } else {
++    PLATFORM_TAG = `${OS_PLATFORM}-${OS_ARCH}-unknown`;
++  }
++
++  const MODULE_NAME = 'registry';
++  const PACKAGE_ROOT = path.join(__dirname, '..', '..'); // e.g., node_modules/my-registry
++  const BUILD_DIR = path.join(PACKAGE_ROOT, 'build', 'Release');
++  const TARGET_DIR = path.join(PACKAGE_ROOT, 'target');
++  const ORIGINAL_PATH = path.join(BUILD_DIR, `${MODULE_NAME}.node`);
++  const TARGET_FILE = `${MODULE_NAME}-${PLATFORM_TAG}.node`;
++  const TARGET_PATH = path.join(TARGET_DIR, TARGET_FILE);
++
++  function ensureDir(dir) {
++    if (!fs.existsSync(dir)) {
++      fs.mkdirSync(dir, { recursive: true });
++    }
++  }
++function canLoad(file) {
++  // console.log(`[registry] Checking if ${file} can be loaded safely...`);
++
++  if (!fs.existsSync(file)) {
++    return false;
++  }
++
++  // 使用子进程测试加载
++  const child = spawnSync(
++    process.execPath,
++    [
++      '-e',
++      `
++        try {
++          require(process.argv[1]);
++          process.exit(0);
++        } catch (e) {
++          // console.error(e.message);
++          process.exit(1);
++        }
++      `,
++      file
++    ],
++    {
++      stdio: 'pipe', // 捕获 stderr
++      windowsHide: true,
++    }
++  );
++
++  if (child.status === 0) {
++    // console.log(`[registry] ✅ ${file} loaded successfully in subprocess.`);
++    return true;
++  } else {
++    const errorMsg = child.stderr?.toString().trim() || 'Unknown load error';
++    // console.warn(`[registry] ❌ Failed to load ${file}:`, errorMsg);
++    return false;
++  }
++}
++
++  function runCommand(cmd, args, opts = {}) {
++    const options = {
++      // stdio: 'inherit',
++      stdio: 'pipe',
++      cwd: PACKAGE_ROOT,
++      shell: true,
++      ...opts,
++    };
++    // console.log(`[registry] Running: ${cmd} ${args.join(' ')}`);
++    const result = spawnSync(cmd, args, options);
++    return result.status === 0;
++  }
++
++  function copyFileSafe(src, dest) {
++    if (!fs.existsSync(dest)) {
++      // console.log(`[registry] Copying ${path.basename(src)} → ${path.basename(dest)}`);
++      fs.copyFileSync(src, dest);
++    }
++  }
++
++  // ====== Step 1: Try original build/Release/registry.node ======
++  if (canLoad(ORIGINAL_PATH)) {
++    // console.log(`[registry] Using prebuilt ${ORIGINAL_PATH}`);
++    // Copy to target/ if not exists
++    ensureDir(TARGET_DIR);
++    copyFileSafe(ORIGINAL_PATH, TARGET_PATH);
++    nativeModule = require(ORIGINAL_PATH);
++  } else {
++    // ====== Step 2: Try target/registry-<tag>.node ======
++    if (canLoad(TARGET_PATH)) {
++      // console.log(`[registry] Using cached target file: ${TARGET_PATH}`);
++      nativeModule = require(TARGET_PATH);
++    } else {
++      // ====== Step 3: Rebuild and populate both locations ======
++      // console.log(`[registry] Need to rebuild for ${PLATFORM_TAG}`);
++
++      // Determine whether to use prebuild-install or force rebuild
++      let success = false;
++      if (OS_TYPE === 'Windows_NT') {
++        // Try prebuild-install first (if config available)
++        try {
++          const packageJson = require(path.join(PACKAGE_ROOT, 'package.json'));
++          const config = packageJson.config || {};
++          const runtime = config.runtime || 'node';
++          const target = config.target || process.version;
++          // const binPath = require.resolve('prebuild-install/bin.js', { paths: [PACKAGE_ROOT] });
++          const binPath = path.join(__dirname, '..', '..', '..', 'prebuild-install', 'bin.js');
++          success = runCommand('node', [
++            binPath,
++            'prebuild-install',
++            '-a', OS_ARCH,
++            '-t', target,
++            '-r', runtime,
++            '--strip'
++          ]);
++        } catch (e) {
++          // console.warn('[registry] prebuild-install not available or failed, falling back to rebuild');
++        }
++
++        if (!success) {
++          success = runCommand('npx', ['node-gyp', 'rebuild']);
++        }
++      } else if (OS_TYPE.startsWith('MINGW')) {
++        // MinGW: skip prebuild, always rebuild
++        success = runCommand('npx', ['node-gyp', 'rebuild']);
++      }
++
++      if (!success) {
++        throw new Error('[registry] Failed to rebuild native module');
++      }
++
++      // Verify rebuild output
++      if (!fs.existsSync(ORIGINAL_PATH)) {
++        throw new Error(`[registry] Rebuild succeeded but ${ORIGINAL_PATH} not found`);
++      }
++
++      // Ensure target dir and copy
++      ensureDir(TARGET_DIR);
++      copyFileSafe(ORIGINAL_PATH, TARGET_PATH);
++
++      // Load from original path (standard location)
++      nativeModule = require(ORIGINAL_PATH);
++    }
++  }
++}
++
+ /**
+  * Utility function used to achieve exhaustive type checks at compile time.
+  *
+diff --git a/package.json b/package.json
+index 466e06af9905fc5398c1897e22a03e8922b093f5..95c813c618f9b98c6832515b97fe0678adcff5ad 100644
+--- a/package.json
++++ b/package.json
+@@ -5,7 +5,7 @@
+   "main": "dist/lib/index.js",
+   "typings": "dist/lib/index.d.ts",
+   "scripts": {
+-    "install": "prebuild-install || node-gyp rebuild",
++    "install": "echo '<<< install registry-js>>>' && node scripts/install.js",
+     "build": "tsc",
+     "pretest": "yarn build",
+     "test": "jest -c jest.json",
+diff --git a/scripts/install.js b/scripts/install.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..ab93f478a241102af49fa74bcfc4d33a16656acb
+--- /dev/null
++++ b/scripts/install.js
+@@ -0,0 +1,145 @@
++#!/usr/bin/env node
++
++// scripts/install.js
++const { spawnSync } = require('child_process');
++const os = require('os');
++const fs = require('fs');
++const path = require('path')
++const packageJson = require(path.join(__dirname, '..', 'package.json'));
++const config = packageJson.config || {};
++const runtime = config.runtime;
++const target = config.target;
++const binPath = path.join(__dirname, '../../../node_modules/prebuild-install/bin.js');
++
++/*
++// 即使 prebuild-install 能自动推导，显式传入参数也是最稳妥的
++const env = { ...process.env };
++// env.npm_config_target = process.version.replace('v', '');
++env.npm_config_target = 3
++env.npm_config_runtime = 'napi';
++env.npm_config_arch = os.arch();
++env.npm_config_platform = os.platform();
++const binPath = path.resolve(__dirname, '../../../node_modules/prebuild-install/bin.js');
++// 验证文件是否存在且包含我们的标记 (可选调试)
++const content = fs.readFileSync(binPath, 'utf8');
++if (!content.includes('PB-FLOW')) {
++  console.error('⚠️  WARNING: The bin.js file does NOT contain the PB-FLOW patch!');
++  console.error('⚠️  It seems pnpm is still using a cached/unpatched version.');
++}
++
++console.log('🛡️  Running registry-js install with enforced environment...');
++
++const result = spawnSync('node', [
++  `${binPath}`,
++  '--target', env.npm_config_target,
++  '--runtime', 'napi',
++  '--strip'
++], {
++  stdio: 'inherit',
++  env: env,
++  shell: true
++});
++
++process.exit(result.status);
++*/
++
++const OS_TYPE = os.type();
++const OS_ARCH = os.arch();
++  const OS_PLATFORM = os.platform()
++  let PLATFORM_TAG;
++  if (OS_TYPE === 'Windows_NT') {
++    PLATFORM_TAG = `${OS_PLATFORM}-${OS_ARCH}-msvc`;
++  } else if (OS_TYPE.startsWith('MINGW')) {
++    PLATFORM_TAG = `${OS_PLATFORM}-${OS_ARCH}-gnu`;
++  } else {
++    // 兜底：其他 Windows 子系统（如 WSL1 不会进这里，因 platform !== 'win32'）
++    PLATFORM_TAG = `${OS_PLATFORM}-${OS_ARCH}-unknown`;
++  }
++
++  const MODULE_NAME = 'registry';
++  const PACKAGE_ROOT = path.join(__dirname, '..'); // e.g., node_modules/my-registry
++  const BUILD_DIR = path.join(PACKAGE_ROOT, 'build', 'Release');
++  const TARGET_DIR = path.join(PACKAGE_ROOT, 'target');
++  const TARGET_FILE = `${MODULE_NAME}-${PLATFORM_TAG}.node`;
++  const TARGET_PATH = path.join(TARGET_DIR, TARGET_FILE);
++  const ORIGINAL_PATH = path.join(BUILD_DIR, `${MODULE_NAME}.node`);
++// console.log(`[install] Detected OS type: ${OS_TYPE}`);
++
++  function ensureDir(dir) {
++    if (!fs.existsSync(dir)) {
++      fs.mkdirSync(dir, { recursive: true });
++    }
++  }
++
++  function copyFileSafe(src, dest) {
++    if (!fs.existsSync(dest)) {
++      // console.log(`[registry] Copying ${path.basename(src)} → ${path.basename(dest)}`);
++      fs.copyFileSync(src, dest);
++    }
++  }
++
++function runCommand(cmd, args, opts = {}) {
++  const options = {
++    stdio: 'inherit',
++    // stdio: ['pipe', 'pipe', 'pipe'],
++    shell: true,
++    env: {...process.env},
++    ...opts,
++  };
++  // console.log(`[install] Running: ${cmd} ${args.join(' ')}`);
++  const result = spawnSync(cmd, args, options);
++  if (result.stdout) {
++      const out = result.stdout.toString()
++      // if (out) console.log(out)
++  };
++  if (result.stderr) {
++      stde = result.stderr.toString();
++      // if (stde) console.error(stde);
++  }
++    // 4. 检查是否有 spawn 级别的错误 (如找不到命令)
++  if (result.error) {
++    // console.error(`[install] Spawn Error: ${result.error.message}`);
++    return false;
++  }
++    // 5. 检查退出码
++  if (result.status !== 0) {
++    // console.error(`[install] Command exited with code ${result.status}`);
++    return false;
++  }
++  // return result.status === 0;
++  // console.log(`[install] <<< SUCCESS`);
++  return true
++}
++
++let success = false;
++
++if (OS_TYPE === 'Windows_NT') {
++  // Native Windows: try prebuilt binary
++  // console.log('[install] Platform: Native Windows → using prebuild-install');
++  success = runCommand('node', [`${binPath}`, 'prebuild-install', '-a', `${OS_ARCH}`, '-t', `${target}`, '-r', `${runtime}`, '--strip']);
++  if (!success) {
++    // console.log('[install] Prebuild failed, falling back to node-gyp rebuild...');
++    success = runCommand('npx', ['node-gyp', 'rebuild']);
++  }
++} else if (OS_TYPE.startsWith('MINGW')) {
++  // MinGW/MSYS2: skip prebuild, force local compile
++  // console.log('[install] Platform: MinGW/MSYS2 → skipping prebuild, using node-gyp rebuild');
++  success = runCommand('npx', ['node-gyp', 'rebuild']);
++} else {
++  // macOS, Linux, etc.
++  // console.log('[install] Platform: Unix-like → trying prebuild-install');
++  success = runCommand('node', [`${binPath}`, 'prebuild-install', '-a', `${OS_ARCH}`, '-t', `${target}`, '-r', `${runtime}`, '--strip']);
++  if (!success) {
++    // console.log('[install] Prebuild failed, falling back to node-gyp rebuild...');
++    success = runCommand('npx', ['node-gyp', 'rebuild']);
++  }
++}
++
++if (!success) {
++  // console.error('[install] ❌ Installation failed.');
++  process.exit(1);
++} else {
++  ensureDir(TARGET_DIR);
++  copyFileSafe(ORIGINAL_PATH, TARGET_PATH);
++  // console.log('[install] ✅ Successfully installed native module.');
++}

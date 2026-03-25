@@ -25,6 +25,7 @@
     "axios": "^1.13.6",
     "cheerio": "^1.1.2",
     "dom-serializer": "^3.0.0",
+    "downloads-folder": "^3.0.3",
     "js-yaml": "^4.1.1",
     "lodash": "^4.17.23",
     "node-html-parser": "^7.1.0",
@@ -33,6 +34,9 @@
     "typescript": "^6.0.0",
     "xpath": "github:goto100/xpath#master",
     "xpath-html": "^1.0.3"
+  },
+  "optionalDependencies": {
+    "registry-js": "^1.16.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^8.0.0",
@@ -45,5 +49,8 @@
   },
   "overrides": {
     "semver": "^7.5.4"
+  },
+  "resolutions": {
+    "semver": "7.5.4"
   }
 }
