@@ -767,14 +767,35 @@ async function fileExists(filePath) {
   }
 }
 
-async function processFiles(fileNames, basedir = __dirname) {
+function getType(value) {
+  return Object.prototype.toString.call(value).slice(8, -1);
+}
+
+function linksToConfig(links) {
+    try {
+    const clashStr = linkToClash(links)
+    // console.log('[linksToConfig] clashStr:', clashStr)
+    const dataObj = yaml.load(clashStr.data)
+    // console.log('[linksToConfig] dataObj:', dataObj)
+    const proxies = dataObj.proxies
+    // console.log(`[linksToConfig] proxies(${proxies.length}):`, proxies)
+        if (proxies.length > 0) {
+        // console.log('[linksToConfig] proxies:', proxies)
+        return proxies
+    }
+        return null
+    } catch (e) {
+        return null
+    }
+}
+async function processFiles(fileNames,procFn, basedir = __dirname) {
   // const fileNames = ['a.txt', 'b.txt', 'c.txt'];
 
   try {
     // 1. 创建所有读取任务的 Promise 数组
     const readTasks = fileNames.map(async (fileName) => {
       const filePath = path.join(basedir, fileName);
-      const fileNameWithOutExt = path.parse(fileName);
+      const fileNameWithOutExt = path.parse(fileName).name;
 
       try {
         // 异步读取文件
@@ -787,11 +808,15 @@ async function processFiles(fileNames, basedir = __dirname) {
           .filter(line => line.length > 0);
 
         // 返回对象以便后续处理（包含文件名和内容）
-        return { fileName: fileNameWithOutExt, data: lines };
+        console.log(`${fileNameWithOutExt} lines: ${lines}, ${getType(lines)}`)
+        const res = procFn(lines)
+        console.log(`processed value: ${JSON.stringify(res)}`)
+        // console.log(`linkToClash result: ${res.data}`)
+        return { fileName: fileNameWithOutExt, data: res};
       }
       catch (err) {
         console.warn(`⚠️ 读取文件 ${fileName} 失败: ${err.message}`);
-        return { fileName: fileNameWithOutExt, data: [] }; // 出错时返回空数组
+        return { fileName: fileNameWithOutExt, data: null }; // 出错时返回空数组
       }
     });
 
@@ -800,15 +825,21 @@ async function processFiles(fileNames, basedir = __dirname) {
 
     // 3. 过滤：只保留数组长度大于 0 的结果，并提取数据部分赋值给 arr
     const arr = results
-      .filter(item => item.data.length > 0) // 核心逻辑：长度为 0 则跳过
-      .map(item => item.data); // 只保留数组内容
+      // .filter(item => item.data.length > 0) // 核心逻辑：长度为 0 则跳过
+          // .filter(item => {console.log(`${item.fileName}: ${item.data}`);if (item.data.length > 0) return true; return false}) // 核心逻辑：长度为 0 则跳过
+          .map(item => {
+              console.log(`${item.fileName}: ${JSON.stringify(item)}`);
+              if (item.data.length > 0) return true;
+              return false}) // 核心逻辑：长度为 0 则跳过
+      // .map(item => item.data); // 只保留数组内容
 
     // 4. 打印最终结果
-    console.log('✅ 处理完成，最终变量 arr:');
-    console.log(arr);
+    // console.log('✅ 处理完成，最终变量 arr:');
+    // console.log(arr);
 
     // 验证数据
     console.log(`\n📊 统计: 原始文件数 ${fileNames.length}, 有效数组数 ${arr.length}`);
+    return arr;
   }
   catch (error) {
     console.error('❌ 发生未知错误:', error);
@@ -823,4 +854,5 @@ exports.restartMihomo = restartMihomo;
 exports.updateUrl = updateUrl;
 exports.exportData = exportData;
 exports.fileExists = fileExists;
+exports.linksToConfig = linksToConfig ;
 exports.saveTextToFile = saveTextToFile;

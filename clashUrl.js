@@ -1,7 +1,7 @@
 const yaml = require('js-yaml');
 const isEqual = require('lodash/isEqual');
 const downloadsFolder = require('./downloads-folder');
-const { exportData, processFiles } = require('./get_newpac');
+const { exportData, processFiles, linksToConfig } = require('./get_newpac');
 const { generateUri, linkToClash } = require('./lib/converter');
 
 const vmessUrl
@@ -70,7 +70,7 @@ const node = proxy.proxies;
 
   const fileNames = ['sub-tuic.txt', 'sub-hysteria.txt'];
   // processFiles(fileNames, __dirname)
-  await processFiles(fileNames);
+  const proxiesData = await processFiles(fileNames,linksToConfig);
   // const fileNames = ['tuic.txt', 'hysteria.txt'];
   // processFiles(fileNames, '/home/lsq/Downloads/Telegram Desktop')
 })();

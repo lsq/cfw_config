@@ -1,0 +1,1 @@
+﻿hysteria://ip1.758733.xyz:23008?alpn=h3&auth=alvin9999.com&auth_str=alvin9999.com&downmbps=1000&protocol=udp&insecure=1&peer=apple.com&udp=true&upmbps=500#%F0%9F%87%A9%F0%9F%87%AADE_3
