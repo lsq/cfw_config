@@ -16,9 +16,8 @@ async function getNodeFromPath() {
     return stdout
       .trim()
       .split(lineEnd)
-      .filter(p => p.trim() !== '');
-  }
-  catch (err) {
+      .filter((p) => p.trim() !== '');
+  } catch (err) {
     return [];
   }
 }
@@ -40,9 +39,9 @@ async function findAllNodePaths() {
   // 4. PATH
   const fromPath = await getNodeFromPath();
   // console.log("fromPath: ", fromPath);
-  fromPath.forEach(p => set.add(p));
+  fromPath.forEach((p) => set.add(p));
 
-  return [...set].filter(p => fs.existsSync(p));
+  return [...set].filter((p) => fs.existsSync(p));
 }
 
 async function updateUrl() {
@@ -63,8 +62,7 @@ async function updateUrl() {
       return ret;
     }
     return null;
-  }
-  catch (err) {
+  } catch (err) {
     console.error('Script failed:', err);
     return null;
   }

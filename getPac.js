@@ -5,7 +5,12 @@ const { env } = require('node:process');
 const yaml = require('js-yaml');
 const lds = require('lodash');
 // 修正：引入标准的 Error 类，不需要从 console 引入
-const { parseData, exportData, updateUrl, fileExists } = require('./get_newpac');
+const {
+  parseData,
+  exportData,
+  updateUrl,
+  fileExists,
+} = require('./get_newpac');
 
 const newpacData = path.join(__dirname, 'newpac.yaml');
 const rootyml = path.join(__dirname, '/../newpac.yaml');
@@ -13,10 +18,8 @@ const isCI = !!env.GITHUB_ACTIONS;
 const outputPath = env.GITHUB_OUTPUT;
 
 function yamlArraysEqual(arr1, arr2) {
-  if (!Array.isArray(arr1) || !Array.isArray(arr2))
-    return false;
-  if (arr1.length !== arr2.length)
-    return false;
+  if (!Array.isArray(arr1) || !Array.isArray(arr2)) return false;
+  if (arr1.length !== arr2.length) return false;
 
   // 按 name 排序（假设 name 是唯一标识）
   const sorted1 = lds.sortBy(arr1, 'name');
@@ -31,13 +34,11 @@ async function writeOutPut(num) {
     try {
       await fsA.appendFile(outputPath, `needCommit=${num}\n`);
       console.log(`✅ needCommit=${num} Outputs written to GITHUB_OUTPUT`);
-    }
-    catch (err) {
+    } catch (err) {
       console.error('❌ Failed to write to GITHUB_OUTPUT:', err);
       process.exit(1);
     }
-  }
-  else {
+  } else {
     // 🟡 本地开发环境：输出到控制台（便于调试）
     console.log('💡 Running locally. Outputs:');
     console.log('needCommit:', num);
@@ -81,8 +82,7 @@ async function writeOutPut(num) {
     // 成功则正常退出 (exit code 0)
     await writeOutPut(yamlArraysEqual(oldData, rest) ? 0 : 1);
     process.exit(0);
-  }
-  catch (err) {
+  } catch (err) {
     // 捕获所有错误
     console.error('❌ 发生严重错误:', err.message);
     console.error(err.stack); // 打印堆栈跟踪，方便调试

@@ -4,8 +4,7 @@ import { load } from 'js-yaml';
 export function parseJsYaml(yamlText: string): any {
   try {
     return load(yamlText, { json: true }) || {};
-  }
-  catch (e) {
+  } catch (e) {
     console.warn('js-yaml 解析失败', e);
     return null;
   }

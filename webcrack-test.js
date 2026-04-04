@@ -17,9 +17,8 @@ async function getNodeFromPath() {
     return stdout
       .trim()
       .split(/\r?\n/)
-      .filter(p => p.trim() !== '');
-  }
-  catch (err) {
+      .filter((p) => p.trim() !== '');
+  } catch (err) {
     return [];
   }
 }
@@ -41,9 +40,9 @@ async function findAllNodePaths() {
   // 4. PATH
   const fromPath = await getNodeFromPath();
   console.log('fromPath: ', fromPath);
-  fromPath.forEach(p => set.add(p));
+  fromPath.forEach((p) => set.add(p));
 
-  return [...set].filter(p => require('node:fs').existsSync(p));
+  return [...set].filter((p) => require('node:fs').existsSync(p));
 }
 
 const code = fs.readFileSync('./iframe.js', 'utf8');
@@ -70,8 +69,7 @@ async function update_uri() {
 
     const myVar = result; // 保存到变量
     console.log(myVar);
-  }
-  catch (err) {
+  } catch (err) {
     console.error('Script failed:', err);
   }
 }
@@ -88,8 +86,7 @@ async function getNodeVersion(nodePath) {
       version: stdout.trim(), // 去掉换行符
       error: null,
     };
-  }
-  catch (err) {
+  } catch (err) {
     return {
       path: nodePath,
       version: null,
@@ -102,7 +99,7 @@ async function getNodeVersion(nodePath) {
 async function testAllNodeVersions(nodePaths) {
   // 并发执行所有测试
   const results = await Promise.all(
-    nodePaths.map(path => getNodeVersion(path)),
+    nodePaths.map((path) => getNodeVersion(path))
   );
 
   // 输出结果
@@ -110,8 +107,7 @@ async function testAllNodeVersions(nodePaths) {
   results.forEach(({ path, version, error }) => {
     if (version) {
       console.log(`✅ ${path} -> ${version}`);
-    }
-    else {
+    } else {
       console.log(`❌ ${path} -> Error: ${error}`);
     }
   });
@@ -141,8 +137,7 @@ async function getNodeOsName(nodePath) {
       osName: stdout.trim(),
       error: null,
     };
-  }
-  catch (err) {
+  } catch (err) {
     return {
       path: nodePath,
       osName: null,
@@ -154,15 +149,14 @@ async function getNodeOsName(nodePath) {
 // 主函数：测试所有路径
 async function testAllNodeOsNames(nodePaths) {
   const results = await Promise.all(
-    nodePaths.map(path => getNodeOsName(path)),
+    nodePaths.map((path) => getNodeOsName(path))
   );
 
   console.log('Node.js 运行时操作系统测试结果：');
   results.forEach(({ path, osName, error }) => {
     if (osName) {
       console.log(`✅ ${path} -> ${osName}`);
-    }
-    else {
+    } else {
       console.log(`❌ ${path} -> Error: ${error}`);
     }
   });
@@ -180,8 +174,8 @@ async function findValidNode() {
   //     console('haha..')
   // }, 3000)
   const output = execSync('where.exe node', { encoding: 'utf8' });
-  const pathArr = output.split(/\r?\n/).filter(p => p.trim() !== '');
-  const results = await Promise.all(pathArr.map(path => getNodeOsName(path)));
+  const pathArr = output.split(/\r?\n/).filter((p) => p.trim() !== '');
+  const results = await Promise.all(pathArr.map((path) => getNodeOsName(path)));
   const validPath = results.filter((p) => {
     return !p.osName.startsWith('MINGW');
   });

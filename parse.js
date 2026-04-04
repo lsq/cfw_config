@@ -3,7 +3,7 @@ const { parseData } = require('./get_newpac');
 module.exports.parse = async (
   raw,
   { axios, yaml, notify, console },
-  { name, url, interval, selected },
+  { name, url, interval, selected }
 ) => {
   /*
 // 1. 记录主模块 console 的特征 (用于对比)
@@ -51,7 +51,7 @@ module.exports.parse = async (
   console.log('内存使用情况:', process.memoryUsage());
   console.log('运行时间 (秒):', process.uptime());
   console.log(prependProxies);
-  const prxoyNames = prependProxies.map(item => item.name);
+  const prxoyNames = prependProxies.map((item) => item.name);
   // if (prependProxies) {
   obj.proxies = [...prependProxies, ...obj.proxies];
   // console.log(data)

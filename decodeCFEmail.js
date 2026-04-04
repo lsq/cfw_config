@@ -20,8 +20,7 @@ const doc = new DOMParser().parseFromString(html, 'text/html');
 // const codeEl = xpath.parse('//code', doc);
 const codeEla = xpath.parse('//code').select({ node: doc, isHtml: true });
 console.log(codeEla);
-if (!codeEla)
-  throw new Error('No <code> found');
+if (!codeEla) throw new Error('No <code> found');
 
 // 4. 获取前缀和后缀文本
 const codeEl = codeEla[0];
@@ -45,15 +44,14 @@ console.log(fullLink);
 
 // 正则方式
 // 正则：匹配 Cloudflare 保护的 <a> 标签
-const cfEmailRegex
-  = /<a[^>]*class="__cf_email__"[^>]*data-cfemail="([a-fA-F0-9]+)"[^>]*>.*?<\/a>/g;
+const cfEmailRegex =
+  /<a[^>]*class="__cf_email__"[^>]*data-cfemail="([a-fA-F0-9]+)"[^>]*>.*?<\/a>/g;
 
 function replaceCFEmailWithReal(htmlString) {
   return htmlString.replace(cfEmailRegex, (match, encodedEmail) => {
     try {
       return decodeCFEmail(encodedEmail);
-    }
-    catch (e) {
+    } catch (e) {
       console.warn('Failed to decode CF email:', match);
       return '[email protected]'; // fallback
     }
@@ -69,7 +67,7 @@ const result = html.replace(
   (match, openTag, content, closeTag) => {
     const cleanedContent = replaceCFEmailWithReal(content);
     return openTag + cleanedContent + closeTag;
-  },
+  }
 );
 
 console.log(result);

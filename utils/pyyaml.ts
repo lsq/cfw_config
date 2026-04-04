@@ -4,8 +4,7 @@ let pyodidePromise: Promise<any> | null = null;
 let isPyodideLoading = false;
 
 export async function getPyodide() {
-  if (pyodidePromise)
-    return pyodidePromise;
+  if (pyodidePromise) return pyodidePromise;
   if (isPyodideLoading) {
     // 防止重复加载
     return new Promise((resolve) => {
@@ -42,8 +41,7 @@ export async function getPyodide() {
     pyodidePromise = Promise.resolve(py);
     isPyodideLoading = false;
     return py;
-  }
-  catch (err: any) {
+  } catch (err: any) {
     console.error('Pyodide + PyYAML 加载失败:', err);
     isPyodideLoading = false;
     throw new Error(`PyYAML 加载失败：${err.message}`);
@@ -65,8 +63,7 @@ yaml.safe_load("""${safeText}""") or {}
   `);
 
     return result?.toJs({ dict_converter: Object.fromEntries }) || {};
-  }
-  catch (err: any) {
+  } catch (err: any) {
     console.error('PyYAML 解析错误:', err);
     throw err;
   }

@@ -5,8 +5,8 @@ const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
 const axiosN = require('axios');
 const xpath = require('xpath');
 
-const amazoneUrl
-  = 'https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html';
+const amazoneUrl =
+  'https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html';
 const parser = new DOMParser();
 function xpathHtml(parseString, doc) {
   return xpath.parse(parseString).select({ node: doc, isHtml: true });
@@ -16,8 +16,7 @@ async function saveTextToFile(filename, content, options = {}) {
   const { e = 'utf8', f = 'w' } = options;
   try {
     await fs.writeFile(filename, content, { encoding: e, flag: f });
-  }
-  catch (err) {
+  } catch (err) {
     console.error('保存文件时出错:', err);
   }
 }
@@ -26,8 +25,7 @@ function isValidUrl(str) {
   try {
     const turl = new URL(str);
     return true;
-  }
-  catch {
+  } catch {
     return false;
   }
 }
@@ -48,12 +46,12 @@ async function update_uri() {
       // );
       {
         proxy: proxyConfig,
-      },
+      }
     );
     // saveTextToFile("amazoneInfo-log.html", amazoneResponse.data);
     const retDoc = parser.parseFromString(amazoneResponse.data, 'text/html');
     // const uriNode = xpath.parse("//link[@rel='icon']/@href").select({node: retDoc, isHtml: true})
-    const uriNode = xpathHtml('//link[@rel=\'icon\']/@href', retDoc);
+    const uriNode = xpathHtml("//link[@rel='icon']/@href", retDoc);
     // console.log(uriNode)
     if (uriNode.length > 0) {
       const faviconUri = uriNode[0].nodeValue;
@@ -63,15 +61,15 @@ async function update_uri() {
       }
     }
     const jsDataNode = xpathHtml(
-      '//script[contains(text(), \'(function\')]',
-      retDoc,
+      "//script[contains(text(), '(function')]",
+      retDoc
     );
     // console.log(`jsDataNode: ${jsDataNode}`)
     if (jsDataNode.length > 0) {
       // console.log('-----------------------')
       // console.log(jsDataNode[0].firstChild.nodeValue)
-      const jsData
-        = jsDataNode[0].textContent || jsDataNode[0].firstChild?.nodeValue;
+      const jsData =
+        jsDataNode[0].textContent || jsDataNode[0].firstChild?.nodeValue;
       // console.log("-----------------------");
       // console.log(`jsData:${jsData}`);
       if (jsData) {
@@ -80,7 +78,7 @@ async function update_uri() {
         if (code) {
           // const match = code.match(/\.src\s*=\s*["']([^"']+)["']/);
           const match = code.match(
-            /id",\s*"(https:\/\/(?:[^\n\r/\u2028\u2029]*\/[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF])*[^\n\r/\u2028\u2029]*\/[^\s"']+(?:[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF](?:[^\n\r/\u2028\u2029]*\/[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF])*[^\n\r/\u2028\u2029]*\/[^\s"']+)*\/)"/,
+            /id",\s*"(https:\/\/(?:[^\n\r/\u2028\u2029]*\/[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF])*[^\n\r/\u2028\u2029]*\/[^\s"']+(?:[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF](?:[^\n\r/\u2028\u2029]*\/[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF])*[^\n\r/\u2028\u2029]*\/[^\s"']+)*\/)"/
           )?.[1];
           // console.log(`match: ${match}`)
           /*
@@ -98,7 +96,7 @@ async function update_uri() {
             await saveTextToFile(
               path.join(__dirname, 'ssUrl.log'),
               `${new Date().toLocaleString()}Extracted src: ${extractedUrl}\n`,
-              { f: 'a' },
+              { f: 'a' }
             );
             return extractedUrl;
           }
@@ -106,13 +104,12 @@ async function update_uri() {
       }
     }
     return null;
-  }
-  catch (err) {
+  } catch (err) {
     saveTextToFile(
       path.join(__dirname, 'ssUrl.log'),
-      `${new Date().toLocaleString()} update_uri() -> Fetch error: ${err}`
-      + `\n`,
-      { f: 'a' },
+      `${new Date().toLocaleString()} update_uri() -> Fetch error: ${err}` +
+        `\n`,
+      { f: 'a' }
     );
     return null;
   }

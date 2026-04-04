@@ -8,8 +8,7 @@ async function runCommand() {
   try {
     const { stdout, stderr } = await execPromise('node -v');
     console.log('命令执行成功, Node version:', stdout.trim()); // v20.17.0
-  }
-  catch (err) {
+  } catch (err) {
     console.error('命令执行失败:', err.message);
   }
 }

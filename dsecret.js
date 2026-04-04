@@ -22,13 +22,14 @@ const CONFIG = {
     maxConnectionPerServer: 16, // -x
     // dir: './downloads', // 下载目录
     dir: downloadsFolder(), // 下载目录
-    userAgent: 'Mozilla/5.0 (X11; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0',
+    userAgent:
+      'Mozilla/5.0 (X11; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0',
   },
 };
 
 const header = {
   'User-Agent': CONFIG.aria2Options.userAgent,
-  'Accept': '*/*',
+  Accept: '*/*',
   'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.6,en;q=0.5',
   'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
   'X-Requested-With': 'XMLHttpRequest',
@@ -47,7 +48,9 @@ function parseHtmlResult(html) {
   // 表头通常是第一个 .row，数据从第二个 .row 开始（index=1）
   // const firstDataRow = $('.container-fluid > .row').eq(1);
   // const dataRows = $('div.row[style*="padding: 5px"][style*="border-top"]');
-  const dataRows = $('div.row[style*="middle"][style*="padding: 5px"][style*="border-top"]');
+  const dataRows = $(
+    'div.row[style*="middle"][style*="padding: 5px"][style*="border-top"]'
+  );
   const firstDataRow = dataRows.first();
   // const firstDataRow = $('.container-fluid > .row').filter((i, el) => {
   //   return $(el).find('.btn').length > 0;
@@ -81,10 +84,17 @@ function parseHtmlResult(html) {
   const operationText = operationBtn.text().trim();
 
   let detailHref = null;
-  const completedLink = $('a.btn.btn-success, a.btn.btn-warning').filter((i, el) => {
-    const href = $(el).attr('href');
-    return ($(el).text().trim() === '已完成' || $(el).text().trim() === '执行中') && (href && href.startsWith('/?uuid='));
-  }).first();
+  const completedLink = $('a.btn.btn-success, a.btn.btn-warning')
+    .filter((i, el) => {
+      const href = $(el).attr('href');
+      return (
+        ($(el).text().trim() === '已完成' ||
+          $(el).text().trim() === '执行中') &&
+        href &&
+        href.startsWith('/?uuid=')
+      );
+    })
+    .first();
   if (completedLink.length) {
     detailHref = completedLink.attr('href');
   }
@@ -109,7 +119,7 @@ function parseHtmlResult(html) {
 }
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 // ========== 核心逻辑 ==========
@@ -127,8 +137,7 @@ async function sendDownloadRequest(url, uuid, downloadUrl) {
     const ct = response.headers.get('content-type');
     if (ct?.includes('application/json')) {
       data = await response.json();
-    }
-    else {
+    } else {
       const resData = await response.text();
       console.log(`response data: ${resData}`);
       data = JSON.parse(resData);
@@ -138,12 +147,14 @@ async function sendDownloadRequest(url, uuid, downloadUrl) {
       case 'download_again':
         return { action: 'redirect', url: data.data };
       case 'danger':
-        return { action: 'error', message: data.data || `${downloadUrl}提交失败` };
+        return {
+          action: 'error',
+          message: data.data || `${downloadUrl}提交失败`,
+        };
       default:
         return { action: 'error', message: '未知响应' };
     }
-  }
-  catch (err) {
+  } catch (err) {
     return { action: 'error', message: `${err.message}(${downloadUrl})` };
   }
 }
@@ -154,8 +165,7 @@ async function redirectRequestWithRetry(redirectPath) {
   let attempt = 0;
 
   while (attempt < CONFIG.maxRedirectRetries) {
-    if (attempt > 0)
-      console.log(`${redirectPath} -- 重试第${attempt}次！`);
+    if (attempt > 0) console.log(`${redirectPath} -- 重试第${attempt}次！`);
     attempt++;
     try {
       const res = await fetch(fullUrl, { headers: header });
@@ -177,19 +187,15 @@ async function redirectRequestWithRetry(redirectPath) {
       }
       console.log(`${fileName}: 解析Html后状态: ${result.status}\n`);
       if (result.status === 'processing') {
-        if (attempt >= CONFIG.maxRedirectRetries)
-          break;
+        if (attempt >= CONFIG.maxRedirectRetries) break;
         await sleep(CONFIG.retryIntervalMs);
         continue;
-      }
-      else if (result.status === 'completed') {
+      } else if (result.status === 'completed') {
         return { success: true, links: result.links };
-      }
-      else {
+      } else {
         return { success: false, error: `${fileName} 无法解析页面状态` };
       }
-    }
-    catch (err) {
+    } catch (err) {
       if (attempt >= CONFIG.maxRedirectRetries) {
         return { success: false, error: err.message };
       }
@@ -215,15 +221,13 @@ function extractFileNameFromUrl(url) {
     // 处理可能被编码的情况（如 %2F 等）
     try {
       target = decodeURIComponent(target);
-    }
-    catch (e) {
+    } catch (e) {
       // 如果解码失败，就用原值
     }
 
     // 提取文件名
     return (target.split(/[?#]/)[0].match(/[^/]*$/) || ['unknown_file'])[0];
-  }
-  catch (e) {
+  } catch (e) {
     // 如果不是合法 URL，直接按字符串处理
     return (url.split(/[?#]/)[0].match(/[^/]*$/) || ['unknown_file'])[0];
   }
@@ -239,15 +243,12 @@ async function downloadWithAria2(links, originalUrl) {
   try {
     if (CONFIG.aria2.mode === 'rpc') {
       result = await downloadViaAria2Rpc(links, fileName, outPath);
-    }
-    else if (CONFIG.aria2.mode === 'cli') {
+    } else if (CONFIG.aria2.mode === 'cli') {
       result = await downloadViaAria2Cli(links, fileName, outPath);
-    }
-    else {
+    } else {
       throw new Error(`未知的 aria2 模式: ${CONFIG.aria2.mode}`);
     }
-  }
-  catch (err) {
+  } catch (err) {
     return {
       success: false,
       error: err.message || '未知错误',
@@ -278,7 +279,8 @@ async function downloadViaAria2Rpc(uris, fileName, outPath) {
         out: fileName,
         user_agent: CONFIG.aria2Options.userAgent,
         split: CONFIG.aria2Options.split.toString(),
-        max_connection_per_server: CONFIG.aria2Options.maxConnectionPerServer.toString(),
+        max_connection_per_server:
+          CONFIG.aria2Options.maxConnectionPerServer.toString(),
       },
     ],
   };
@@ -308,8 +310,7 @@ async function downloadViaAria2Rpc(uris, fileName, outPath) {
       gid: data.result, // 可用于查询进度
       message: '任务已通过 RPC 提交至 Aria2',
     };
-  }
-  catch (err) {
+  } catch (err) {
     console.log(`${fileName} RPC 请求失败。。。(${err.message})`);
     return {
       success: false,
@@ -348,8 +349,7 @@ function downloadViaAria2Cli(links, fileName, outPath) {
     aria2.on('close', (code) => {
       if (code === 0) {
         resolve({ success: true, file: outPath, message: 'CLI 下载完成' });
-      }
-      else {
+      } else {
         resolve({ success: false, error: `aria2c 退出码: ${code}` });
       }
     });
@@ -365,7 +365,7 @@ function withTimeout(promise, ms, errorMsg) {
   return Promise.race([
     promise,
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error(errorMsg)), ms),
+      setTimeout(() => reject(new Error(errorMsg)), ms)
     ),
   ]);
 }
@@ -395,8 +395,7 @@ async function processSingleTask(downloadUrl) {
       console.log('📌 Aria2 GID:', result.gid);
     }
     return result;
-  }
-  else {
+  } else {
     console.log('❌ 任务失败:', result.error);
     throw new Error(`任务失败: ${result.error}`);
   }
@@ -412,12 +411,16 @@ async function runConcurrentTasks(taskUrls) {
     const promise = withTimeout(
       processSingleTask(url),
       120_000, // 5分钟超时
-      `任务超时: ${url}`,
+      `任务超时: ${url}`
     );
-      // 包装结果并立即监听完成（成功或失败）
+    // 包装结果并立即监听完成（成功或失败）
     const resultPromise = promise
-      .then(value => ({ url, status: 'fulfilled', value }))
-      .catch(reason => ({ url, status: 'rejected', reason: reason.message || reason }));
+      .then((value) => ({ url, status: 'fulfilled', value }))
+      .catch((reason) => ({
+        url,
+        status: 'rejected',
+        reason: reason.message || reason,
+      }));
 
     // 当任务完成时，自动推入 results
     resultPromise.then((result) => {
@@ -454,15 +457,16 @@ async function main() {
     // 可添加更多
   ];
 
-  console.log(`🚀 启动并发下载任务（最多 ${CONFIG.maxConcurrentTasks} 个并发）`);
+  console.log(
+    `🚀 启动并发下载任务（最多 ${CONFIG.maxConcurrentTasks} 个并发）`
+  );
   const results = await runConcurrentTasks(taskUrls);
 
   console.log('\n=== 最终结果汇总 ===');
   results.forEach((r) => {
     if (r.status === 'fulfilled') {
       console.log(`✅ [${r.url}] 成功 → ${r.value.file}`);
-    }
-    else {
+    } else {
       console.log(`❌ [${r.url}] ${r.reason}`);
     }
   });

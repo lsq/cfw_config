@@ -52,7 +52,7 @@ export function setParser(type: ParserType) {
 // ====================== 正向：链接 → Clash ======================
 export function linkToClash(
   links: string[],
-  mode: ClashOutputMode = 'proxies',
+  mode: ClashOutputMode = 'proxies'
 ): ConvertResult {
   const nodeStrings = links
     .map((link) => {
@@ -60,8 +60,7 @@ export function linkToClash(
         const node = parseUri(link.trim());
         // console.log("node", node)
         return node ? generateClashNode(node) : null;
-      }
-      catch (e) {
+      } catch (e) {
         console.error(e);
         return null;
       }
@@ -79,8 +78,7 @@ export function linkToClash(
 
   if (mode === 'payload')
     return { success: true, data: `payload:\n${content}` };
-  if (mode === 'none')
-    return { success: true, data: content };
+  if (mode === 'none') return { success: true, data: content };
   return { success: true, data: `proxies:\n${content}` };
 }
 
@@ -99,8 +97,7 @@ export async function clashToLink(yamlText: string): Promise<ConvertResult> {
           data: '# js-yaml 解析失败，建议切换到 PyYAML 引擎\n# js-yaml failed, try PyYAML',
         };
       }
-    }
-    else {
+    } else {
       config = await parsePyYaml(yamlText);
     }
 
@@ -114,7 +111,7 @@ export async function clashToLink(yamlText: string): Promise<ConvertResult> {
       config?.payload,
       // proxy-providers 里嵌套的 payload
       Object.values(config?.['proxy-providers'] || {}).flatMap(
-        (p: any) => p?.proxies || p?.payload || [],
+        (p: any) => p?.proxies || p?.payload || []
       ),
       // 直接就是节点数组的情况
       Array.isArray(config) ? config : null,
@@ -147,8 +144,7 @@ export async function clashToLink(yamlText: string): Promise<ConvertResult> {
       success: true,
       data: links.join('\n'),
     };
-  }
-  catch (e: any) {
+  } catch (e: any) {
     return {
       success: false,
       data: `# YAML 解析失败: ${e.message || e}\n# YAML parse failed: ${
@@ -194,7 +190,7 @@ export default function parseUri(uri: string): IProxyConfig {
 
 function getIfNotBlank(
   value: string | undefined,
-  dft?: string,
+  dft?: string
 ): string | undefined {
   return value && value.trim() !== '' ? value : dft;
 }
@@ -217,8 +213,8 @@ function isIPv4(address: string): boolean {
 }
 
 function isIPv6(address: string): boolean {
-  const ipv6Regex
-    = /^([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$|^::$|^::1$|^([0-9a-f]{1,4}:)*::([0-9a-f]{1,4}:)*[0-9a-f]{1,4}$/i;
+  const ipv6Regex =
+    /^([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$|^::$|^::1$|^([0-9a-f]{1,4}:)*::([0-9a-f]{1,4}:)*[0-9a-f]{1,4}$/i;
   return ipv6Regex.test(address);
 }
 
@@ -231,8 +227,7 @@ function decodeBase64OrOriginal(str: string): string {
       bytes[i] = binary.charCodeAt(i);
     }
     return new TextDecoder().decode(bytes);
-  }
-  catch {
+  } catch {
     return str;
   }
 }
@@ -278,7 +273,7 @@ function URI_SS(line: string): IProxyShadowsocksConfig {
         if (v2rayPlugin) {
           proxy.plugin = 'v2ray-plugin';
           proxy['plugin-opts'] = JSON.parse(
-            decodeBase64OrOriginal(v2rayPlugin),
+            decodeBase64OrOriginal(v2rayPlugin)
           );
         }
       }
@@ -290,10 +285,10 @@ function URI_SS(line: string): IProxyShadowsocksConfig {
   const serverAndPort = serverAndPortArray?.[1];
   // console.log(`serverAndPort: ${serverAndPort}`)
   const portIdx = serverAndPort?.lastIndexOf(':') ?? 0;
-  proxy.server
-    = serverAndPort?.substring(0, portIdx)?.replace(/^\[|\]$/g, '') ?? '';
+  proxy.server =
+    serverAndPort?.substring(0, portIdx)?.replace(/^\[|\]$/g, '') ?? '';
   proxy.port = Number.parseInt(
-    `${serverAndPort?.substring(portIdx + 1)}`.match(/\d+/)?.[0] ?? '',
+    `${serverAndPort?.substring(portIdx + 1)}`.match(/\d+/)?.[0] ?? ''
   );
   const userInfo = userInfoStr.match(/(^.*?):(.*$)/);
   proxy.cipher = getCipher(userInfo?.[1]);
@@ -302,15 +297,14 @@ function URI_SS(line: string): IProxyShadowsocksConfig {
   // handle obfs
   const idx = content.indexOf('?plugin=');
   if (idx !== -1) {
-    const pluginInfo
-      = `plugin=${decodeURIComponent(content.split('?plugin=')[1].split('&')[0])}`.split(
-        ';',
+    const pluginInfo =
+      `plugin=${decodeURIComponent(content.split('?plugin=')[1].split('&')[0])}`.split(
+        ';'
       );
     const params: Record<string, any> = {};
     for (const item of pluginInfo) {
       const [key, val] = item.split('=');
-      if (key)
-        params[key] = val || true; // some options like "tls" will not have value
+      if (key) params[key] = val || true; // some options like "tls" will not have value
     }
     switch (params.plugin) {
       case 'obfs-local':
@@ -354,7 +348,7 @@ function URI_SSR(line: string): IProxyshadowsocksRConfig {
   const serverAndPort = line.substring(0, splitIdx);
   const server = serverAndPort.substring(0, serverAndPort.lastIndexOf(':'));
   const port = Number.parseInt(
-    serverAndPort.substring(serverAndPort.lastIndexOf(':') + 1),
+    serverAndPort.substring(serverAndPort.lastIndexOf(':') + 1)
   );
 
   const params = line
@@ -384,14 +378,14 @@ function URI_SSR(line: string): IProxyshadowsocksRConfig {
 
   proxy = {
     ...proxy,
-    'name': other_params.remarks
+    name: other_params.remarks
       ? decodeBase64OrOriginal(other_params.remarks).trim()
       : (proxy.server ?? ''),
     'protocol-param': getIfNotBlank(
-      decodeBase64OrOriginal(other_params.protoparam || '').replace(/\s/g, ''),
+      decodeBase64OrOriginal(other_params.protoparam || '').replace(/\s/g, '')
     ),
     'obfs-param': getIfNotBlank(
-      decodeBase64OrOriginal(other_params.obfsparam || '').replace(/\s/g, ''),
+      decodeBase64OrOriginal(other_params.obfsparam || '').replace(/\s/g, '')
     ),
   };
   return proxy;
@@ -402,7 +396,7 @@ function URI_VMESS(line: string): IProxyVmessConfig {
   let content = decodeBase64OrOriginal(line);
   if (/=\s*vmess/.test(content)) {
     // Quantumult VMess URI format
-    const partitions = content.split(',').map(p => p.trim());
+    const partitions = content.split(',').map((p) => p.trim());
     const params: Record<string, string> = {};
     for (const part of partitions) {
       if (part.includes('=')) {
@@ -412,15 +406,15 @@ function URI_VMESS(line: string): IProxyVmessConfig {
     }
 
     const proxy: IProxyVmessConfig = {
-      'name': partitions[0].split('=')[0].trim(),
-      'type': 'vmess',
-      'server': partitions[1],
-      'port': Number.parseInt(partitions[2], 10),
-      'cipher': getCipher(getIfNotBlank(partitions[3], 'auto')),
-      'uuid': partitions[4].match(/^"(.*)"$/)?.[1] || '',
-      'tls': params.obfs === 'wss',
-      'udp': getIfPresent(params['udp-relay']),
-      'tfo': getIfPresent(params['fast-open']),
+      name: partitions[0].split('=')[0].trim(),
+      type: 'vmess',
+      server: partitions[1],
+      port: Number.parseInt(partitions[2], 10),
+      cipher: getCipher(getIfNotBlank(partitions[3], 'auto')),
+      uuid: partitions[4].match(/^"(.*)"$/)?.[1] || '',
+      tls: params.obfs === 'wss',
+      udp: getIfPresent(params['udp-relay']),
+      tfo: getIfPresent(params['fast-open']),
       'skip-cert-verify': isPresent(params['tls-verification'])
         ? !params['tls-verification']
         : undefined,
@@ -432,34 +426,31 @@ function URI_VMESS(line: string): IProxyVmessConfig {
         proxy['ws-opts'] = {
           path:
             (getIfNotBlank(params['obfs-path']) || '"/"').match(
-              /^"(.*)"$/,
+              /^"(.*)"$/
             )?.[1] || '/',
           headers: {
             Host:
-              params['obfs-header']?.match(/Host:\s*([a-zA-Z0-9-.]*)/)?.[1]
-              || '',
+              params['obfs-header']?.match(/Host:\s*([a-zA-Z0-9-.]*)/)?.[1] ||
+              '',
           },
         };
-      }
-      else {
+      } else {
         throw new Error(`Unsupported obfs: ${params.obfs}`);
       }
     }
 
     return proxy;
-  }
-  else {
+  } else {
     let params: Record<string, any> = {};
 
     try {
       // V2rayN URI format
       params = JSON.parse(content);
-    }
-    catch (e) {
+    } catch (e) {
       // Shadowrocket URI format
       console.warn(
         '[URI_VMESS] JSON.parse(content) failed, falling back to Shadowrocket parsing:',
-        e,
+        e
       );
       const match = /(^[^?]+?)\/?\?(.*)$/.exec(line);
       if (match) {
@@ -471,8 +462,7 @@ function URI_VMESS(line: string): IProxyVmessConfig {
           const value = decodeURIComponent(valueRaw);
           if (!value.includes(',')) {
             params[key] = value;
-          }
-          else {
+          } else {
             params[key] = value.split(',');
           }
         }
@@ -493,17 +483,17 @@ function URI_VMESS(line: string): IProxyVmessConfig {
     const server = params.add;
     const port = Number.parseInt(getIfPresent(params.port), 10);
     const proxy: IProxyVmessConfig = {
-      'name':
-        trimStr(params.ps)
-        ?? trimStr(params.remarks)
-        ?? trimStr(params.remark)
-        ?? `VMess ${server}:${port}`,
-      'type': 'vmess',
+      name:
+        trimStr(params.ps) ??
+        trimStr(params.remarks) ??
+        trimStr(params.remark) ??
+        `VMess ${server}:${port}`,
+      type: 'vmess',
       server,
       port,
-      'cipher': getCipher(getIfPresent(params.scy, 'auto')),
-      'uuid': params.id,
-      'tls': ['tls', true, 1, '1'].includes(params.tls),
+      cipher: getCipher(getIfPresent(params.scy, 'auto')),
+      uuid: params.id,
+      tls: ['tls', true, 1, '1'].includes(params.tls),
       'skip-cert-verify': isPresent(params.verify_cert)
         ? !params.verify_cert
         : undefined,
@@ -511,7 +501,7 @@ function URI_VMESS(line: string): IProxyVmessConfig {
 
     proxy.alterId = Number.parseInt(
       getIfPresent(params.aid ?? params.alterId, 0),
-      10,
+      10
     );
 
     if (proxy.tls && params.sni) {
@@ -521,28 +511,24 @@ function URI_VMESS(line: string): IProxyVmessConfig {
     let httpupgrade = false;
     if (params.net === 'ws' || params.obfs === 'websocket') {
       proxy.network = 'ws';
-    }
-    else if (
-      ['http'].includes(params.net)
-      || ['http'].includes(params.obfs)
-      || ['http'].includes(params.type)
+    } else if (
+      ['http'].includes(params.net) ||
+      ['http'].includes(params.obfs) ||
+      ['http'].includes(params.type)
     ) {
       proxy.network = 'http';
-    }
-    else if (['grpc'].includes(params.net)) {
+    } else if (['grpc'].includes(params.net)) {
       proxy.network = 'grpc';
-    }
-    else if (params.net === 'httpupgrade') {
+    } else if (params.net === 'httpupgrade') {
       proxy.network = 'ws';
       httpupgrade = true;
-    }
-    else if (params.net === 'h2' || proxy.network === 'h2') {
+    } else if (params.net === 'h2' || proxy.network === 'h2') {
       proxy.network = 'h2';
     }
 
     if (proxy.network) {
-      let transportHost
-        = typeof params.host === 'string' ? params.host.trim() : '';
+      let transportHost =
+        typeof params.host === 'string' ? params.host.trim() : '';
       if (!transportHost && typeof params.obfsParam === 'string') {
         try {
           const parsedObfs = JSON.parse(transportHost);
@@ -550,8 +536,7 @@ function URI_VMESS(line: string): IProxyVmessConfig {
           if (parsedHost) {
             transportHost = parsedHost;
           }
-        }
-        catch (e) {
+        } catch (e) {
           console.warn('[URI_VMESS] transportHost JSON.parse failed:', e);
           // ignore JSON parse errors
         }
@@ -568,8 +553,7 @@ function URI_VMESS(line: string): IProxyVmessConfig {
           transportPath = Array.isArray(transportPath)
             ? transportPath[0]
             : transportPath;
-        }
-        else {
+        } else {
           transportPath = '/';
         }
       }
@@ -579,8 +563,7 @@ function URI_VMESS(line: string): IProxyVmessConfig {
           proxy[`grpc-opts`] = {
             'grpc-service-name': getIfNotBlank(transportPath),
           };
-        }
-        else {
+        } else {
           const opts: Record<string, any> = {
             path: getIfNotBlank(transportPath),
             headers: { Host: getIfNotBlank(transportHost) },
@@ -603,8 +586,7 @@ function URI_VMESS(line: string): IProxyVmessConfig {
               break;
           }
         }
-      }
-      else {
+      } else {
         delete proxy.network;
       }
 
@@ -637,15 +619,13 @@ function URI_VLESS(line: string): IProxyVlessConfig {
         line = decoded;
         parsed = /^(.*?)@(.*?):(\d+)\/?(\?(.*?))?(?:#(.*))?$/.exec(decoded)!;
         isShadowrocket = true;
-      }
-      catch (e) {
+      } catch (e) {
         console.warn('Shadowrocket base64 decode failed:', e);
       }
     }
   }
 
-  if (!parsed)
-    throw new Error('Invalid VLESS URI');
+  if (!parsed) throw new Error('Invalid VLESS URI');
 
   // console.log(parsed)
   const [, uuidRaw, server, portStr, , addons = '', nameRaw] = parsed;
@@ -670,19 +650,18 @@ function URI_VLESS(line: string): IProxyVlessConfig {
 
   const params: Record<string, string> = {};
   for (const addon of addons.split('&')) {
-    if (!addon)
-      continue;
+    if (!addon) continue;
     const [key, valueRaw = ''] = addon.split('=');
     const value = decodeURIComponent(valueRaw);
     params[key.toLowerCase()] = value; // 统一小写，兼容大小写混写
   }
   // console.log("params:", params)
 
-  proxy.name
-    = trimStr(name)
-      || trimStr(params.remarks)
-      || trimStr(params.remark)
-      || `VLESS ${server}:${port}`;
+  proxy.name =
+    trimStr(name) ||
+    trimStr(params.remarks) ||
+    trimStr(params.remark) ||
+    `VLESS ${server}:${port}`;
 
   // TLS 处理
   proxy.tls = (params.security && params.security !== 'none') || undefined;
@@ -695,25 +674,20 @@ function URI_VLESS(line: string): IProxyVlessConfig {
   proxy.flow = params.flow ? 'xtls-rprx-vision' : undefined;
   proxy['client-fingerprint'] = params.fp as ClientFingerprint;
   proxy.alpn = params.alpn
-    ? params.alpn.split(',').map(a => a.trim())
+    ? params.alpn.split(',').map((a) => a.trim())
     : undefined;
   proxy['skip-cert-verify'] = /(TRUE|1)/i.test(
-    params.allowinsecure || params.allowInsecure || '',
+    params.allowinsecure || params.allowInsecure || ''
   );
 
   // Reality 参数
   if (params.security === 'reality') {
     const opts: IProxyVlessConfig['reality-opts'] = {};
-    if (params.pbk)
-      opts['public-key'] = params.pbk;
-    if (params.sid)
-      opts['short-id'] = params.sid;
-    if (params.spx)
-      opts['spider-x'] = params.spx;
-    if (params.pqv)
-      opts['mldsa65-verify'] = params.pqv;
-    if (params.ech)
-      opts.ech = params.ech;
+    if (params.pbk) opts['public-key'] = params.pbk;
+    if (params.sid) opts['short-id'] = params.sid;
+    if (params.spx) opts['spider-x'] = params.spx;
+    if (params.pqv) opts['mldsa65-verify'] = params.pqv;
+    if (params.ech) opts.ech = params.ech;
     if (Object.keys(opts).length > 0) {
       proxy['reality-opts'] = opts;
     }
@@ -721,16 +695,11 @@ function URI_VLESS(line: string): IProxyVlessConfig {
 
   // 网络类型
   let network: NetworkType = 'tcp';
-  if (params.type === 'ws' || params.type === 'websocket')
-    network = 'ws';
-  else if (params.type === 'http')
-    network = 'http';
-  else if (params.type === 'xhttp')
-    network = 'xhttp';
-  else if (params.type === 'grpc')
-    network = 'grpc';
-  else if (params.type === 'h2')
-    network = 'h2';
+  if (params.type === 'ws' || params.type === 'websocket') network = 'ws';
+  else if (params.type === 'http') network = 'http';
+  else if (params.type === 'xhttp') network = 'xhttp';
+  else if (params.type === 'grpc') network = 'grpc';
+  else if (params.type === 'h2') network = 'h2';
   proxy.network = network;
 
   // ws/http/grpc opts
@@ -743,13 +712,11 @@ function URI_VLESS(line: string): IProxyVlessConfig {
         if (host.startsWith('{') && host.endsWith('}')) {
           opts.headers = JSON.parse(host);
         }
-      }
-      catch {
+      } catch {
         opts.headers = { Host: host };
       }
     }
-    if (params.path)
-      opts.path = params.path;
+    if (params.path) opts.path = params.path;
     if (network === 'ws' && params.headerType === 'http') {
       opts['v2ray-http-upgrade'] = true;
     }
@@ -763,8 +730,7 @@ function URI_VLESS(line: string): IProxyVlessConfig {
   if (proxy.tls && !proxy.servername) {
     if (proxy['ws-opts']?.headers?.Host) {
       proxy.servername = proxy['ws-opts'].headers.Host;
-    }
-    else if (proxy['http-opts']?.headers?.Host) {
+    } else if (proxy['http-opts']?.headers?.Host) {
       const h = proxy['http-opts'].headers.Host;
       proxy.servername = Array.isArray(h) ? h[0] : h;
     }
@@ -776,8 +742,8 @@ function URI_VLESS(line: string): IProxyVlessConfig {
 
 function URI_Trojan(line: string): IProxyTrojanConfig {
   line = line.split('trojan://')[1];
-  const [, passwordRaw, server, , port, , addons = '', nameRaw]
-    = /^(.*?)@(.*?)(:(\d+))?\/?(\?(.*?))?(?:#(.*))?$/.exec(line) || [];
+  const [, passwordRaw, server, , port, , addons = '', nameRaw] =
+    /^(.*?)@(.*?)(:(\d+))?\/?(\?(.*?))?(?:#(.*))?$/.exec(line) || [];
 
   let portNum = Number.parseInt(`${port}`, 10);
   if (isNaN(portNum)) {
@@ -808,8 +774,7 @@ function URI_Trojan(line: string): IProxyTrojanConfig {
       case 'type':
         if (['ws', 'h2'].includes(value)) {
           proxy.network = value as NetworkType;
-        }
-        else {
+        } else {
           proxy.network = 'tcp';
         }
         break;
@@ -858,8 +823,7 @@ function URI_Trojan(line: string): IProxyTrojanConfig {
       headers: { Host: host },
       path,
     } as WsOptions;
-  }
-  else if (proxy.network === 'grpc') {
+  } else if (proxy.network === 'grpc') {
     proxy['grpc-opts'] = {
       'grpc-service-name': path,
     } as GrpcOptions;
@@ -918,7 +882,7 @@ function URI_Hysteria2(line: string): IProxyHysteria2Config {
     const alpnStr = params.get('alpn')!;
     proxy.alpn = alpnStr
       .split(',')
-      .map(a => a.trim())
+      .map((a) => a.trim())
       .filter(Boolean);
   }
 
@@ -937,8 +901,8 @@ function URI_Hysteria2(line: string): IProxyHysteria2Config {
 
 function URI_Hysteria(line: string): IProxyHysteriaConfig {
   line = line.split(/(hysteria|hy):\/\//)[2];
-  const [, server, , port, , addons = '', nameRaw]
-    = /^(.*?)(:(\d+))?\/?(\?(.*?))?(?:#(.*))?$/.exec(line)!;
+  const [, server, , port, , addons = '', nameRaw] =
+    /^(.*?)(:(\d+))?\/?(\?(.*?))?(?:#(.*))?$/.exec(line)!;
   let portNum = Number.parseInt(`${port}`, 10);
   if (isNaN(portNum)) {
     portNum = 443;
@@ -1035,8 +999,8 @@ function URI_Hysteria(line: string): IProxyHysteriaConfig {
 function URI_TUIC(line: string): IProxyTuicConfig {
   line = line.split(/tuic:\/\//)[1];
 
-  const [, uuid, passwordRaw, server, , port, , addons = '', nameRaw]
-    = /^(.*?):(.*?)@(.*?)(:(\d+))?\/?(\?(.*?))?(?:#(.*))?$/.exec(line) || [];
+  const [, uuid, passwordRaw, server, , port, , addons = '', nameRaw] =
+    /^(.*?):(.*?)@(.*?)(:(\d+))?\/?(\?(.*?))?(?:#(.*))?$/.exec(line) || [];
 
   let portNum = Number.parseInt(`${port}`, 10);
   if (isNaN(portNum)) {
@@ -1114,8 +1078,8 @@ function URI_TUIC(line: string): IProxyTuicConfig {
 
 function URI_Wireguard(line: string): IProxyWireguardConfig {
   line = line.split(/(wireguard|wg):\/\//)[2];
-  const [, , privateKeyRaw, server, , port, , addons = '', nameRaw]
-    = /^((.*?)@)?(.*?)(:(\d+))?\/?(\?(.*?))?(?:#(.*))?$/.exec(line)!;
+  const [, , privateKeyRaw, server, , port, , addons = '', nameRaw] =
+    /^((.*?)@)?(.*?)(:(\d+))?\/?(\?(.*?))?(?:#(.*))?$/.exec(line)!;
 
   let portNum = Number.parseInt(`${port}`, 10);
   if (isNaN(portNum)) {
@@ -1126,12 +1090,12 @@ function URI_Wireguard(line: string): IProxyWireguardConfig {
 
   const name = decodedName ?? `WireGuard ${server}:${port}`;
   const proxy: IProxyWireguardConfig = {
-    'type': 'wireguard',
+    type: 'wireguard',
     name,
     server,
-    'port': portNum,
+    port: portNum,
     'private-key': privateKey,
-    'udp': true,
+    udp: true,
   };
   for (const addon of addons.split('&')) {
     let [key, value] = addon.split('=');
@@ -1148,8 +1112,7 @@ function URI_Wireguard(line: string): IProxyWireguardConfig {
             .replace(/\]$/, '');
           if (isIPv4(ip)) {
             proxy.ip = ip;
-          }
-          else if (isIPv6(ip)) {
+          } else if (isIPv6(ip)) {
             proxy.ipv6 = ip;
           }
         });
@@ -1167,8 +1130,8 @@ function URI_Wireguard(line: string): IProxyWireguardConfig {
         {
           const parsed = value
             .split(',')
-            .map(i => Number.parseInt(i.trim(), 10))
-            .filter(i => Number.isInteger(i));
+            .map((i) => Number.parseInt(i.trim(), 10))
+            .filter((i) => Number.isInteger(i));
           if (parsed.length === 3) {
             proxy.reserved = parsed;
           }
@@ -1199,8 +1162,8 @@ function URI_Wireguard(line: string): IProxyWireguardConfig {
 
 function URI_HTTP(line: string): IProxyHttpConfig {
   line = line.split(/(http|https):\/\//)[2];
-  const [, , authRaw, server, , port, , addons = '', nameRaw]
-    = /^((.*?)@)?(.*?)(:(\d+))?\/?(\?(.*?))?(?:#(.*))?$/.exec(line)!;
+  const [, , authRaw, server, , port, , addons = '', nameRaw] =
+    /^((.*?)@)?(.*?)(:(\d+))?\/?(\?(.*?))?(?:#(.*))?$/.exec(line)!;
 
   let portNum = Number.parseInt(`${port}`, 10);
   if (isNaN(portNum)) {
@@ -1245,13 +1208,12 @@ function URI_HTTP(line: string): IProxyHttpConfig {
           ['dual', 'ipv4', 'ipv6', 'ipv4-prefer', 'ipv6-prefer'].includes(value)
         ) {
           proxy['ip-version'] = value as
-          | 'dual'
-          | 'ipv4'
-          | 'ipv6'
-          | 'ipv4-prefer'
-          | 'ipv6-prefer';
-        }
-        else {
+            | 'dual'
+            | 'ipv4'
+            | 'ipv6'
+            | 'ipv4-prefer'
+            | 'ipv6-prefer';
+        } else {
           proxy['ip-version'] = 'dual';
         }
 
@@ -1266,8 +1228,8 @@ function URI_HTTP(line: string): IProxyHttpConfig {
 
 function URI_SOCKS(line: string): IProxySocks5Config {
   line = line.split(/socks5:\/\//)[1];
-  const [, , authRaw, server, , port, , addons = '', nameRaw]
-    = /^((.*?)@)?(.*?)(:(\d+))?\/?(\?(.*?))?(?:#(.*))?$/.exec(line)!;
+  const [, , authRaw, server, , port, , addons = '', nameRaw] =
+    /^((.*?)@)?(.*?)(:(\d+))?\/?(\?(.*?))?(?:#(.*))?$/.exec(line)!;
 
   let portNum = Number.parseInt(`${port}`, 10);
   if (isNaN(portNum)) {
@@ -1314,13 +1276,12 @@ function URI_SOCKS(line: string): IProxySocks5Config {
           ['dual', 'ipv4', 'ipv6', 'ipv4-prefer', 'ipv6-prefer'].includes(value)
         ) {
           proxy['ip-version'] = value as
-          | 'dual'
-          | 'ipv4'
-          | 'ipv6'
-          | 'ipv4-prefer'
-          | 'ipv6-prefer';
-        }
-        else {
+            | 'dual'
+            | 'ipv4'
+            | 'ipv6'
+            | 'ipv4-prefer'
+            | 'ipv6-prefer';
+        } else {
           proxy['ip-version'] = 'dual';
         }
         break;
@@ -1375,17 +1336,15 @@ function generateClashNode(node: any): string {
     }
   });
 
-  if (node.sni && !clashNode.servername)
-    clashNode.servername = node.sni;
+  if (node.sni && !clashNode.servername) clashNode.servername = node.sni;
 
   // 深度清理空对象、空数组
   const cleanEmpty = (obj: any): any => {
-    if (obj === null || obj === undefined)
-      return undefined;
+    if (obj === null || obj === undefined) return undefined;
     if (Array.isArray(obj)) {
       const arr = obj
         .map(cleanEmpty)
-        .filter(v => v !== undefined && v !== null);
+        .filter((v) => v !== undefined && v !== null);
       return arr.length > 0 ? arr : undefined;
     }
     if (typeof obj === 'object') {
@@ -1393,10 +1352,10 @@ function generateClashNode(node: any): string {
       for (const [k, v] of Object.entries(obj)) {
         const cv = cleanEmpty(v);
         if (
-          cv !== undefined
-          && cv !== null
-          && cv !== ''
-          && (typeof cv !== 'object' || Object.keys(cv).length > 0)
+          cv !== undefined &&
+          cv !== null &&
+          cv !== '' &&
+          (typeof cv !== 'object' || Object.keys(cv).length > 0)
         ) {
           cleaned[k] = cv;
         }
@@ -1439,9 +1398,9 @@ export function generateUri(node: any): string {
         type: 'none',
         host: node['ws-opts']?.headers?.Host || '',
         path:
-          node['ws-opts']?.path
-          || node['grpc-opts']?.['grpc-service-name']
-          || '',
+          node['ws-opts']?.path ||
+          node['grpc-opts']?.['grpc-service-name'] ||
+          '',
         tls: node.tls ? 'tls' : 'none',
         sni: node.servername || '',
         alpn: node.alpn?.join(',') || '',
@@ -1454,8 +1413,7 @@ export function generateUri(node: any): string {
       const params = new URLSearchParams();
       params.set('type', node.network || 'tcp');
       params.set('encryption', 'none');
-      if (node.flow)
-        params.set('flow', node.flow);
+      if (node.flow) params.set('flow', node.flow);
       if (node[`${node.network}-opts`]) {
         // console.log(`${node.network}-opts: ${node[`${node.network}-opts`]}`)
         Object.entries(node[`${node.network}-opts`]).forEach(([key, value]) => {
@@ -1475,24 +1433,17 @@ export function generateUri(node: any): string {
         if (node.fingerprint || node['client-fingerprint'])
           params.set('fp', node.fingerprint || node['client-fingerprint']);
 
-        if (node['skip-cert-verify'])
-          params.set('allowInsecure', '1');
-        if (node.alpn?.length)
-          params.set('alpn', node.alpn.join(','));
+        if (node['skip-cert-verify']) params.set('allowInsecure', '1');
+        if (node.alpn?.length) params.set('alpn', node.alpn.join(','));
 
         // Reality 专属参数
         if (isReality) {
           const ro = node['reality-opts'];
-          if (ro['public-key'])
-            params.set('pbk', ro['public-key']);
-          if (ro['short-id'])
-            params.set('sid', ro['short-id'] || '');
-          if (ro['spider-x'])
-            params.set('spx', ro['spider-x']);
-          if (ro['mldsa65-verify'])
-            params.set('pqv', ro['mldsa65-verify']);
-          if (ro.ech)
-            params.set('ech', ro.ech);
+          if (ro['public-key']) params.set('pbk', ro['public-key']);
+          if (ro['short-id']) params.set('sid', ro['short-id'] || '');
+          if (ro['spider-x']) params.set('spx', ro['spider-x']);
+          if (ro['mldsa65-verify']) params.set('pqv', ro['mldsa65-verify']);
+          if (ro.ech) params.set('ech', ro.ech);
         }
       }
 
@@ -1500,35 +1451,30 @@ export function generateUri(node: any): string {
 
     case 'trojan':
       const trojan = `trojan://${encodeURIComponent(
-        node.password || '',
+        node.password || ''
       )}@${server}:${port}`;
       const tParams = new URLSearchParams();
       if (node.network && node.network !== 'tcp')
         tParams.set('type', node.network);
       if (node.sni || node.servername)
         tParams.set('sni', node.sni || node.servername);
-      if (node['skip-cert-verify'])
-        tParams.set('allowInsecure', '1');
-      if (node.fingerprint)
-        tParams.set('fp', node.fingerprint);
+      if (node['skip-cert-verify']) tParams.set('allowInsecure', '1');
+      if (node.fingerprint) tParams.set('fp', node.fingerprint);
       return `${
         trojan + (tParams.toString() ? `?${tParams.toString()}` : '')
       }#${name}`;
 
     case 'hysteria2':
       const hy2 = `hysteria2://${encodeURIComponent(
-        node.password || '',
+        node.password || ''
       )}@${server}:${port}`;
       const hyParams = new URLSearchParams();
 
-      if (node.sni)
-        hyParams.set('sni', node.sni);
-      if (node.obfs)
-        hyParams.set('obfs', node.obfs);
+      if (node.sni) hyParams.set('sni', node.sni);
+      if (node.obfs) hyParams.set('obfs', node.obfs);
       if (node['obfs-password'])
         hyParams.set('obfs-password', node['obfs-password']);
-      if (node['skip-cert-verify'])
-        hyParams.set('insecure', '1');
+      if (node['skip-cert-verify']) hyParams.set('insecure', '1');
 
       // 修复：添加 alpn
       if (node.alpn && Array.isArray(node.alpn) && node.alpn.length > 0) {
@@ -1541,15 +1487,12 @@ export function generateUri(node: any): string {
 
     case 'tuic':
       const tuic = `tuic://${node.uuid}:${encodeURIComponent(
-        node.password || '',
+        node.password || ''
       )}@${server}:${port}`;
       const tuicParams = new URLSearchParams();
-      if (node.sni)
-        tuicParams.set('sni', node.sni);
-      if (node.alpn)
-        tuicParams.set('alpn', node.alpn.join(','));
-      if (node['skip-cert-verify'])
-        tuicParams.set('allow_insecure', '1');
+      if (node.sni) tuicParams.set('sni', node.sni);
+      if (node.alpn) tuicParams.set('alpn', node.alpn.join(','));
+      if (node['skip-cert-verify']) tuicParams.set('allow_insecure', '1');
       return `${
         tuic + (tuicParams.toString() ? `?${tuicParams.toString()}` : '')
       }#${name}`;

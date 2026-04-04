@@ -5,8 +5,8 @@ const parser = require('node-html-parser');
 const xpath = require('xpath');
 //  https://www.horosama.com/archives/317
 
-const url
-  = 'https://dgithub.xyz/Alvin9999/new-pac/wiki/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7';
+const url =
+  'https://dgithub.xyz/Alvin9999/new-pac/wiki/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7';
 // const url = 'https://fan2.194529.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/'
 //
 async function parse_data() {
@@ -20,13 +20,13 @@ async function parse_data() {
     // const node = xpath.select('//code/text()', doc) // for xpath
     const node = xpath
       .fromPageSource(data)
-      .findElements('//*[contains(text(), \'节点\')'); // for xpath-html
+      .findElements("//*[contains(text(), '节点')"); // for xpath-html
     // console.log(node)
     const root = parser.parse(data);
     // console.log(root.querySelector('.markdown-body > table:nth-child(24) > tbody:nth-child(2) > tr:nth-child(1) > td:nth-child(4)'))
     // console.log(root.querySelector('.markdown-body > table:nth-child(24) > tbody:nth-child(2) > tr:nth-child(1)'))
     const tr = root.querySelector(
-      '.markdown-body > table:nth-child(24) > tbody:nth-child(2) > tr:nth-child(1)',
+      '.markdown-body > table:nth-child(24) > tbody:nth-child(2) > tr:nth-child(1)'
     );
     console.log(tr.textContent);
     // console.log(node[2].nodeValue)
@@ -52,8 +52,7 @@ async function parse_data() {
     ];
 
     return new_pac;
-  }
-  catch (e) {
+  } catch (e) {
     console.log(e);
   }
 }

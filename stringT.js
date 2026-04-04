@@ -6,8 +6,7 @@ const i = 0;
 function mystr() {
   if (i === 0) {
     return 'lsq';
-  }
-  else {
+  } else {
     return '';
   }
 }
@@ -35,8 +34,8 @@ if (process.report?.getReport?.()?.header?.osName?.startsWith?.('MINGW')) {
   mingwPkgConfigPath = process.env.PKG_CONFIG_PATH?.split(';')
     .map((item) => {
       // console.log(item);
-      const ret
-        = spawnSync('cygpath', ['-u', `${item}`], {
+      const ret =
+        spawnSync('cygpath', ['-u', `${item}`], {
           ...spawnSyncOptions,
           shell: false,
         }).stdout || '';

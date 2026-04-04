@@ -24,10 +24,10 @@ const process = require('node:process');
 
 const newline = /\r?\n/;
 // const uriPath = "/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/";
-const fixedurl
-  = 'https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/';
-const ssIpv6
-/*
+const fixedurl =
+  'https://fan3.206102.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/';
+const ssIpv6 =
+  /*
 = `- name: PL【机场推荐：https://a9a.xyz】66
   type: vless
   server: pl0.nerpvpn.net
@@ -38,7 +38,7 @@ const ssIpv6
   ws-opts:
     path: /`;
 */
-  = `- name: newpac-SS-ipv6
+  `- name: newpac-SS-ipv6
   type: ss
   server: 2a14:7584:d0a1::a
   port: 12345
@@ -100,13 +100,12 @@ async function saveTextToFile(filename, content, options = {}) {
   try {
     console.log(`正在wrinting ${filename}...`);
     await fsA.writeFile(filename, content, { encoding: e, flag: f });
-  }
-  catch (err) {
+  } catch (err) {
     console.error('保存文件时出错:', err);
   }
 }
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // 1. 解码 Cloudflare 邮箱
 function decodeCFEmail(encoded) {
@@ -118,15 +117,14 @@ function decodeCFEmail(encoded) {
   return email;
 }
 
-const cfEmailRegex
-  = /<a[^>]*class="__cf_email__"[^>]*data-cfemail="([a-fA-F0-9]+)"[^>]*>.*?<\/a>/g;
+const cfEmailRegex =
+  /<a[^>]*class="__cf_email__"[^>]*data-cfemail="([a-fA-F0-9]+)"[^>]*>.*?<\/a>/g;
 
 function replaceCFEmailWithReal(htmlString) {
   return htmlString.replace(cfEmailRegex, (match, encodedEmail) => {
     try {
       return decodeCFEmail(encodedEmail);
-    }
-    catch (e) {
+    } catch (e) {
       console.warn('Failed to decode CF email:', match);
       return '[email protected]'; // fallback
     }
@@ -146,19 +144,18 @@ function createParseProxies() {
     // 因为 "proxies:" 是合法的 YAML 映射键，值是一个列表
     try {
       const parsed = yaml.load(
-        hasAppended ? data : ((hasAppended = true), `${data}\n${ssIpv6}`),
+        hasAppended ? data : ((hasAppended = true), `${data}\n${ssIpv6}`)
       );
       // parsed 是 { proxies: [ {...}, {...} ] }
       return parsed.proxies.filter((n) => {
         return (
-          n.name !== null
-          && n.server
-          && n.name !== 'Unnamed'
-          && n.server !== null
+          n.name !== null &&
+          n.server &&
+          n.name !== 'Unnamed' &&
+          n.server !== null
         );
       });
-    }
-    catch (err) {
+    } catch (err) {
       console.error('YAML parse error:', err.message);
       throw err;
     }
@@ -178,8 +175,7 @@ async function rparse_data(consoleObj) {
     // 注意：某些沙箱环境可能禁止同步 IO，如果报错请去掉 try-catch 外的逻辑
     try {
       process.stdout.write('');
-    }
-    catch (e) {
+    } catch (e) {
       // 如果无法强制刷新，至少我们尝试了
     }
   }
@@ -201,8 +197,14 @@ async function ttparse_data(consoleObj) {
   const constructorName = exists ? consoleObj.constructor.name : 'NULL';
 
   // 4. 获取原型链上的关键属性 (尝试寻找框架特有的属性，不同框架可能不同，常见如 _path, _ctx 等，这里列出通用检查)
-  const ownKeys = exists ? Object.getOwnPropertyNames(consoleObj).join(',') : 'NULL';
-  const protoKeys = exists ? Object.getOwnPropertyNames(Object.getPrototypeOf(consoleObj) || {}).join(',') : 'NULL';
+  const ownKeys = exists
+    ? Object.getOwnPropertyNames(consoleObj).join(',')
+    : 'NULL';
+  const protoKeys = exists
+    ? Object.getOwnPropertyNames(Object.getPrototypeOf(consoleObj) || {}).join(
+        ','
+      )
+    : 'NULL';
 
   // 5. 尝试判断是否是原生 Node Console (原生通常不会自动写文件到特定路径)
   // 框架注入的对象通常不是 "Console" 类，或者是经过包装的
@@ -229,8 +231,7 @@ async function ttparse_data(consoleObj) {
 
     // 尝试执行实际的日志写入
     consoleObj.log(`  ${new Date().toLocaleString()}: newUri -> (Test Write)`);
-  }
-  else {
+  } else {
     // 如果连 log 都没有，抛出错误让主模块捕获
     throw new Error(`Received invalid console object: ${diagnosticReport}`);
   }
@@ -238,8 +239,8 @@ async function ttparse_data(consoleObj) {
   return diagnosticReport; // 返回报告给主模块处理
 }
 async function getFromGitHub() {
-  const giturl
-    = 'https://gh-proxy.com/https://github.com/YouAreHuman/updatePac/raw/refs/heads/master/newpac.yaml';
+  const giturl =
+    'https://gh-proxy.com/https://github.com/YouAreHuman/updatePac/raw/refs/heads/master/newpac.yaml';
   const gData = await getPublicNodeset(giturl);
   return gData;
 }
@@ -255,14 +256,12 @@ async function parse_data(options = {}) {
     if (url) {
       shouldFetch = true;
       newUri = url;
-    }
-    else {
+    } else {
       const udUrl = await updateUrl(consoleObj);
       if (udUrl) {
         shouldFetch = true;
         newUri = udUrl;
-      }
-      else {
+      } else {
         shouldFetch = false;
         const ret = await getFromGitHub();
         return ret;
@@ -271,7 +270,9 @@ async function parse_data(options = {}) {
     if (shouldFetch) {
       consoleObj.log('开始更新....');
       const v2rayUri = newUri.replace('/v2ray', '/ss');
-      consoleObj.log(` ${new Date().toLocaleString()}: newUri -> ${newUri}\n v2rayUri -> ${v2rayUri}\n`);
+      consoleObj.log(
+        ` ${new Date().toLocaleString()}: newUri -> ${newUri}\n v2rayUri -> ${v2rayUri}\n`
+      );
       // await sleep(3000)
       // const input = await fsA.readFile("./ssrurl.txt", "utf8");
       // const newUri = input?.trim()
@@ -285,7 +286,7 @@ async function parse_data(options = {}) {
             path.join(__dirname, 'ssUrl.log'),
             // new Date().toLocaleString() + ": " + (newUri || url) + (JSON.stringify(newUri)) + "\n",
             `${new Date().toLocaleString()}: parse_data() -> ${link}\n`,
-            { f: 'a' },
+            { f: 'a' }
           );
           const response = await axiosN.get(link);
           // const data = response.data;
@@ -296,7 +297,7 @@ async function parse_data(options = {}) {
             (match, openTag, content, closeTag) => {
               const cleanedContent = replaceCFEmailWithReal(content);
               return openTag + cleanedContent + closeTag;
-            },
+            }
           );
           // console.log(data)
           const doc = parser.parseFromString(data, 'text/html');
@@ -314,7 +315,7 @@ async function parse_data(options = {}) {
     );
     */
           /* for @xmldom
-         */
+           */
           // const node = xpath
           //   .parse("//code[preceding::*[contains(text(),'SSR节点')]]")
           //   .select({ node: doc, isHtml: true });
@@ -323,14 +324,14 @@ async function parse_data(options = {}) {
           const node = xpathHtml(
             '//p[.//code]//code//text()[normalize-space()]',
             // '//p[.//code]//code',
-            doc,
+            doc
           );
 
           const new_pac_link = node
             .map((info) => {
               return info.nodeValue;
             })
-            .filter(item => item !== null);
+            .filter((item) => item !== null);
           const config_data = parseProxies(linkToClash(new_pac_link));
           // console.log(info)
           /*
@@ -358,19 +359,18 @@ async function parse_data(options = {}) {
           // const new_pac = parseNodes(info);
 
           return config_data;
-        }),
+        })
       );
       const new_pac = ret
         .map((result) => {
           if (result.status === 'fulfilled') {
             return result.value;
-          }
-          else {
+          } else {
             saveTextToFile(
               path.join(__dirname, 'ssUrl.log'),
-              `${new Date().toLocaleString()}: parse.js -> Fetch error: ${result.reason}`
-              + `\n`,
-              { f: 'a' },
+              `${new Date().toLocaleString()}: parse.js -> Fetch error: ${result.reason}` +
+                `\n`,
+              { f: 'a' }
             );
             throw result.reason;
           }
@@ -378,8 +378,7 @@ async function parse_data(options = {}) {
         .flat();
       return new_pac;
     }
-  }
-  catch (e) {
+  } catch (e) {
     console.log(e);
   }
 }
@@ -401,8 +400,7 @@ function o_parseProxies(response) {
         n.name !== null && n.server && n.name !== 'Unnamed' && n.server !== null
       );
     });
-  }
-  catch (err) {
+  } catch (err) {
     console.error('YAML parse error:', err.message);
     throw err;
   }
@@ -429,8 +427,7 @@ async function getNodeOsName(nodePath) {
       osName: stdout.trim(),
       error: null,
     };
-  }
-  catch (err) {
+  } catch (err) {
     return {
       path: nodePath,
       osName: null,
@@ -441,17 +438,16 @@ async function getNodeOsName(nodePath) {
 
 async function findLocaleNode() {
   const output = execSync('where.exe node', { encoding: 'utf8' });
-  const nodePaths = output.split(newline).filter(p => p.trim() !== '');
+  const nodePaths = output.split(newline).filter((p) => p.trim() !== '');
   const results = await Promise.all(
-    nodePaths.map(path => getNodeOsName(path)),
+    nodePaths.map((path) => getNodeOsName(path))
   );
 
   console.log('Node.js 运行时操作系统测试结果：');
   results.forEach(({ path, osName, error }) => {
     if (osName) {
       console.log(`✅ ${path} -> ${osName}`);
-    }
-    else {
+    } else {
       console.log(`❌ ${path} -> Error: ${error}`);
     }
   });
@@ -472,7 +468,7 @@ async function findLocaleNode() {
   saveTextToFile(
     path.join(__dirname, 'ssUrl.log'),
     `${new Date().toLocaleString()}: ${validPath}\n`,
-    { f: 'a' },
+    { f: 'a' }
   );
   return validPath;
 }
@@ -486,7 +482,7 @@ async function updateUrl(consoleObj = console) {
   try {
     if (process.platform === 'win32') {
       const output = execSync('where.exe node', { encoding: 'utf8' });
-      const pathArr = output.split(newline).filter(p => p.trim() !== '');
+      const pathArr = output.split(newline).filter((p) => p.trim() !== '');
       // saveTextToFile( __dirname + "/ssUrl.log",
       // new Date().toLocaleString() + `✅ ${Array.isArray(pathArr)}-> ` + pathArr + "\n",
       // { f: "a" },);
@@ -517,45 +513,45 @@ async function updateUrl(consoleObj = console) {
         pathArr.map(async (path) => {
           const nodeInfo = await getNodeOsName(path);
           return nodeInfo;
-        }),
+        })
       );
       saveTextToFile(
         path.join(__dirname, 'ssUrl.log'),
         `${new Date().toLocaleString()}: nodePaths found in: ${JSON.stringify(results)}\n`,
-        { f: 'a' },
+        { f: 'a' }
       );
       const validPath = results
         .filter((p) => {
           return !p.osName.startsWith('MINGW');
         })
-        .map(item => item.path);
+        .map((item) => item.path);
       saveTextToFile(
         path.join(__dirname, 'ssUrl.log'),
         `${new Date().toLocaleString()}: ${validPath}\n`,
-        { f: 'a' },
+        { f: 'a' }
       );
       if (validPath.length > 0) {
         nodePath = validPath[0];
       }
-    }
-    else {
+    } else {
       nodePath = process.execPath;
     }
     consoleObj.log(`nodePath: ${nodePath}\n`);
 
     const nodeOutput = execSync(
       `${nodePath.trim()} ${path.join(__dirname, 'updateUri.js')}`,
-      { encoding: 'utf8' },
+      { encoding: 'utf8' }
     );
-    consoleObj.log(`${new Date().toLocaleString()}: getting new Url ->  ${nodeOutput}\n`);
+    consoleObj.log(
+      `${new Date().toLocaleString()}: getting new Url ->  ${nodeOutput}\n`
+    );
     saveTextToFile(
       path.join(__dirname, 'ssUrl.log'),
       `${new Date().toLocaleString()}: getting new Url ->  ${nodeOutput}`,
-      { f: 'a' },
+      { f: 'a' }
     );
     return nodeOutput?.trim() === 'null' ? null : nodeOutput?.trim();
-  }
-  catch (e) {
+  } catch (e) {
     consoleObj.log(`execSync updateUri.js error: ${e.message}\n`);
   }
 }
@@ -633,18 +629,16 @@ async function getPublicNodeset(giturl) {
       // 例如：data.settings.theme = 'dark';
       console.log('解析YAML完成返回...');
       return data;
-    }
-    else {
+    } else {
       throw new Error('YAML 内容不是有效的对象');
     }
-  }
-  catch (error) {
+  } catch (error) {
     console.error('❌ 获取YAML内容发生错误:', error.message);
     if (error.response) {
       console.error('HTTP 状态码:', error.response.status);
       console.error(
         '响应内容预览:',
-        (await error.response.data?.substring?.(0, 200)) || error.response.data,
+        (await error.response.data?.substring?.(0, 200)) || error.response.data
       );
     }
     process.exit(1);
@@ -663,8 +657,7 @@ async function exportData(storePath, ymlobj) {
     // 保存到本地
     await fsA.writeFile(storePath, newYamlStr, 'utf8');
     console.log(`✅ 修改后的 YAML 已保存到: ${storePath}`);
-  }
-  catch (error) {
+  } catch (error) {
     console.error('❌ 写入数据发生错误:', error.message);
   }
 }
@@ -678,8 +671,7 @@ async function mergeData(getFn, parseFn, storePath) {
     const isDefaultFile = await fileExists(deYaml);
     if (!isDefaultFile) {
       console.log('./default.yml 不存在或无法访问');
-    }
-    else {
+    } else {
       const deData = await fsA.readFile(deYaml, 'utf8');
       const dData = yaml.load(deData);
       if (dData) {
@@ -688,14 +680,13 @@ async function mergeData(getFn, parseFn, storePath) {
     }
 
     console.log(`Proxies: ${JSON.stringify(prependProxies)}`);
-    const prxoyNames = prependProxies.map(item => item.name);
+    const prxoyNames = prependProxies.map((item) => item.name);
     obj.proxies = [...prependProxies, ...obj.proxies];
     console.log(`Proxies: ${JSON.stringify(obj.proxies)}`);
     obj['proxy-groups'][0].proxies.push(...prxoyNames);
     obj['allow-lan'] = true;
     await exportData(storePath, obj);
-  }
-  catch (error) {
+  } catch (error) {
     console.error('❌ 合并数据发生错误:', error.message);
   }
 }
@@ -705,16 +696,17 @@ async function restartMihomo() {
   const port = isWindows ? 56907 : 9090;
   // 3. 构建基础 Headers
   const headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0',
-    'Accept': 'application/json, text/plain, */*',
+    'User-Agent':
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0',
+    Accept: 'application/json, text/plain, */*',
     'Accept-Language': 'en-US,en;q=0.9',
     'Content-Type': 'application/json',
     // 注意：Sec-Fetch-* 和 Sec-GPC 是浏览器自动添加的安全头，
     // 在 Node.js 中手动添加通常会被忽略或导致请求被某些服务器拒绝，建议移除。
     // 如果目标服务器强制校验这些头，可以保留，但通常不需要。
-    'Priority': 'u=0',
+    Priority: 'u=0',
   };
-    // 4. 根据平台决定是否添加 Authorization
+  // 4. 根据平台决定是否添加 Authorization
   if (isWindows) {
     headers.Authorization = 'Bearer 95217e41-622f-4139-a583-f6a228201004';
   }
@@ -728,15 +720,17 @@ async function restartMihomo() {
     // credentials: 'include' 在 Node.js 中通常用于携带 Cookie，需配合 agent 使用，
     // 如果只是简单的 API 调用且无 Cookie 依赖，可省略。若必须，需确保服务端支持。
   };
-  const res = await fetch(`http://127.0.0.1:${port}/configs?force=true`, options);
+  const res = await fetch(
+    `http://127.0.0.1:${port}/configs?force=true`,
+    options
+  );
 
   if (res.status === 204) {
-  // 无内容，不要尝试读取 .json() 或 .text()
+    // 无内容，不要尝试读取 .json() 或 .text()
     console.log('Success, no response body');
     return true;
-  }
-  else if (res.ok) {
-  // 可能有内容
+  } else if (res.ok) {
+    // 可能有内容
     const data = await res.json(); // 或 .text()
     console.log('Response:', data);
     return true;
@@ -750,18 +744,15 @@ async function fileExists(filePath) {
     if (stats.isFile()) {
       console.log(filePath, '是一个文件');
       return true;
-    }
-    else {
+    } else {
       console.log(filePath, '存在但不是文件（可能是目录）');
       return false;
     }
-  }
-  catch (err) {
+  } catch (err) {
     if (err.code === 'ENOENT') {
       console.log(filePath, '文件不存在');
       return false;
-    }
-    else {
+    } else {
       throw err;
     }
   }
@@ -772,23 +763,23 @@ function getType(value) {
 }
 
 function linksToConfig(links) {
-    try {
-    const clashStr = linkToClash(links)
+  try {
+    const clashStr = linkToClash(links);
     // console.log('[linksToConfig] clashStr:', clashStr)
-    const dataObj = yaml.load(clashStr.data)
+    const dataObj = yaml.load(clashStr.data);
     // console.log('[linksToConfig] dataObj:', dataObj)
-    const proxies = dataObj.proxies
+    const proxies = dataObj.proxies;
     // console.log(`[linksToConfig] proxies(${proxies.length}):`, proxies)
-        if (proxies.length > 0) {
-        // console.log('[linksToConfig] proxies:', proxies)
-        return proxies
+    if (proxies.length > 0) {
+      // console.log('[linksToConfig] proxies:', proxies)
+      return proxies;
     }
-        return null
-    } catch (e) {
-        return null
-    }
+    return null;
+  } catch (e) {
+    return null;
+  }
 }
-async function processFiles(fileNames,procFn, basedir = __dirname) {
+async function processFiles(fileNames, procFn, basedir = __dirname) {
   // const fileNames = ['a.txt', 'b.txt', 'c.txt'];
 
   try {
@@ -804,17 +795,16 @@ async function processFiles(fileNames,procFn, basedir = __dirname) {
         // 处理为数组：分割换行符 -> 去除首尾空格 -> 过滤空行
         const lines = content
           .split(newline)
-          .map(line => line.trim())
-          .filter(line => line.length > 0);
+          .map((line) => line.trim())
+          .filter((line) => line.length > 0);
 
         // 返回对象以便后续处理（包含文件名和内容）
-        console.log(`${fileNameWithOutExt} lines: ${lines}, ${getType(lines)}`)
-        const res = procFn(lines)
-        console.log(`processed value: ${JSON.stringify(res)}`)
+        console.log(`${fileNameWithOutExt} lines: ${lines}, ${getType(lines)}`);
+        const res = procFn(lines);
+        console.log(`processed value: ${JSON.stringify(res)}`);
         // console.log(`linkToClash result: ${res.data}`)
-        return { fileName: fileNameWithOutExt, data: res};
-      }
-      catch (err) {
+        return { fileName: fileNameWithOutExt, data: res };
+      } catch (err) {
         console.warn(`⚠️ 读取文件 ${fileName} 失败: ${err.message}`);
         return { fileName: fileNameWithOutExt, data: null }; // 出错时返回空数组
       }
@@ -826,22 +816,24 @@ async function processFiles(fileNames,procFn, basedir = __dirname) {
     // 3. 过滤：只保留数组长度大于 0 的结果，并提取数据部分赋值给 arr
     const arr = results
       // .filter(item => item.data.length > 0) // 核心逻辑：长度为 0 则跳过
-          // .filter(item => {console.log(`${item.fileName}: ${item.data}`);if (item.data.length > 0) return true; return false}) // 核心逻辑：长度为 0 则跳过
-          .map(item => {
-              console.log(`${item.fileName}: ${JSON.stringify(item)}`);
-              if (item.data.length > 0) return true;
-              return false}) // 核心逻辑：长度为 0 则跳过
-      // .map(item => item.data); // 只保留数组内容
+      // .filter(item => {console.log(`${item.fileName}: ${item.data}`);if (item.data.length > 0) return true; return false}) // 核心逻辑：长度为 0 则跳过
+      .map((item) => {
+        console.log(`${item.fileName}: ${JSON.stringify(item)}`);
+        if (item.data.length > 0) return true;
+        return false;
+      }); // 核心逻辑：长度为 0 则跳过
+    // .map(item => item.data); // 只保留数组内容
 
     // 4. 打印最终结果
     // console.log('✅ 处理完成，最终变量 arr:');
     // console.log(arr);
 
     // 验证数据
-    console.log(`\n📊 统计: 原始文件数 ${fileNames.length}, 有效数组数 ${arr.length}`);
+    console.log(
+      `\n📊 统计: 原始文件数 ${fileNames.length}, 有效数组数 ${arr.length}`
+    );
     return arr;
-  }
-  catch (error) {
+  } catch (error) {
     console.error('❌ 发生未知错误:', error);
   }
 }
@@ -854,5 +846,5 @@ exports.restartMihomo = restartMihomo;
 exports.updateUrl = updateUrl;
 exports.exportData = exportData;
 exports.fileExists = fileExists;
-exports.linksToConfig = linksToConfig ;
+exports.linksToConfig = linksToConfig;
 exports.saveTextToFile = saveTextToFile;

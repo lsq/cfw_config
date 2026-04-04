@@ -17,8 +17,8 @@ const fs = require('node:fs').promises;
 const parser = new DOMParser();
 const url = 'https://fan2.194529.xyz/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/';
 // const uriPath = "ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/";
-const amazoneUrl
-  = 'https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html';
+const amazoneUrl =
+  'https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html';
 function xpathHtml(parseString, doc) {
   return xpath.parse(parseString).select({ node: doc, isHtml: true });
 }
@@ -27,8 +27,7 @@ function isValidUrl(str) {
   try {
     const turl = new URL(str);
     return true;
-  }
-  catch {
+  } catch {
     return false;
   }
 }
@@ -40,7 +39,7 @@ async function update_uri() {
   // saveTextToFile("amazoneInfo.html", amazoneResponse.data);
   const retDoc = parser.parseFromString(amazoneResponse.data, 'text/html');
   // const uriNode = xpath.parse("//link[@rel='icon']/@href").select({node: retDoc, isHtml: true})
-  const uriNode = xpathHtml('//link[@rel=\'icon\']/@href', retDoc);
+  const uriNode = xpathHtml("//link[@rel='icon']/@href", retDoc);
   // console.log(uriNode);
   const faviconUri = uriNode[0].nodeValue;
   const retUri = faviconUri.slice(0, faviconUri.lastIndexOf('/') + 1);
@@ -49,8 +48,8 @@ async function update_uri() {
     return retUri;
   }
   const jsDataNode = xpathHtml(
-    '//script[contains(text(), \'(function\')]',
-    retDoc,
+    "//script[contains(text(), '(function')]",
+    retDoc
   );
   // console.log(jsDataNode)
   if (jsDataNode) {
@@ -64,7 +63,7 @@ async function update_uri() {
     if (code) {
       // const match = code.match(/\.src\s*=\s*["']([^"']+)["']/);
       const match = code.match(
-        /id",\s*"(https:\/\/(?:[^\n\r/\u2028\u2029]*\/[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF])*[^\n\r/\u2028\u2029]*\/[^\s"']+(?:[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF](?:[^\n\r/\u2028\u2029]*\/[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF])*[^\n\r/\u2028\u2029]*\/[^\s"']+)*\/)"/,
+        /id",\s*"(https:\/\/(?:[^\n\r/\u2028\u2029]*\/[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF])*[^\n\r/\u2028\u2029]*\/[^\s"']+(?:[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF](?:[^\n\r/\u2028\u2029]*\/[\t\v\f "'\xA0\u1680\u2000-\u200A\u202F\u205F\u3000\uFEFF])*[^\n\r/\u2028\u2029]*\/[^\s"']+)*\/)"/
       )?.[1];
       if (match) {
         if (isValidUrl(match)) {
@@ -72,7 +71,7 @@ async function update_uri() {
           saveTextToFile(
             path.join(__dirname, 'ssUrl.log'),
             `${new Date().toLocaleString()}Extracted src: ${match[1]}\n`,
-            { f: 'a' },
+            { f: 'a' }
           );
           return match;
         }
@@ -81,8 +80,8 @@ async function update_uri() {
   }
 }
 // 原始字符串
-const inputString
-  = '节点：92.118.205.61 端口：22222 密码： dongtaiwang.com  加密方式：aes-256-gcm';
+const inputString =
+  '节点：92.118.205.61 端口：22222 密码： dongtaiwang.com  加密方式：aes-256-gcm';
 // const inputString = `ipv4 节点：92.118.205.61 端口：22222 密码： dongtaiwang.com  加密方式：aes-256-gcm
 //
 // ipv6 节点：2001:bc8:32d7:30b::202 端口：13355 密码： dongtaiwang.com  加密方式：aes-256-gcm`;
@@ -147,8 +146,7 @@ async function saveTextToFile(filename, content, options = {}) {
   const { e = 'utf8', f = 'w' } = options;
   try {
     await fs.writeFile(filename, content, { encoding: e, flag: f });
-  }
-  catch (err) {
+  } catch (err) {
     console.error('保存文件时出错:', err);
   }
 }
@@ -163,15 +161,14 @@ function decodeCFEmail(encoded) {
   return email;
 }
 
-const cfEmailRegex
-  = /<a[^>]*class="__cf_email__"[^>]*data-cfemail="([a-fA-F0-9]+)"[^>]*>.*?<\/a>/g;
+const cfEmailRegex =
+  /<a[^>]*class="__cf_email__"[^>]*data-cfemail="([a-fA-F0-9]+)"[^>]*>.*?<\/a>/g;
 
 function replaceCFEmailWithReal(htmlString) {
   return htmlString.replace(cfEmailRegex, (match, encodedEmail) => {
     try {
       return decodeCFEmail(encodedEmail);
-    }
-    catch (e) {
+    } catch (e) {
       console.warn('Failed to decode CF email:', match);
       return '[email protected]'; // fallback
     }
@@ -199,7 +196,7 @@ async function parse_data() {
           (match, openTag, content, closeTag) => {
             const cleanedContent = replaceCFEmailWithReal(content);
             return openTag + cleanedContent + closeTag;
-          },
+          }
         );
 
         // console.log(data);
@@ -234,7 +231,7 @@ async function parse_data() {
           // '//p[.//code]//code//text()[normalize-space()]',
           '//p[.//code]//code',
           // "//p[.//code]//code//text()[normalize-space()]/replace(replace(., '\n', ' '), '\s+', ' ')", //xpath 2.0
-          doc,
+          doc
         );
         /*
           xpath
@@ -268,7 +265,7 @@ async function parse_data() {
             console.log(`nvalue: ${nvalue}`);
             return nvalue;
           })
-          .filter(p => p !== null);
+          .filter((p) => p !== null);
         console.log(new_pac_link);
         console.log(`link2Clash: ${JSON.stringify(linkToClash(new_pac_link))}`);
         const config_data = parseProxies(linkToClash(new_pac_link));
@@ -285,27 +282,25 @@ async function parse_data() {
     }]
     */
         return config_data;
-      }),
+      })
     );
     const new_pac = ret
       .map((result) => {
         if (result.status === 'fulfilled') {
           return result.value;
-        }
-        else {
+        } else {
           saveTextToFile(
             path.join(__dirname, 'ssUrl.log'),
-            `${new Date().toLocaleString()}Fetch error: ${result.reason}`
-            + `\n`,
-            { f: 'a' },
+            `${new Date().toLocaleString()}Fetch error: ${result.reason}` +
+              `\n`,
+            { f: 'a' }
           );
           throw result.reason;
         }
       })
       .flat();
     return new_pac;
-  }
-  catch (e) {
+  } catch (e) {
     console.log(e);
   }
 }
@@ -323,26 +318,25 @@ function createParseProxies() {
     // 因为 "proxies:" 是合法的 YAML 映射键，值是一个列表
     try {
       const parsed = yaml.load(
-        hasAppended ? data : ((hasAppended = true), `${data}\n${ssIpv6}`),
+        hasAppended ? data : ((hasAppended = true), `${data}\n${ssIpv6}`)
       );
       // parsed 是 { proxies: [ {...}, {...} ] }
       return parsed.proxies.filter((n) => {
         return (
-          n.name !== null
-          && n.server
-          && n.name !== 'Unnamed'
-          && n.server !== null
+          n.name !== null &&
+          n.server &&
+          n.name !== 'Unnamed' &&
+          n.server !== null
         );
       });
-    }
-    catch (err) {
+    } catch (err) {
       console.error('YAML parse error:', err.message);
       throw err;
     }
   };
 }
 
-parse_data().then(data => console.log(data));
+parse_data().then((data) => console.log(data));
 /*
 module.exports.parse = async (raw, { axios, yaml, notify, console }, { name, url, interval, selected }) => {
   const obj = yaml.parse(raw)
