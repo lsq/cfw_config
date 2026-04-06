@@ -5,11 +5,11 @@ shellEmulator: true
 trustPolicy: no-downgrade
 patchedDependencies:
   # prebuild-install: patches/prebuild-install.patch
-  registry-js: patches/registry-js.patch
+  # registry-js: patches/registry-js.patch
   ts-punycode@0.1.2: patches/ts-punycode@0.1.2.patch
 ignoredBuiltDependencies:
   - ts-punycode
 onlyBuiltDependencies:
   - isolated-vm
-  - registry-js
+  # - registry-js
   - ts-punycode
