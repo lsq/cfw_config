@@ -17,8 +17,8 @@ importers:
   .:
     dependencies:
       '@bratel/webcrack':
-        specifier: 2.16.0-beta.3
-        version: 2.16.0-beta.3
+        specifier: 2.16.1
+        version: 2.16.1
       '@nestjs/axios':
         specifier: ^4.0.1
         version: 4.0.1(@nestjs/common@11.1.17(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.14.0)(rxjs@7.8.2)
@@ -232,8 +232,8 @@ packages:
   '@bratel/registry-js@1.17.0':
     resolution: {integrity: sha512-wpJyPAUjcgT5D8pkQfUURb0ionlcMPLQGpC65sn5J73EEt33jLvbHz8+XaIUZC099DB8BPRuz1Bo/tEQai1VDw==}
 
-  '@bratel/webcrack@2.16.0-beta.3':
-    resolution: {integrity: sha512-CFhMnstDEO8A5JpBmCFXmuQBqoqtWBx1Gx5uRxY7KPdMaHPNI9eVcvAdlNg+2Dadqrp0cOf81bCemWW2CkoIRg==}
+  '@bratel/webcrack@2.16.1':
+    resolution: {integrity: sha512-NwUk2PTk6+IpH574AX+ZxraRMfiDbbC8TKytPAEG8KRs2M9by93kEAZYrRJ2PD5tnx/LJsl3XpaMDPz97n1p1w==}
     engines: {node: '>=22.0.0 <23 || >=24.0.0 <25'}
     hasBin: true
 
@@ -3174,7 +3174,7 @@ snapshots:
       - supports-color
     optional: true
 
-  '@bratel/webcrack@2.16.0-beta.3':
+  '@bratel/webcrack@2.16.1':
     dependencies:
       '@babel/generator': 7.29.1
       '@babel/helper-validator-identifier': 7.28.5
