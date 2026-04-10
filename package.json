@@ -17,7 +17,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@bratel/webcrack": "2.16.3",
+    "@bratel/webcrack": "2.16.4",
     "@nestjs/axios": "^4.0.1",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^25.5.0",
