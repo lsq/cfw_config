@@ -17,7 +17,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@bratel/webcrack": "2.16.4",
+    "@bratel/webcrack": "^2.16.4",
     "@nestjs/axios": "^4.0.1",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^25.5.0",
@@ -44,7 +44,7 @@
     "@types/node": "^25.5.0",
     "@xmldom/xmldom": "^0.9.0",
     "eslint": "^10.1.0",
-    "prettier": "3.8.3",
+    "prettier": "3.8.1",
     "prettier-eslint": "^16.4.2"
   },
   "overrides": {

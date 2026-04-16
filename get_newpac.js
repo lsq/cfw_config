@@ -22,6 +22,11 @@ const { linkToClash } = require('./lib/converter');
 const parser = new DOMParser();
 const process = require('node:process');
 
+const isArray = (data) => Array.isArray(data) && data.length > 0;
+function getFileNames(data) {
+  return isArray(data?.fileName) ? data.fileName : null;
+}
+
 const newline = /\r?\n/;
 // const uriPath = "/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7/";
 const fixedurl =
@@ -661,10 +666,23 @@ async function exportData(storePath, ymlobj) {
     console.error('❌ 写入数据发生错误:', error.message);
   }
 }
+async function readyaml(filename) {
+  try {
+    const ymlContent = await fsA.readFile(filename, 'utf8');
+    const data = yaml.load(ymlContent);
+    if (data) return data;
+    return null;
+  } catch (e) {
+    console.log(`${filename} 不存在，yaml内容返回null`);
+    return null;
+  }
+}
 
 async function mergeData(getFn, parseFn, storePath) {
   try {
-    let prependProxies;
+    let prependProxies = [];
+    let proxyNames = [];
+    const appendProxyGroups = [];
     const obj = await getFn();
     prependProxies = await parseFn();
     const deYaml = path.join(__dirname, './default.yaml');
@@ -672,18 +690,40 @@ async function mergeData(getFn, parseFn, storePath) {
     if (!isDefaultFile) {
       console.log('./default.yml 不存在或无法访问');
     } else {
-      const deData = await fsA.readFile(deYaml, 'utf8');
-      const dData = yaml.load(deData);
+      const dData = await readyaml(deYaml);
+      // console.log(dData)
       if (dData) {
         prependProxies = [...prependProxies, ...dData];
+        proxyNames = prependProxies.map((item) => item.name);
+      }
+    }
+
+    const configData = await readConfig(
+      path.join(__dirname, 'config.yaml'),
+      getFileNames
+    );
+    // console.log(`configData: ${configData}`);
+    if (isArray(configData)) {
+      const addPoxyData = await processFiles(configData, linksToConfig);
+      // console.log(addPoxyData);
+      if (isArray(addPoxyData)) {
+        for (const f of addPoxyData) {
+          prependProxies.push(...f.data);
+          proxyNames.push(f.fileName);
+          appendProxyGroups.push({
+            name: f.fileName,
+            proxies: f.data.map((f) => f.name),
+            type: 'select',
+          });
+        }
       }
     }
 
     console.log(`Proxies: ${JSON.stringify(prependProxies)}`);
-    const prxoyNames = prependProxies.map((item) => item.name);
     obj.proxies = [...prependProxies, ...obj.proxies];
     console.log(`Proxies: ${JSON.stringify(obj.proxies)}`);
-    obj['proxy-groups'][0].proxies.push(...prxoyNames);
+    obj['proxy-groups'][0].proxies.push(...proxyNames);
+    obj['proxy-groups'].push(...appendProxyGroups);
     obj['allow-lan'] = true;
     await exportData(storePath, obj);
   } catch (error) {
@@ -779,6 +819,21 @@ function linksToConfig(links) {
     return null;
   }
 }
+
+async function readConfig(filename, filterFn) {
+  try {
+    const data = await readyaml(filename);
+    if (data === null) {
+      return null;
+    }
+    if (typeof filterFn === 'function') {
+      return filterFn(data);
+    }
+  } catch (e) {
+    console.error(e.message);
+    return null;
+  }
+}
 async function processFiles(fileNames, procFn, basedir = __dirname) {
   // const fileNames = ['a.txt', 'b.txt', 'c.txt'];
 
@@ -799,9 +854,9 @@ async function processFiles(fileNames, procFn, basedir = __dirname) {
           .filter((line) => line.length > 0);
 
         // 返回对象以便后续处理（包含文件名和内容）
-        console.log(`${fileNameWithOutExt} lines: ${lines}, ${getType(lines)}`);
+        // console.log(`${fileNameWithOutExt} lines: ${lines}, ${getType(lines)}`);
         const res = procFn(lines);
-        console.log(`processed value: ${JSON.stringify(res)}`);
+        // console.log(`processed value: ${JSON.stringify(res)}`);
         // console.log(`linkToClash result: ${res.data}`)
         return { fileName: fileNameWithOutExt, data: res };
       } catch (err) {
@@ -817,9 +872,10 @@ async function processFiles(fileNames, procFn, basedir = __dirname) {
     const arr = results
       // .filter(item => item.data.length > 0) // 核心逻辑：长度为 0 则跳过
       // .filter(item => {console.log(`${item.fileName}: ${item.data}`);if (item.data.length > 0) return true; return false}) // 核心逻辑：长度为 0 则跳过
-      .map((item) => {
-        console.log(`${item.fileName}: ${JSON.stringify(item)}`);
-        if (item.data.length > 0) return true;
+      // .map((item) => {
+      .filter((item) => {
+        // console.log(`${item.fileName}: ${JSON.stringify(item)}`);
+        if (isArray(item?.data)) return true;
         return false;
       }); // 核心逻辑：长度为 0 则跳过
     // .map(item => item.data); // 只保留数组内容
@@ -829,9 +885,7 @@ async function processFiles(fileNames, procFn, basedir = __dirname) {
     // console.log(arr);
 
     // 验证数据
-    console.log(
-      `\n📊 统计: 原始文件数 ${fileNames.length}, 有效数组数 ${arr.length}`
-    );
+    // console.log( `\n📊 统计: 原始文件数 ${fileNames.length}, 有效数组数 ${arr.length}`);
     return arr;
   } catch (error) {
     console.error('❌ 发生未知错误:', error);
@@ -839,6 +893,8 @@ async function processFiles(fileNames, procFn, basedir = __dirname) {
 }
 
 exports.processFiles = processFiles;
+exports.readyaml = readyaml;
+exports.readConfig = readConfig;
 exports.parseData = parse_data;
 exports.mergeData = mergeData;
 exports.getPublicNodeset = getPublicNodeset;

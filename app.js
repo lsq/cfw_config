@@ -48,6 +48,7 @@ if (require('node:process').platform === 'win32') {
   outputPath = path.join(__dirname, 't_modified.yaml');
 } else {
   outputPath = mhdir;
+  // outputPath = newpacData;
 }
 
 function getHomeDir() {

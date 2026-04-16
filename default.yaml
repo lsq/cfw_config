@@ -79,3 +79,57 @@
   cipher: auto
   alterId: 64
   tls: false
+- name: MY【机场推荐：https://a9a.xyz】1
+  type: vmess
+  server: v12.hdacd.com
+  port: 30812
+  uuid: cbb3f877-d1fb-344c-87a9-d153bffd5484
+  cipher: auto
+  alterId: 0
+  tls: false
+- name: ID【机场推荐：https://a9a.xyz】2
+  type: vmess
+  server: v30.hdacd.com
+  port: 30830
+  uuid: cbb3f877-d1fb-344c-87a9-d153bffd5484
+  cipher: auto
+  alterId: 0
+  tls: false
+- name: HK【机场推荐：https://a9a.xyz】3
+  type: vmess
+  server: 103.181.164.145
+  port: 51556
+  uuid: 418048af-a293-4b99-9b0c-98ca3580dd24
+  cipher: auto
+  alterId: 0
+  tls: false
+- name: US【机场推荐：https://a9a.xyz】7
+  type: vmess
+  server: 82.198.246.250
+  port: 180
+  uuid: d13fc2f5-3e05-4795-81eb-44143a09e552
+  cipher: auto
+  alterId: 0
+  tls: false
+- name: CA【机场推荐：https://a9a.xyz】9
+  type: vless
+  server: fm3.pages.dev
+  port: 443
+  uuid: 873914f7-1b3d-481d-9a34-69bc85f64aac
+  network: ws
+  tls: true
+  skip-cert-verify: false
+  servername: fm3.pages.dev
+  client-fingerprint: randomized
+  ws-opts:
+    headers:
+      Host: fm3.pages.dev
+    path: /?ed=2560
+- name: HK【机场推荐：https://a9a.xyz】10
+  type: vmess
+  server: efan.dnsefan04881.com
+  port: 7754
+  uuid: 009e558d-3cf4-49d8-b5e4-82c9e14fe1a4
+  cipher: auto
+  alterId: 0
+  tls: false

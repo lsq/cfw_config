@@ -7,6 +7,7 @@ patchedDependencies:
   # prebuild-install: patches/prebuild-install.patch
   # registry-js: patches/registry-js.patch
   ts-punycode@0.1.2: patches/ts-punycode@0.1.2.patch
+  # node-gyp-build: patches/node-gyp-build.patch
 ignoredBuiltDependencies:
   - ts-punycode
 onlyBuiltDependencies:
