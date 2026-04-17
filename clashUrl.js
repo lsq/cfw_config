@@ -48,8 +48,8 @@ const ssUrl =
 // = 'ss://YWVzLTI1Ni1nY206YWx2aW45OTk5LmNvbQ@[2a14:7584:d0a1::a]:12345#SS%E8%8A%82%E7%82%B9-ipv6';
 //
 const tuicUrl = [
-'tuic://9bbd1f42-7ae7-4239-bd10-a68de95e3295:dongtaiwang.com@ip1.758733.xyz:10088?alpn=h3&congestion_control=bbr&allow_insecure=1&sni=apple.com&udp_relay_mode=native#%F0%9F%87%A9%F0%9F%87%AADE_2'
-]
+  'tuic://9bbd1f42-7ae7-4239-bd10-a68de95e3295:dongtaiwang.com@ip1.758733.xyz:10088?alpn=h3&congestion_control=bbr&allow_insecure=1&sni=apple.com&udp_relay_mode=native#%F0%9F%87%A9%F0%9F%87%AADE_2',
+];
 const newVmess = [...new Set(vmessUrl)];
 // const newVmess = [...new Set(tuicUrl)];
 console.log(`new Url: length: ${newVmess.length}/${vmessUrl.length}`);

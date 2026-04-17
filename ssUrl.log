@@ -8821,3 +8821,23 @@ https://fan3.206102.xyz/v2ray免费账号/
 2026/4/16 20:00:03: getting new Url ->  null
 2026/4/16 21:05:40 update_uri() -> Fetch error: AggregateError
 2026/4/16 21:05:40: getting new Url ->  null
+2026/4/16 21:59:01 update_uri() -> Fetch error: AggregateError
+2026/4/16 21:59:01: getting new Url ->  null
+2026/4/16 22:00:02 update_uri() -> Fetch error: AggregateError
+2026/4/16 22:00:02: getting new Url ->  null
+2026/4/16 22:06:10 update_uri() -> Fetch error: AggregateError
+2026/4/16 22:06:10: getting new Url ->  null
+2026/4/16 22:07:34 update_uri() -> Fetch error: AggregateError
+2026/4/16 22:07:34: getting new Url ->  null
+2026/4/17 08:57:08 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/4/17 08:57:07: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/4/17 08:57:07: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/4/17 08:57:08: getting new Url ->  null
+2026/4/17 09:59:01 update_uri() -> Fetch error: AggregateError
+2026/4/17 09:59:01: getting new Url ->  null
+2026/4/17 10:00:02 update_uri() -> Fetch error: AggregateError
+2026/4/17 10:00:02: getting new Url ->  null
+2026/4/17 10:59:01 update_uri() -> Fetch error: AggregateError
+2026/4/17 10:59:01: getting new Url ->  null
+2026/4/17 11:00:02 update_uri() -> Fetch error: AggregateError
+2026/4/17 11:00:02: getting new Url ->  null

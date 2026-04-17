@@ -58,7 +58,6 @@ export function linkToClash(
     .map((link) => {
       try {
         const node = parseUri(link.trim());
-        // console.log("node", node)
         return node ? generateClashNode(node) : null;
       } catch (e) {
         console.error(e);
@@ -85,7 +84,8 @@ export function linkToClash(
 // ====================== 反向：Clash → 链接 ======================
 export async function clashToLink(yamlText: string): Promise<ConvertResult> {
   try {
-    yamlText = yamlText.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+    // Strip control chars except tab (\x09), LF (\x0A), CR (\x0D) — newlines are required for YAML structure
+    yamlText = yamlText.replace(/[\x00-\x08\v\f\x0E-\x1F\x7F-\x9F]/g, '');
 
     let config: any;
 
@@ -220,13 +220,16 @@ function isIPv6(address: string): boolean {
 
 function decodeBase64OrOriginal(str: string): string {
   try {
-    // return atob(str);
     const binary = atob(str);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-      bytes[i] = binary.charCodeAt(i);
+    // Attempt UTF-8 decode so emoji / CJK in vmess JSON and SSR remarks survive the round-trip.
+    // If the bytes aren't valid UTF-8 (e.g. a raw binary SS password) we fall back to the
+    // raw Latin-1 binary string, preserving the old behaviour.
+    try {
+      const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+      return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    } catch {
+      return binary;
     }
-    return new TextDecoder().decode(bytes);
   } catch {
     return str;
   }
@@ -256,7 +259,6 @@ function URI_SS(line: string): IProxyShadowsocksConfig {
   content = content.split('#')[0]; // strip proxy name
   // handle IPV4 and IPV6
   let serverAndPortArray = content.match(/@([^/]*)(\/|$)/);
-  // console.log("serverAndPortArray:", serverAndPortArray)
   let userInfoStr = decodeBase64OrOriginal(content.split('@')[0]);
   let query = '';
   if (!serverAndPortArray) {
@@ -283,7 +285,6 @@ function URI_SS(line: string): IProxyShadowsocksConfig {
     serverAndPortArray = content.match(/@([^/]*)(\/|$)/);
   }
   const serverAndPort = serverAndPortArray?.[1];
-  // console.log(`serverAndPort: ${serverAndPort}`)
   const portIdx = serverAndPort?.lastIndexOf(':') ?? 0;
   proxy.server =
     serverAndPort?.substring(0, portIdx)?.replace(/^\[|\]$/g, '') ?? '';
@@ -393,6 +394,14 @@ function URI_SSR(line: string): IProxyshadowsocksRConfig {
 
 function URI_VMESS(line: string): IProxyVmessConfig {
   line = line.split('vmess://')[1];
+
+  // Strip #fragment before base64 decoding — some clients append #name to V2rayN URIs,
+  // but '#' is not valid base64 and causes decodeBase64OrOriginal to return the raw string.
+  const hashIndex = line.indexOf('#');
+  const fragment =
+    hashIndex !== -1 ? decodeURIComponent(line.slice(hashIndex + 1)) : '';
+  if (hashIndex !== -1) line = line.slice(0, hashIndex);
+
   let content = decodeBase64OrOriginal(line);
   if (/=\s*vmess/.test(content)) {
     // Quantumult VMess URI format
@@ -487,6 +496,7 @@ function URI_VMESS(line: string): IProxyVmessConfig {
         trimStr(params.ps) ??
         trimStr(params.remarks) ??
         trimStr(params.remark) ??
+        trimStr(fragment) ??
         `VMess ${server}:${port}`,
       type: 'vmess',
       server,
@@ -527,19 +537,16 @@ function URI_VMESS(line: string): IProxyVmessConfig {
     }
 
     if (proxy.network) {
-      let transportHost =
-        typeof params.host === 'string' ? params.host.trim() : '';
-      if (!transportHost && typeof params.obfsParam === 'string') {
-        try {
-          const parsedObfs = JSON.parse(transportHost);
-          const parsedHost = parsedObfs?.Host;
-          if (parsedHost) {
-            transportHost = parsedHost;
-          }
-        } catch (e) {
-          console.warn('[URI_VMESS] transportHost JSON.parse failed:', e);
-          // ignore JSON parse errors
+      let transportHost = params.host ?? params.obfsParam;
+      try {
+        const parsedObfs = JSON.parse(transportHost);
+        const parsedHost = parsedObfs?.Host;
+        if (parsedHost) {
+          transportHost = parsedHost;
         }
+      } catch (e) {
+        console.warn('[URI_VMESS] transportHost JSON.parse failed:', e);
+        // ignore JSON parse errors
       }
 
       let transportPath = params.path;
@@ -627,8 +634,12 @@ function URI_VLESS(line: string): IProxyVlessConfig {
 
   if (!parsed) throw new Error('Invalid VLESS URI');
 
-  // console.log(parsed)
-  const [, uuidRaw, server, portStr, , addons = '', nameRaw] = parsed;
+  const [, uuidRaw, serverRaw, portStr, , addons = '', nameRaw] = parsed;
+  // Strip IPv6 brackets: "[2001:db8::1]" → "2001:db8::1"
+  const server =
+    serverRaw.startsWith('[') && serverRaw.endsWith(']')
+      ? serverRaw.slice(1, -1)
+      : serverRaw;
   let uuid = uuidRaw;
   if (isShadowrocket) {
     uuid = uuidRaw.replace(/^.*?:/g, '');
@@ -638,7 +649,6 @@ function URI_VLESS(line: string): IProxyVlessConfig {
   uuid = decodeURIComponent(uuid);
   const nameEncoded = nameRaw || '';
   const name = decodeURIComponent(nameEncoded);
-  // console.log("name:", name)
 
   const proxy: IProxyVlessConfig = {
     type: 'vless',
@@ -655,7 +665,6 @@ function URI_VLESS(line: string): IProxyVlessConfig {
     const value = decodeURIComponent(valueRaw);
     params[key.toLowerCase()] = value; // 统一小写，兼容大小写混写
   }
-  // console.log("params:", params)
 
   proxy.name =
     trimStr(name) ||
@@ -723,7 +732,6 @@ function URI_VLESS(line: string): IProxyVlessConfig {
     if (Object.keys(opts).length > 0 && network !== 'tcp') {
       proxy[`${network}-opts`] = opts;
     }
-    // console.log("network-opt", opts)
   }
 
   // 自动填充 servername（很多客户端省略 sni）
@@ -736,14 +744,18 @@ function URI_VLESS(line: string): IProxyVlessConfig {
     }
   }
 
-  // console.log("proxy",proxy)
   return proxy;
 }
 
 function URI_Trojan(line: string): IProxyTrojanConfig {
   line = line.split('trojan://')[1];
-  const [, passwordRaw, server, , port, , addons = '', nameRaw] =
+  const [, passwordRaw, serverRaw, , port, , addons = '', nameRaw] =
     /^(.*?)@(.*?)(:(\d+))?\/?(\?(.*?))?(?:#(.*))?$/.exec(line) || [];
+  // Strip IPv6 brackets: "[2001:db8::1]" → "2001:db8::1"
+  const server =
+    serverRaw?.startsWith('[') && serverRaw?.endsWith(']')
+      ? serverRaw.slice(1, -1)
+      : serverRaw;
 
   let portNum = Number.parseInt(`${port}`, 10);
   if (isNaN(portNum)) {
@@ -1406,7 +1418,16 @@ export function generateUri(node: any): string {
         alpn: node.alpn?.join(',') || '',
         fp: node.fingerprint || node['client-fingerprint'] || '',
       };
-      return `vmess://${Buffer.from(JSON.stringify(vmess), 'utf8').toString('base64')}#${name}`;
+      // Name is already encoded in the JSON `ps` field; do NOT append #fragment,
+      // as '#' is not valid base64 and breaks URI_VMESS parsing on the return trip.
+      // Encode as UTF-8 bytes before base64 so emoji / CJK names don't throw in btoa().
+      const jsonStr = JSON.stringify(vmess);
+      const utf8Bytes = new TextEncoder().encode(jsonStr);
+      const vmessBase64 = btoa(
+        utf8Bytes.reduce((acc, b) => acc + String.fromCharCode(b), '')
+      );
+      return `vmess://${vmessBase64}`;
+    // return `vmess://${Buffer.from(JSON.stringify(vmess), 'utf8').toString('base64')}#${name}`;
 
     case 'vless':
       const link = `vless://${node.uuid}@${server}:${port}`;
