@@ -153,6 +153,8 @@ function createParseProxies() {
       );
       // parsed 是 { proxies: [ {...}, {...} ] }
       return parsed.proxies.filter((n) => {
+        // if (n.name === 'hysteria2')
+        // console.log(`hysteria2: ${JSON.stringify(n)}`)
         return (
           n.name !== null &&
           n.server &&
@@ -269,14 +271,15 @@ async function parse_data(options = {}) {
       } else {
         shouldFetch = false;
         const ret = await getFromGitHub();
+        console.log(`ret: ${JSON.stringify(ret)}`);
         return ret;
       }
     }
     if (shouldFetch) {
       consoleObj.log('开始更新....');
-      const v2rayUri = newUri.replace('/v2ray', '/ss');
+      const SSUri = newUri.replace('/v2ray', '/ss');
       consoleObj.log(
-        ` ${new Date().toLocaleString()}: newUri -> ${newUri}\n v2rayUri -> ${v2rayUri}\n`
+        ` ${new Date().toLocaleString()}: newUri -> ${newUri}\n SSUri -> ${SSUri}\n`
       );
       // await sleep(3000)
       // const input = await fsA.readFile("./ssrurl.txt", "utf8");
@@ -286,7 +289,12 @@ async function parse_data(options = {}) {
       // }
       const parseProxies = createParseProxies();
       const ret = await Promise.allSettled(
-        [newUri, v2rayUri].map(async (link) => {
+        [
+          { link: newUri, prefix: 'v2ray' },
+          { link: SSUri, prefix: 'ss' },
+        ].map(async (linkInfo) => {
+          const pref = linkInfo.prefix;
+          const link = linkInfo.link;
           saveTextToFile(
             path.join(__dirname, 'ssUrl.log'),
             // new Date().toLocaleString() + ": " + (newUri || url) + (JSON.stringify(newUri)) + "\n",
@@ -363,7 +371,10 @@ async function parse_data(options = {}) {
     */
           // const new_pac = parseNodes(info);
 
-          return config_data;
+          return config_data.map((itm) => ({
+            ...itm,
+            name: `${pref}-${itm.name}`,
+          }));
         })
       );
       const new_pac = ret
