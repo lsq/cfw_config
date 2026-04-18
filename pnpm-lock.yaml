@@ -30,7 +30,7 @@ importers:
         version: 25.6.0
       '@xmldom/xmldom':
         specifier: ^0.9.9
-        version: 0.9.9
+        version: 0.9.10
       axios:
         specifier: ^1.14.0
         version: 1.15.0
@@ -702,8 +702,8 @@ packages:
   '@vue/shared@3.5.30':
     resolution: {integrity: sha512-YXgQ7JjaO18NeK2K9VTbDHaFy62WrObMa6XERNfNOkAhD1F1oDSf3ZJ7K6GqabZ0BvSDHajp8qfS5Sa2I9n8uQ==}
 
-  '@xmldom/xmldom@0.9.9':
-    resolution: {integrity: sha512-qycIHAucxy/LXAYIjmLmtQ8q9GPnMbnjG1KXhWm9o5sCr6pOYDATkMPiTNa6/v8eELyqOQ2FsEqeoFYmgv/gJg==}
+  '@xmldom/xmldom@0.9.10':
+    resolution: {integrity: sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw==}
     engines: {node: '>=14.6'}
 
   '@yarnpkg/lockfile@1.1.0':
@@ -3889,7 +3889,7 @@ snapshots:
 
   '@vue/shared@3.5.30': {}
 
-  '@xmldom/xmldom@0.9.9': {}
+  '@xmldom/xmldom@0.9.10': {}
 
   '@yarnpkg/lockfile@1.1.0': {}
 
