@@ -1,3 +1,4 @@
+proxies:
 - name: US【机场推荐：https://a9a.xyz】6
   type: vmess
   server: 82.198.246.97

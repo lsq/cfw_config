@@ -9,7 +9,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const util = require('node:util');
 const axiosN = require('axios');
-
+const os = require('os')
 const execAsync = util.promisify(exec);
 const execFileAsync = util.promisify(execFile);
 const fsA = require('node:fs/promises');
@@ -245,6 +245,7 @@ async function ttparse_data(consoleObj) {
 
   return diagnosticReport; // 返回报告给主模块处理
 }
+
 async function getFromGitHub() {
   const giturl =
     'https://gh-proxy.com/https://github.com/YouAreHuman/updatePac/raw/refs/heads/master/newpac.yaml';
@@ -845,6 +846,75 @@ async function readConfig(filename, filterFn) {
     return null;
   }
 }
+
+/**
+ * 跨平台创建符号链接（支持文件和目录）
+ * @param {string} target - 目标路径（文件或目录）
+ * @param {string} symlinkPath - 符号链接路径（要创建的链接位置）
+ */
+async function createSymlink(target, symlinkPath) {
+  const absTarget = path.resolve(target);
+  const absSymlink = path.resolve(symlinkPath);
+
+  // 获取目标的 stat 信息，判断是文件还是目录
+  let stats;
+  try {
+    stats = await fsA.stat(absTarget);
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      throw new Error(`目标路径不存在: ${absTarget}`);
+    }
+    throw err;
+  }
+
+  const isDirectory = stats.isDirectory();
+  const type = isDirectory ? 'dir' : 'file';
+
+  // 如果符号链接已存在，先删除
+  try {
+    await fsA.unlink(absSymlink);
+  } catch (err) {
+    if (err.code !== 'ENOENT') {
+      throw err;
+    }
+  }
+
+  // 创建符号链接
+  try {
+    await fsA.symlink(absTarget, absSymlink, type);
+  } catch (err) {
+    // 增强 Windows 权限错误提示
+    if (process.platform === 'win32' && err.code === 'EPERM') {
+      err.message += '\n\n💡 在 Windows 上创建符号链接需要：\n' +
+                     '- 以管理员身份运行程序，或\n' +
+                     '- 启用“开发人员模式”（设置 → 隐私和安全性 → 开发者选项）';
+    }
+    throw err;
+  }
+}
+
+function mihomoConfig() {
+const mhdir = path.join(getHomeDir(), '.config/mihomo/config.yaml');
+console.log(`mihomo config path: ${mhdir}`);
+
+let outputPath;
+if (require('node:process').platform === 'win32') {
+  outputPath = path.join(__dirname, 't_modified.yaml');
+} else {
+  outputPath = mhdir;
+  // outputPath = newpacData;
+}
+
+return outputPath;
+
+function getHomeDir() {
+  const home = os.homedir();
+  if (!home) {
+    throw new Error('无法确定用户主目录');
+  }
+  return home;
+}
+}
 async function processFiles(fileNames, procFn, basedir = __dirname) {
   // const fileNames = ['a.txt', 'b.txt', 'c.txt'];
 
@@ -913,5 +983,7 @@ exports.restartMihomo = restartMihomo;
 exports.updateUrl = updateUrl;
 exports.exportData = exportData;
 exports.fileExists = fileExists;
+exports.mihomoConfig=mihomoConfig;
 exports.linksToConfig = linksToConfig;
 exports.saveTextToFile = saveTextToFile;
+exports.createSymlink=createSymlink
