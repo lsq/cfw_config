@@ -2,6 +2,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { DOMParser } = require('@xmldom/xmldom');
 const xpath = require('xpath');
+const { genClashCfg } = require('./genMihomo');
 const {
   getPublicNodeset,
   mergeData,
@@ -10,7 +11,6 @@ const {
   mihomoConfig,
 } = require('./get_newpac');
 const math = require('./math');
-const {genClashCfg} = require('./genMihomo')
 
 const html = `<code>abc\nbcb13ecb-4f63-4257-ae01-ec5aeaa613a5@157.254.223.64\ndef</code>`;
 const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -42,24 +42,25 @@ const giturl =
   // 'https://gh-proxy.com/https://raw.githubusercontent.com/chengaopan/AutoMergePublicNodes/master/list.yml';
   'https://gh-proxy.com/raw.githubusercontent.com/free18/v2ray/refs/heads/main/c.yaml';
 // const newpacData = path.join(__dirname, 'newpac.yaml');
-const outputPath = mihomoConfig()
+const outputPath = mihomoConfig();
 
 // getPublicNodeset(giturl, outputPath);
 const getNodesetForUrl = (url) => () => getPublicNodeset(url);
 (async () => {
-    if (false) {
-  await mergeData(getNodesetForUrl(giturl), parseData, outputPath);
-  // ----- test exportData ----------
-  // const rest = await parseData();
-  // await exportData(newpacData, rest);
-  // ----- test exportData ----------
-  // ----- test  reload mihomo config ----------
-  const restartOrNot = await restartMihomo();
-  if (restartOrNot) {
-    console.log('重载mihomo配置成功！');
-  }}
-    if (true) {
-        await genClashCfg()
+  if (false) {
+    await mergeData(getNodesetForUrl(giturl), parseData, outputPath);
+    // ----- test exportData ----------
+    // const rest = await parseData();
+    // await exportData(newpacData, rest);
+    // ----- test exportData ----------
+    // ----- test  reload mihomo config ----------
+    const restartOrNot = await restartMihomo();
+    if (restartOrNot) {
+      console.log('重载mihomo配置成功！');
     }
+  }
+  if (true) {
+    await genClashCfg();
+  }
   // ----- test  reload mihomo config ----------
 })();

@@ -9019,3 +9019,18 @@ https://fan3.206102.xyz/v2ray免费账号/
 2026/4/20 16:59:02: getting new Url ->  null
 2026/4/20 17:00:02 update_uri() -> Fetch error: AggregateError
 2026/4/20 17:00:02: getting new Url ->  null
+2026/4/21 20:26:09Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/4/21 20:25:56: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/4/21 20:26:06: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/4/21 20:26:06: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/4/21 20:26:06: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/4/21 20:25:56: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/4/21 20:26:36: parse.js -> Fetch error: AxiosError: timeout exceeded
+2026/4/21 20:39:06: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/4/21 20:39:06: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/4/21 21:13:44Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/4/21 21:13:34: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/4/21 21:13:34: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/4/21 21:13:44: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/4/21 21:13:44: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/4/21 21:13:44: parse_data() -> https://fan3.206102.xyz/ss免费账号/

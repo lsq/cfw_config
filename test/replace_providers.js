@@ -1,15 +1,15 @@
-const fs = require('fs');
+const fs = require('node:fs');
 
 function replaceProxyProviders(configPath, newBlock) {
-  fs.copyFileSync(configPath, configPath + '.bak');
+  fs.copyFileSync(configPath, `${configPath}.bak`);
   const content = fs.readFileSync(configPath, 'utf8');
   const regex = /^proxy-providers:\s*\n(?:\s{2,}.*\n?)*/gm;
-  
+
   if (!regex.test(content)) {
     throw new Error('proxy-providers block not found in config');
   }
 
-  const updated = content.replace(regex, newBlock.trim() + '\n');
+  const updated = content.replace(regex, `${newBlock.trim()}\n`);
   fs.writeFileSync(configPath, updated, 'utf8');
 }
 

@@ -28,7 +28,11 @@ export default antfu({
     'if*.js',
     'lib/**',
     '*.md',
+    // '**/*.yaml',
+    // '**/*.yml',
+    'node_modules',
     'pnpm-lock.yaml',
+    'downloads/**',
   ],
   gitignore: true,
   stylistic: {

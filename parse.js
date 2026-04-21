@@ -36,7 +36,8 @@ module.exports.parse = async (
   // const free_pac = 'https://dgithub.xyz/Alvin9999/new-pac/wiki/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7'
   // let {data, status} =  await axios.get(url)
   console.log(new Date().toLocaleString());
-  const prependProxies = await parseData(console);
+  const parsed = await parseData(console);
+  const prependProxies = parsed.proxies;
   console.log(process.cwd(), ': ', process.report.getReport().header.osName);
   console.log('Node.js 版本:', process.version);
   console.log('Node.js 路径:', process.execPath);

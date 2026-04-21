@@ -1,5 +1,5 @@
-method: 2  #方案一；修复策略，方案二：模板策略
-templateset: 1  # 采用模板策略时，采用哪个模板, 可以是字符串，或者数字
+method: 2 # 方案一；修复策略，方案二：模板策略
+templateset: 1 # 采用模板策略时，采用哪个模板, 可以是字符串，或者数字
 fileName:
   - ssrsub-vless.txt
   - ssrsub-hysteria2.txt
@@ -13,10 +13,20 @@ strategy-anchor:
   # sticky-sessions: 将相同的 来源地址 和 目标地址 的请求分配给策略组内的同一个代理节点，缓存 10 分钟过期
   # BaseCR: &BaseCR { type: load-balance, interval: 300, lazy: true, hidden: true, include-all: true, strategy: round-robin }
   # BaseCH: &BaseCH { type: load-balance, interval: 300, lazy: true, hidden: true, include-all: true, strategy: consistent-hashing }
-  BaseCR: &BaseCR {type: load-balance, interval: 300, lazy: true, strategy: round-robin}
-  BaseCH: &BaseCH {type: load-balance, interval: 300, lazy: true, strategy: consistent-hashing}
+  BaseCR: &BaseCR
+    type: load-balance
+    interval: 300
+    lazy: true
+    strategy: round-robin
+
+  BaseCH: &BaseCH
+    type: load-balance
+    interval: 300
+    lazy: true
+    strategy: consistent-hashing
+
 groups-strategy:
-  providers: {<<: *BaseCH}
+  providers: { <<: *BaseCH }
 providers:
   - name: vvTec
     type: yaml
@@ -102,22 +112,22 @@ fix:
       fallback:
         - https://dns.cloudflare.com/dns-query#ecs=1.1.1.1/24&ecs-override=true
         - https://dns.google/dns-query#ecs=8.8.8.8/24&ecs-override=true
-      default-nameserver:  # 默认 DNS, 用于解析 DNS 服务器 的域名，必须为 IP, 可为加密 DNS
+      default-nameserver: # 默认 DNS, 用于解析 DNS 服务器 的域名，必须为 IP, 可为加密 DNS
         - tls://223.5.5.5
         - tls://119.29.29.29
         - tls://8.8.8.8
-      nameserver:  # 默认的域名解析服务器，如不配置 fallback/proxy-server-nameserver , 则所有域名都由 nameserver 解析
+      nameserver: # 默认的域名解析服务器，如不配置 fallback/proxy-server-nameserver , 则所有域名都由 nameserver 解析
         - https://dns.cloudflare.com/dns-query#ecs=1.1.1.1/24&ecs-override=true
         - https://dns.google/dns-query#ecs=8.8.8.8/24&ecs-override=true
-      proxy-server-nameserver:  # 代理节点域名解析服务器，仅用于解析代理节点的域名
+      proxy-server-nameserver: # 代理节点域名解析服务器，仅用于解析代理节点的域名
         - https://doh.pub/dns-query#ecs=223.5.5.5/24&ecs-override=true
         - https://dns.alidns.com/dns-query#ecs=223.5.5.5/24&ecs-override=true
       direct-nameserver:
         - https://doh.pub/dns-query#ecs=223.5.5.5/24&ecs-override=true
         - https://dns.alidns.com/dns-query#ecs=223.5.5.5/24&ecs-override=true
       direct-nameserver-follow-policy: true
-      nameserver-policy:  # 指定域名查询的解析服务器，优先于 nameserver/fallback 查询
-        "RULE-SET:China,Lan":
+      nameserver-policy: # 指定域名查询的解析服务器，优先于 nameserver/fallback 查询
+        'RULE-SET:China,Lan':
           - https://doh.pub/dns-query#ecs=223.5.5.5/24&ecs-override=true
           - https://dns.alidns.com/dns-query#ecs=223.5.5.5/24&ecs-override=true
 
@@ -159,8 +169,8 @@ fix:
         QUIC:
           ports: [443, 8443]
       skip-domain:
-        - "Mijia Cloud"
-        - "+.push.apple.com"
+        - Mijia Cloud
+        - '+.push.apple.com'
 
     # 实验性功能
     experimental:
@@ -176,9 +186,21 @@ fix:
   rules: []
   rule-anchor:
     # 规则集锚点
-    BehaviorDN: &BehaviorDN {type: http, interval: 86400, format: mrs,  behavior: domain }
-    BehaviorIP: &BehaviorIP {type: http, interval: 86400, format: mrs,  behavior: ipcidr }
-    BehaviorCL: &BehaviorCL {type: http, interval: 86400, format: yaml, behavior: classical }
+    BehaviorDN:
+      &BehaviorDN { type: http, interval: 86400, format: mrs, behavior: domain }
+    BehaviorIP:
+      &BehaviorIP { type: http, interval: 86400, format: mrs, behavior: ipcidr }
+    BehaviorCL: &BehaviorCL
+      type: http
+      interval: 86400
+      format: yaml
+      behavior: classical
+
   rule-providers:
-    Lan: {<<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/private.mrs}
-    China: {<<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/cn.mrs}
+    Lan:
+      <<: *BehaviorDN
+      url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/private.mrs
+
+    China:
+      <<: *BehaviorDN
+      url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/cn.mrs

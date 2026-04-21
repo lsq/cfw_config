@@ -6,10 +6,11 @@ const {
   execFileSync,
 } = require('node:child_process');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const util = require('node:util');
 const axiosN = require('axios');
-const os = require('os')
+
 const execAsync = util.promisify(exec);
 const execFileAsync = util.promisify(execFile);
 const fsA = require('node:fs/promises');
@@ -393,7 +394,7 @@ async function parse_data(options = {}) {
           }
         })
         .flat();
-      return new_pac;
+      return { proxies: new_pac };
     }
   } catch (e) {
     console.log(e);
@@ -696,7 +697,8 @@ async function mergeData(getFn, parseFn, storePath) {
     let proxyNames = [];
     const appendProxyGroups = [];
     const obj = await getFn();
-    prependProxies = await parseFn();
+    const parsed = await parseFn();
+    prependProxies = parsed.proxies;
     const deYaml = path.join(__dirname, './default.yaml');
     const isDefaultFile = await fileExists(deYaml);
     if (!isDefaultFile) {
@@ -885,35 +887,36 @@ async function createSymlink(target, symlinkPath) {
   } catch (err) {
     // 增强 Windows 权限错误提示
     if (process.platform === 'win32' && err.code === 'EPERM') {
-      err.message += '\n\n💡 在 Windows 上创建符号链接需要：\n' +
-                     '- 以管理员身份运行程序，或\n' +
-                     '- 启用“开发人员模式”（设置 → 隐私和安全性 → 开发者选项）';
+      err.message +=
+        '\n\n💡 在 Windows 上创建符号链接需要：\n' +
+        '- 以管理员身份运行程序，或\n' +
+        '- 启用“开发人员模式”（设置 → 隐私和安全性 → 开发者选项）';
     }
     throw err;
   }
 }
 
 function mihomoConfig() {
-const mhdir = path.join(getHomeDir(), '.config/mihomo/config.yaml');
-console.log(`mihomo config path: ${mhdir}`);
+  const mhdir = path.join(getHomeDir(), '.config/mihomo/config.yaml');
+  console.log(`mihomo config path: ${mhdir}`);
 
-let outputPath;
-if (require('node:process').platform === 'win32') {
-  outputPath = path.join(__dirname, 't_modified.yaml');
-} else {
-  outputPath = mhdir;
-  // outputPath = newpacData;
-}
-
-return outputPath;
-
-function getHomeDir() {
-  const home = os.homedir();
-  if (!home) {
-    throw new Error('无法确定用户主目录');
+  let outputPath;
+  if (require('node:process').platform === 'win32') {
+    outputPath = path.join(__dirname, 't_modified.yaml');
+  } else {
+    outputPath = mhdir;
+    // outputPath = newpacData;
   }
-  return home;
-}
+
+  return outputPath;
+
+  function getHomeDir() {
+    const home = os.homedir();
+    if (!home) {
+      throw new Error('无法确定用户主目录');
+    }
+    return home;
+  }
 }
 async function processFiles(fileNames, procFn, basedir = __dirname) {
   // const fileNames = ['a.txt', 'b.txt', 'c.txt'];
@@ -983,7 +986,7 @@ exports.restartMihomo = restartMihomo;
 exports.updateUrl = updateUrl;
 exports.exportData = exportData;
 exports.fileExists = fileExists;
-exports.mihomoConfig=mihomoConfig;
+exports.mihomoConfig = mihomoConfig;
 exports.linksToConfig = linksToConfig;
 exports.saveTextToFile = saveTextToFile;
-exports.createSymlink=createSymlink
+exports.createSymlink = createSymlink;
