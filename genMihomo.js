@@ -317,7 +317,7 @@ async function processProvidersForMethod1(providers) {
   return { mainConfig, allProxyGroup };
 }
 
-async function methodOne(config, mihomoCfg) {
+async function methodOne(config) {
   const [providerResult, fileNameProxies, fileYamlProxies] = await Promise.all([
     processProvidersForMethod1(config.providers),
     processLocalFiles(config.fileName || [], (content) =>
@@ -397,10 +397,13 @@ async function methodOne(config, mihomoCfg) {
   }
 
   // 输出最终配置
-  await exportData(mihomoCfg, mainConfig);
+  // await exportData(mihomoCfg, mainConfig);
   console.log('✅ 方案一完成：config.yaml 已生成');
-
-  await reloadConfig();
+  return yaml.dump(mainConfig, {
+    indent: 2,
+    noRefs: true,
+    sortKeys: false, // 保持原有顺序
+  });
 }
 
 // ======================
@@ -462,8 +465,11 @@ async function methodTwo(config, mihomoCfg) {
   // 下载模板为主配置
   const remoteFilename = path.basename(template.url);
   const localFilename = `${template.name}_${remoteFilename}`;
-  const res = await downloadFile(template.url, `./downloads/${localFilename}`);
-  if (!res) return;
+  const res = await downloadFile(
+    template.url,
+    path.join(__dirname, `downloads/${localFilename}`)
+  );
+  if (!res) throw new Error(`主配置未下载成功!`);
 
   // 3. 构建 proxy-providers
   let yamlStr = 'proxy-providers:\n';
@@ -486,7 +492,7 @@ async function methodTwo(config, mihomoCfg) {
   ];
   const mihomoCfgHome = path.dirname(path.resolve(mihomoCfg));
   await createSymlink(
-    path.resolve('downloads'),
+    path.join(__dirname, 'downloads'),
     path.join(mihomoCfgHome, template.providersDir)
   );
   // await fs.mkdir(template.providersDir, { recursive: true });
@@ -496,7 +502,10 @@ async function methodTwo(config, mihomoCfg) {
     // 复制文件到 proxy_providers/
     // const content = await fs.readFile(file);
     // await fs.writeFile(destPath, content);
-    await createSymlink(path.resolve(file), path.join('downloads', destPath));
+    await createSymlink(
+      path.join(__dirname, file),
+      path.join(__dirname, 'downloads', destPath)
+    );
 
     const providerName =
       path.parse(file).name === 'default' ? 'back' : path.parse(file).name;
@@ -510,10 +519,9 @@ async function methodTwo(config, mihomoCfg) {
   const mainConfig = replaceProxyProviders(res, yamlStr);
 
   // 5. 保存最终配置
-  await fs.writeFile(mihomoCfg, mainConfig);
+  // await fs.writeFile(mihomoCfg, mainConfig);
   console.log('✅ 方案二完成：config.yaml 已生成');
-
-  await reloadConfig();
+  return mainConfig;
 }
 
 // ======================
@@ -521,22 +529,42 @@ async function methodTwo(config, mihomoCfg) {
 // ======================
 
 async function genClashCfg(miCfg = mihomoCfg) {
+  const isUsingDefault = arguments.length === 0;
   try {
-    const configFile = await fs.readFile('config.yaml', 'utf8');
+    const configFile = await fs.readFile(
+      path.join(__dirname, 'config.yaml'),
+      'utf8'
+    );
     const config = yaml.load(configFile);
+    let generatedConfig;
 
     if (config.method === 1) {
       console.log('🚀 执行方案一：修复策略');
-      await methodOne(config, miCfg);
+      generatedConfig = await methodOne(config);
     } else if (config.method === 2) {
       console.log('🚀 执行方案二：模板策略');
-      await methodTwo(config, miCfg);
+      generatedConfig = await methodTwo(config, miCfg);
     } else {
       throw new Error('method 必须为 1 或 2');
     }
+
+    // 5. 保存最终配置
+    let outputPath;
+    outputPath = mihomoCfg;
+    if (isUsingDefault && require('node:process').platform === 'win32') {
+      outputPath = path.join(__dirname, 't_modified.yaml');
+    }
+    if (!generatedConfig) {
+      throw new Error(`generatedConfig: ${generatedConfig}`);
+    }
+    await fs.writeFile(outputPath, generatedConfig);
+    await reloadConfig();
+    return generatedConfig;
   } catch (error) {
     console.error('💥 执行出错:', error);
-    process.exit(1);
+    // throw new Error(error.message)
+    throw new Error(`${error.message}\n ${error.stack}`);
+    // process.exit(1);
   }
 }
 

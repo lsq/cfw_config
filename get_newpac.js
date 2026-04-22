@@ -900,15 +900,15 @@ function mihomoConfig() {
   const mhdir = path.join(getHomeDir(), '.config/mihomo/config.yaml');
   console.log(`mihomo config path: ${mhdir}`);
 
-  let outputPath;
-  if (require('node:process').platform === 'win32') {
-    outputPath = path.join(__dirname, 't_modified.yaml');
-  } else {
-    outputPath = mhdir;
-    // outputPath = newpacData;
-  }
+  // let outputPath;
+  // if (require('node:process').platform === 'win32') {
+  //   outputPath = path.join(__dirname, 't_modified.yaml');
+  // } else {
+  // outputPath = mhdir;
+  // outputPath = newpacData;
+  // }
 
-  return outputPath;
+  return mhdir;
 
   function getHomeDir() {
     const home = os.homedir();

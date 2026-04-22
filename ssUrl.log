@@ -9034,3 +9034,43 @@ https://fan3.206102.xyz/v2ray免费账号/
 2026/4/21 21:13:44: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
 2026/4/21 21:13:44: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
 2026/4/21 21:13:44: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/4/21 21:58:37Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/4/21 21:58:34: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/4/21 21:58:37: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/4/21 21:58:37: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/4/21 21:58:34: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/4/21 21:58:37: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/4/21 22:59:05Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/4/21 22:59:03: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/4/21 22:59:03: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/4/21 22:59:05: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/4/21 22:59:05: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/4/21 22:59:05: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/4/22 07:46:51 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/4/22 07:46:41: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/4/22 07:46:51: getting new Url ->  null
+2026/4/22 07:46:41: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/4/22 08:47:57Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/4/22 08:47:54: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/4/22 08:47:54: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/4/22 08:47:57: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/4/22 08:47:57: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/4/22 08:47:57: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/4/22 09:48:56Extracted src: https://fan3.206102.xyz/v2ray免费账号/
+2026/4/22 09:48:53: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/4/22 09:48:56: getting new Url ->  https://fan3.206102.xyz/v2ray免费账号/
+2026/4/22 09:48:56: parse_data() -> https://fan3.206102.xyz/v2ray免费账号/
+2026/4/22 09:48:53: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/4/22 09:48:56: parse_data() -> https://fan3.206102.xyz/ss免费账号/
+2026/4/22 11:09:35 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/4/22 11:09:35: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/4/22 11:09:35: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/4/22 11:09:35: getting new Url ->  null
+2026/4/22 11:32:02 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/4/22 11:31:57: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/4/22 11:31:57: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/4/22 11:32:02: getting new Url ->  null
+2026/4/22 12:10:23 update_uri() -> Fetch error: AxiosError: Request failed with status code 502
+2026/4/22 12:10:22: nodePaths found in: [{"path":"C:\\Users\\Administrator\\scoop\\apps\\nodejs24\\current\\node.exe","osName":"Windows_NT","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node","osName":"MINGW32_NT-10.0","error":null},{"path":"C:\\msys64\\ucrt64\\bin\\node.exe","osName":"MINGW32_NT-10.0","error":null}]
+2026/4/22 12:10:22: C:\Users\Administrator\scoop\apps\nodejs24\current\node.exe
+2026/4/22 12:10:23: getting new Url ->  null

@@ -38,7 +38,7 @@ function unix() {
 }
 
 function windows() {
-  const registry = require('registry-js');
+  const registry = require('@bratel/registry-js');
   let folder = `${process.env.USERPROFILE}\\Downloads`;
   const folders = registry.enumerateValues(
     registry.HKEY.HKEY_CURRENT_USER,

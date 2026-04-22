@@ -1,3 +1,4 @@
+# node-gyp-build: patches/node-gyp-build.patch
 # patchedDependencies:
 # ts-punycode@0.1.0: patches/ts-punycode@0.1.0.patch
 shellEmulator: true
@@ -6,11 +7,13 @@ trustPolicy: no-downgrade
 patchedDependencies:
   # prebuild-install: patches/prebuild-install.patch
   # registry-js: patches/registry-js.patch
-  ts-punycode@0.1.2: patches/ts-punycode@0.1.2.patch
-  # node-gyp-build: patches/node-gyp-build.patch
+  ts-punycode: patches/ts-punycode@0.1.2.patch
 ignoredBuiltDependencies:
-  - ts-punycode
+  - registry-js
 onlyBuiltDependencies:
+  - '@bratel/registry-js'
+  - '@bratel/webcrack'
+  - es5-ext
   - isolated-vm
   # - registry-js
   - ts-punycode

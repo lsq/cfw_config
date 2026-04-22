@@ -1,3 +1,4 @@
+const { genClashCfg } = require('./genMihomo');
 const { parseData } = require('./get_newpac');
 
 module.exports.parse = async (
@@ -31,13 +32,11 @@ module.exports.parse = async (
   */
 
   // --------------------------
-  const obj = yaml.parse(raw);
   // console.log(obj['proxy-groups'][0]['proxies'])
   // const free_pac = 'https://dgithub.xyz/Alvin9999/new-pac/wiki/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7'
   // let {data, status} =  await axios.get(url)
   console.log(new Date().toLocaleString());
-  const parsed = await parseData(console);
-  const prependProxies = parsed.proxies;
+  console.log(`Name: ${name} -> Url: ${url}`);
   console.log(process.cwd(), ': ', process.report.getReport().header.osName);
   console.log('Node.js 版本:', process.version);
   console.log('Node.js 路径:', process.execPath);
@@ -51,6 +50,18 @@ module.exports.parse = async (
   console.log('执行目录:', process.execArgv);
   console.log('内存使用情况:', process.memoryUsage());
   console.log('运行时间 (秒):', process.uptime());
+
+  if (name === 'custom') {
+    console.log(`开始生成genClashCfg`);
+    const newRaw = await genClashCfg();
+    console.log(`genClashCfg生成成功...`);
+    return newRaw;
+    // return raw
+  }
+
+  const obj = yaml.parse(raw);
+  const parsed = await parseData(console);
+  const prependProxies = parsed.proxies;
   console.log(prependProxies);
   const prxoyNames = prependProxies.map((item) => item.name);
   // if (prependProxies) {
