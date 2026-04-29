@@ -747,7 +747,9 @@ async function mergeData(getFn, parseFn, storePath) {
 
 async function restartMihomo() {
   const isWindows = process.platform === 'win32';
-  const port = isWindows ? 56907 : 9090;
+  const configData = await readyaml(mihomoConfig())
+  const externalController = configData['external-controller']
+  // const port = isWindows ? 56907 : 9090;
   // 3. 构建基础 Headers
   const headers = {
     'User-Agent':
@@ -762,7 +764,8 @@ async function restartMihomo() {
   };
   // 4. 根据平台决定是否添加 Authorization
   if (isWindows) {
-    headers.Authorization = 'Bearer 95217e41-622f-4139-a583-f6a228201004';
+    const secret = configData.secret
+    headers.Authorization = `Bearer ${secret}`;
   }
 
   // 5. 请求配置
@@ -775,7 +778,7 @@ async function restartMihomo() {
     // 如果只是简单的 API 调用且无 Cookie 依赖，可省略。若必须，需确保服务端支持。
   };
   const res = await fetch(
-    `http://127.0.0.1:${port}/configs?force=true`,
+    `http://${externalController}/configs?force=true`,
     options
   );
 

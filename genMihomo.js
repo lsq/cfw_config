@@ -558,7 +558,7 @@ async function genClashCfg(miCfg = mihomoCfg) {
       throw new Error(`generatedConfig: ${generatedConfig}`);
     }
     await fs.writeFile(outputPath, generatedConfig);
-    await reloadConfig();
+    if (require('node:process').platform !== 'win32') await reloadConfig();
     return generatedConfig;
   } catch (error) {
     console.error('💥 执行出错:', error);
