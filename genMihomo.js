@@ -2,6 +2,7 @@ const fs = require('node:fs').promises;
 const path = require('node:path');
 const axios = require('axios');
 const yaml = require('js-yaml');
+const { merge } = require('lodash');
 const {
   exportData,
   mihomoConfig,
@@ -28,9 +29,51 @@ function replaceProxyProviders(content, newBlock) {
     throw new Error('proxy-providers block not found in config');
   }
 
-  const updated = content.replace(regex, `${newBlock.trim()}\n`);
-  return updated;
+  return replaceWithExp(regex, content, newBlock);
+}
+
+function extractKey(obj, key) {
+  return obj?.[key] !== undefined ? { [key]: obj[key] } : undefined;
+}
+
+function mergeReplaceWithExp(key, content, obj) {
+  const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // const regex = new RegExp(`^\\\\s*${escapedKey}:\\\\s*$((?:\\\\n(?:\\\\s.*|$))*)`, 'gm');
+  const regex = new RegExp(`^${escapedKey}:\\s*\\n(?:\\s{2,}.*\\n?)*`, 'gm');
+  if (!regex.test(content)) {
+    throw new Error(`${regex} block not found in content`);
+  }
+
+  const block = extractYamlBlock(content, regex);
+  if (block) {
+    const partial = yaml.load(block); // { tun: { ... } }
+    // const merged = merge({}, partial, { tun: { enable: true } });
+    const replace = extractKey(obj, key);
+    const merged = merge({}, partial, replace);
+    // console.log(merged)
+    // console.log(yaml.dump(merged))
+    const newBlock = yaml.dump(merged, {
+      noRefs: true,
+      indent: 2,
+      sortKeys: false,
+    });
+    return replaceWithExp(regex, content, newBlock);
+  }
+
+  return content;
+}
+
+function extractYamlBlock(text, regex) {
+  regex.lastIndex = 0;
+  const match = regex.exec(text);
+  // console.log(match)
+  return match ? match[0] : null;
+}
+
+function replaceWithExp(reg, content, newBlock) {
+  const updated = content.replace(reg, `${newBlock.trim()}\n`);
   // fs.writeFileSync(configPath, updated, 'utf8');
+  return updated;
 }
 
 /**
@@ -516,7 +559,13 @@ async function methodTwo(config, mihomoCfg) {
     )}\n`;
   }
 
-  const mainConfig = replaceProxyProviders(res, yamlStr);
+  let mainConfig;
+
+  mainConfig = replaceProxyProviders(res, yamlStr);
+  if (template.tun) {
+    console.log('准备修改tun配置');
+    mainConfig = mergeReplaceWithExp('tun', mainConfig, template);
+  }
 
   // 5. 保存最终配置
   // await fs.writeFile(mihomoCfg, mainConfig);

@@ -747,8 +747,8 @@ async function mergeData(getFn, parseFn, storePath) {
 
 async function restartMihomo() {
   const isWindows = process.platform === 'win32';
-  const configData = await readyaml(mihomoConfig())
-  const externalController = configData['external-controller']
+  const configData = await readyaml(mihomoConfig());
+  const externalController = configData['external-controller'];
   // const port = isWindows ? 56907 : 9090;
   // 3. 构建基础 Headers
   const headers = {
@@ -763,10 +763,10 @@ async function restartMihomo() {
     Priority: 'u=0',
   };
   // 4. 根据平台决定是否添加 Authorization
-  if (isWindows) {
-    const secret = configData.secret
-    headers.Authorization = `Bearer ${secret}`;
-  }
+  // if (isWindows) {
+  const secret = configData.secret;
+  headers.Authorization = `Bearer ${secret}`;
+  // }
 
   // 5. 请求配置
   const options = {

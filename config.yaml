@@ -41,6 +41,10 @@ providers:
     type: base64
     url:
       - https://www.xrayvip.com/free.txt
+  - name: freeV2net
+    type: base64
+    url:
+      - https://xmxosfepggzm.503403.xyz
   - name: ssrsub
     type: yaml
     url:
@@ -75,6 +79,8 @@ templates:
       additional-prefix: '|'
     dns: false
     rules: false
+    tun:
+      enable: true
 
 fix:
   base:
