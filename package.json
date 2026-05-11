@@ -52,5 +52,11 @@
   },
   "resolutions": {
     "semver": "7.8.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "semver": "^7.8.0",
+      "**/semver": "^7.8.0"
+    }
   }
 }

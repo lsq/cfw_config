@@ -4,6 +4,8 @@
 shellEmulator: true
 
 trustPolicy: no-downgrade
+trustPolicyExclude:
+  - 'semver@5.7.2 || 6.3.1'
 patchedDependencies:
   # prebuild-install: patches/prebuild-install.patch
   # registry-js: patches/registry-js.patch
@@ -17,3 +19,10 @@ onlyBuiltDependencies:
   - isolated-vm
   # - registry-js
   - ts-punycode
+allowBuilds:
+  '@bratel/registry-js': true
+  '@bratel/webcrack': true
+  es5-ext: true
+  isolated-vm: true
+  registry-js: true
+  ts-punycode: true
