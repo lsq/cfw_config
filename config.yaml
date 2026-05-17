@@ -71,12 +71,15 @@ templates:
   - name: wanswu
     url: >-
       https://gh-proxy.com/raw.githubusercontent.com/HenryChiao/MIHOMO_YAMLS/main/THEYAMLS/General_Config/wanswu/config.yaml
-    providersAnchorUrl: ProvidersURL
-    providersAnchorFile: ProvidersFILE
+    providersAnchorUrl: PU
+    providersAnchorFile: PF
     providersDir: proxy_providers
     override:
       upd: true
       additional-prefix: '|'
+      proxy-name:
+        - pattern: "机场推荐[：:]"
+          target: ""
     dns: false
     rules: false
     tun:
