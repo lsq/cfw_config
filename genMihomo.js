@@ -14,6 +14,8 @@ const { linkToClash } = require('./lib/converter');
 const newline = /\r?\n/;
 const trimText = /机场推荐：/;
 const mihomoCfg = mihomoConfig();
+const { env } = require('node:process');
+const isCI = !!env.GITHUB_ACTIONS;
 // const mihomoCfg = 'mihomo_config.yaml'
 
 // ======================
@@ -26,6 +28,7 @@ function replaceProxyProviders(content, newBlock) {
   const regex = /^proxy-providers:\s*\n(?:\s{2,}.*\n?)*/gm;
 
   if (!regex.test(content)) {
+    // console.log(`content: ${content}`)
     throw new Error('proxy-providers block not found in config');
   }
 
@@ -509,7 +512,11 @@ async function methodTwo(config, mihomoCfg) {
   const remoteFilename = path.basename(template.url);
   const localFilename = `${template.name}_${remoteFilename}`;
   const res = await downloadFile(
-    template.url,
+    isCI
+      ? template.url
+          ?.replace('gh-proxy.com/raw.githubusercontent.com/', 'github.com/')
+          .replace('main', 'raw/refs/heads/main')
+      : template.url,
     path.join(__dirname, `downloads/${localFilename}`)
   );
   if (!res) throw new Error(`主配置未下载成功!`);
@@ -529,34 +536,36 @@ async function methodTwo(config, mihomoCfg) {
   // Object.assign(mainConfig['proxy-providers'], proxyProvidersFromRemote);
 
   // 4. 处理本地文件（fileName + fileYaml）→ 作为 file provider
-  const allLocalFiles = [
-    ...(config.fileName || []),
-    ...(config.fileYaml || []),
-  ];
-  const mihomoCfgHome = path.dirname(path.resolve(mihomoCfg));
-  await createSymlink(
-    path.join(__dirname, 'downloads'),
-    path.join(mihomoCfgHome, template.providersDir)
-  );
-  // await fs.mkdir(template.providersDir, { recursive: true });
-
-  for (const file of allLocalFiles) {
-    const destPath = `${path.basename(file)}`;
-    // 复制文件到 proxy_providers/
-    // const content = await fs.readFile(file);
-    // await fs.writeFile(destPath, content);
+  if (!isCI) {
+    const allLocalFiles = [
+      ...(config.fileName || []),
+      ...(config.fileYaml || []),
+    ];
+    const mihomoCfgHome = path.dirname(path.resolve(mihomoCfg));
     await createSymlink(
-      path.join(__dirname, file),
-      path.join(__dirname, 'downloads', destPath)
+      path.join(__dirname, 'downloads'),
+      path.join(mihomoCfgHome, template.providersDir)
     );
+    // await fs.mkdir(template.providersDir, { recursive: true });
 
-    const providerName =
-      path.parse(file).name === 'default' ? 'back' : path.parse(file).name;
-    yamlStr += `${renderProxyProvider(
-      providerName,
-      { type: 'file', path: destPath },
-      template
-    )}\n`;
+    for (const file of allLocalFiles) {
+      const destPath = `${path.basename(file)}`;
+      // 复制文件到 proxy_providers/
+      // const content = await fs.readFile(file);
+      // await fs.writeFile(destPath, content);
+      await createSymlink(
+        path.join(__dirname, file),
+        path.join(__dirname, 'downloads', destPath)
+      );
+
+      const providerName =
+        path.parse(file).name === 'default' ? 'back' : path.parse(file).name;
+      yamlStr += `${renderProxyProvider(
+        providerName,
+        { type: 'file', path: destPath },
+        template
+      )}\n`;
+    }
   }
 
   let mainConfig;
