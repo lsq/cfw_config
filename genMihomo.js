@@ -599,7 +599,7 @@ async function genClashCfg(miCfg = mihomoCfg) {
 
     // 5. 保存最终配置
     let outputPath;
-    outputPath = mihomoCfg;
+    outputPath = miCfg;
     if (isUsingDefault && require('node:process').platform === 'win32') {
       outputPath = path.join(__dirname, 't_modified.yaml');
     }
@@ -607,7 +607,7 @@ async function genClashCfg(miCfg = mihomoCfg) {
       throw new Error(`generatedConfig: ${generatedConfig}`);
     }
     await fs.writeFile(outputPath, generatedConfig);
-    if (require('node:process').platform !== 'win32') await reloadConfig();
+    // if (require('node:process').platform !== 'win32') await reloadConfig();
     return generatedConfig;
   } catch (error) {
     console.error('💥 执行出错:', error);

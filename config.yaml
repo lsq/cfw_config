@@ -78,8 +78,8 @@ templates:
       upd: true
       additional-prefix: '|'
       proxy-name:
-        - pattern: "机场推荐[：:]"
-          target: ""
+        - pattern: '机场推荐[：:]'
+          target: ''
     dns: false
     rules: false
     tun:

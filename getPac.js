@@ -11,6 +11,7 @@ const {
   updateUrl,
   fileExists,
 } = require('./get_newpac');
+const { genClashCfg } = require('./genMihomo');
 
 const newpacData = path.join(__dirname, 'newpac.yaml');
 const rootyml = path.join(__dirname, '/../newpac.yaml');
@@ -47,6 +48,12 @@ async function writeOutPut(num) {
 
 (async () => {
   try {
+    console.log('🚀 开始更新ssrhub节点配置...');
+    const ssrContents = await genClashCfg(path.join(__dirname, 'ssrhub.yaml'));
+    if (!ssrContents) {
+      throw new Error('ssrhub更新失败！');
+    }
+
     console.log('🚀 开始更新节点配置...');
 
     // 1. 获取链接
