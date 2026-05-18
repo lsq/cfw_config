@@ -4,6 +4,7 @@ const path = require('node:path');
 const { env } = require('node:process');
 const yaml = require('js-yaml');
 const lds = require('lodash');
+const { genClashCfg } = require('./genMihomo');
 // 修正：引入标准的 Error 类，不需要从 console 引入
 const {
   parseData,
@@ -11,7 +12,6 @@ const {
   updateUrl,
   fileExists,
 } = require('./get_newpac');
-const { genClashCfg } = require('./genMihomo');
 
 const newpacData = path.join(__dirname, 'newpac.yaml');
 const rootyml = path.join(__dirname, '/../newpac.yaml');
@@ -87,7 +87,14 @@ async function writeOutPut(num) {
     const oldData = yaml.load(oldYML);
 
     // 成功则正常退出 (exit code 0)
-    await writeOutPut(yamlArraysEqual(oldData, rest) ? 0 : 1);
+    const cmt = yamlArraysEqual(oldData, rest) ? 0 : 1;
+    await writeOutPut(cmt);
+    if (cmt || !fileExists(path.join(__dirname, '../newpac.json'))) {
+      await fsA.writeFile(
+        path.join(__dirname, 'newpac.json'),
+        JSON.stringify(rest)
+      );
+    }
     process.exit(0);
   } catch (err) {
     // 捕获所有错误

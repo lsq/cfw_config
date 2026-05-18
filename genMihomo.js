@@ -15,6 +15,7 @@ const newline = /\r?\n/;
 const trimText = /机场推荐：/;
 const mihomoCfg = mihomoConfig();
 const { env } = require('node:process');
+
 const isCI = !!env.GITHUB_ACTIONS;
 // const mihomoCfg = 'mihomo_config.yaml'
 
