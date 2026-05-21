@@ -1,5 +1,6 @@
 const os = require('node:os');
 const path = require('node:path');
+const { env } = require('process');
 const { DOMParser } = require('@xmldom/xmldom');
 const xpath = require('xpath');
 const { genClashCfg } = require('./genMihomo');
@@ -11,6 +12,7 @@ const {
   mihomoConfig,
 } = require('./get_newpac');
 const math = require('./math');
+const isCI = !!env.GITHUB_ACTIONS;
 
 const html = `<code>abc\nbcb13ecb-4f63-4257-ae01-ec5aeaa613a5@157.254.223.64\ndef</code>`;
 const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -46,6 +48,14 @@ const outputPath = mihomoConfig();
 
 // getPublicNodeset(giturl, outputPath);
 const getNodesetForUrl = (url) => () => getPublicNodeset(url);
+
+async function reloadConfig() {
+  const restartOrNot = await restartMihomo();
+  if (restartOrNot) {
+    console.log('重载mihomo配置成功！');
+  }
+}
+
 (async () => {
   if (false) {
     await mergeData(getNodesetForUrl(giturl), parseData, outputPath);
@@ -61,6 +71,9 @@ const getNodesetForUrl = (url) => () => getPublicNodeset(url);
   }
   if (true) {
     await genClashCfg();
+    if (!isCI) {
+      await reloadConfig();
+    }
   }
   // ----- test  reload mihomo config ----------
 })();

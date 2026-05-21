@@ -270,7 +270,7 @@ sniffer:
     QUIC:
       ports: [443, 8443]
   skip-domain:
-    - Mijia Cloud
+    - 'Mijia Cloud'
     - '+.push.apple.com'
 
 # 实验性功能
