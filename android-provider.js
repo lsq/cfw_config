@@ -85,6 +85,7 @@ async function main(config) {
     'https://gitproxy.mrhjx.cn/',
   ];
   const gitfast = await fetchProxyList();
+  console.log(gitfast);
   const githubProxy = gitfast?.[0]?.url ?? githubProxies?.[0];
   const url = [
     `${githubProxy}https://github.com/ssrsub/ssr/raw/refs/heads/master/clash.yaml`, // 0

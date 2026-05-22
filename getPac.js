@@ -14,7 +14,7 @@ const {
 } = require('./get_newpac');
 
 const newpacData = path.join(__dirname, 'newpac.yaml');
-const rootyml = path.join(__dirname, '/../newpac.yaml');
+const rootyml = path.join(__dirname, '..', 'newpac.yaml');
 const isCI = !!env.GITHUB_ACTIONS;
 const outputPath = env.GITHUB_OUTPUT;
 
@@ -26,7 +26,16 @@ function yamlArraysEqual(arr1, arr2) {
   const sorted1 = lds.sortBy(arr1, 'name');
   const sorted2 = lds.sortBy(arr2, 'name');
 
-  return lds.isEqual(sorted1, sorted2);
+  // return lds.isEqual(sorted1, sorted2);
+  for (let i = 0; i < sorted1.length; i++) {
+    if (!lds.isEqual(sorted1[i], sorted2[i])) {
+      console.log('差异出现在 proxy:', sorted1[i].name);
+      console.log('proxy1:', sorted1[i]);
+      console.log('proxy2:', sorted2[i]);
+      return false;
+    }
+  }
+  return true;
 }
 
 async function writeOutPut(num) {
@@ -87,7 +96,7 @@ async function writeOutPut(num) {
     const oldData = yaml.load(oldYML);
 
     // 成功则正常退出 (exit code 0)
-    const cmt = yamlArraysEqual(oldData, rest) ? 0 : 1;
+    const cmt = yamlArraysEqual(oldData.proxies, rest.proxies) ? 0 : 1;
     await writeOutPut(cmt);
     if (cmt || !fileExists(path.join(__dirname, '../newpac.json'))) {
       await fsA.writeFile(

@@ -150,7 +150,8 @@ function createParseProxies() {
     // 因为 "proxies:" 是合法的 YAML 映射键，值是一个列表
     try {
       const parsed = yaml.load(
-        hasAppended ? data : ((hasAppended = true), `${data}\n${ssIpv6}`)
+        // hasAppended ? data : ((hasAppended = true), `${data}\n${ssIpv6}`)
+        data
       );
       // parsed 是 { proxies: [ {...}, {...} ] }
       return parsed.proxies.filter((n) => {
