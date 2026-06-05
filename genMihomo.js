@@ -121,7 +121,10 @@ function renderProxyProvider(name, config, template) {
   } else if (config.type === 'file' && template.providersAnchorFile) {
     lines.push(`    <<: *${template.providersAnchorFile}`);
   }
-  if (config.type) lines.push(`    type: ${config.type}`);
+  if (template.interval) {
+      lines.push(`    interval: ${template.interval}`);
+  }
+  // if (config.type) lines.push(`    type: ${config.type}`);
   if (config.url) lines.push(`    url: ${config.url}`);
   if (config.path) {
     lines.push(

@@ -74,6 +74,7 @@ templates:
     providersAnchorUrl: PU
     providersAnchorFile: PF
     providersDir: proxy_providers
+    interval: 3600
     override:
       upd: true
       additional-prefix: '|'
