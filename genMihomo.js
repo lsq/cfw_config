@@ -10,6 +10,7 @@ const {
   createSymlink,
 } = require('./get_newpac');
 const { linkToClash } = require('./lib/converter');
+const {getFastestProxy} = require('./githubProxy')
 
 const newline = /\r?\n/;
 const trimText = /机场推荐：/;
@@ -17,6 +18,7 @@ const mihomoCfg = mihomoConfig();
 const { env } = require('node:process');
 
 const isCI = !!env.GITHUB_ACTIONS;
+const defaultProxy = "https://gh-proxy.com";
 // const mihomoCfg = 'mihomo_config.yaml'
 
 // ======================
@@ -512,6 +514,9 @@ async function methodTwo(config, mihomoCfg) {
   }
   if (!template) throw new Error('模板未找到');
 
+  //切换github 最快代理
+  const proxyResult = await getFastestProxy();
+    const mostFastProxy = proxyResult.success ? proxyResult.source : defaultProxy;
   // 下载模板为主配置
   const remoteFilename = path.basename(template.url);
   const localFilename = `${template.name}_${remoteFilename}`;
@@ -520,7 +525,7 @@ async function methodTwo(config, mihomoCfg) {
       ? template.url
           ?.replace('gh-proxy.com/raw.githubusercontent.com/', 'github.com/')
           .replace('main', 'raw/refs/heads/main')
-      : template.url,
+      : template.url?.replace(defaultProxy, mostFastProxy),
     path.join(__dirname, `downloads/${localFilename}`)
   );
   if (!res) throw new Error(`主配置未下载成功!`);
@@ -579,6 +584,8 @@ async function methodTwo(config, mihomoCfg) {
     console.log('准备修改tun配置');
     mainConfig = mergeReplaceWithExp('tun', mainConfig, template);
   }
+
+  mainConfig = mainConfig.replaceAll(defaultProxy, mostFastProxy);
 
   // 5. 保存最终配置
   // await fs.writeFile(mihomoCfg, mainConfig);

@@ -24,6 +24,7 @@ if (codeNode) {
 }
 // 输出: email protected （或类似）
 
+console.log(`${new Date().toLocaleString()}`);
 console.log(math.add(8, 8));
 
 const str = 'haha';
