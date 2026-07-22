@@ -1,19 +1,143 @@
-<span><span class="token token" style="color: rgb(179, 74, 0);">cd</span><span> /home/claude/filetransfer </span><span class="token token" style="color: rgb(20, 24, 31);">&amp;&amp;</span><span> </span><span class="token token" style="color: rgb(0, 81, 194);">rm</span><span> -rf dst </span><span class="token token" style="color: rgb(20, 24, 31);">&amp;&amp;</span><span> </span><span class="token token" style="color: rgb(0, 81, 194);">mkdir</span><span> -p dst
-</span></span><span><span></span><span class="token token assign-left" style="color: rgb(179, 74, 0);">SIZE</span><span class="token token" style="color: rgb(20, 24, 31);">=</span><span class="token token" style="color: rgb(0, 128, 128);">314572800</span><span class="token token" style="color: rgb(43, 48, 59);">;</span><span> </span><span class="token token assign-left" style="color: rgb(179, 74, 0);">SS</span><span class="token token" style="color: rgb(20, 24, 31);">=</span><span class="token token" style="color: rgb(0, 128, 128);">39321600</span><span class="token token" style="color: rgb(43, 48, 59);">;</span><span> </span><span class="token token assign-left" style="color: rgb(179, 74, 0);">DONE</span><span class="token token" style="color: rgb(20, 24, 31);">=</span><span class="token token" style="color: rgb(0, 128, 128);">4</span><span>
-</span></span><span><span></span><span class="token token" style="color: rgb(0, 81, 194);">dd</span><span> </span><span class="token token assign-left" style="color: rgb(179, 74, 0);">if</span><span class="token token" style="color: rgb(20, 24, 31);">=</span><span>src/f_300M.bin </span><span class="token token assign-left" style="color: rgb(179, 74, 0);">of</span><span class="token token" style="color: rgb(20, 24, 31);">=</span><span>dst/f_300M.bin.part </span><span class="token token assign-left" style="color: rgb(179, 74, 0);">bs</span><span class="token token" style="color: rgb(20, 24, 31);">=</span><span class="token token" style="color: rgb(179, 74, 0);">$SS</span><span> </span><span class="token token assign-left" style="color: rgb(179, 74, 0);">count</span><span class="token token" style="color: rgb(20, 24, 31);">=</span><span class="token token" style="color: rgb(179, 74, 0);">$DONE</span><span> </span><span class="token token assign-left" style="color: rgb(179, 74, 0);">status</span><span class="token token" style="color: rgb(20, 24, 31);">=</span><span>none
-</span></span><span><span>python3 - </span><span class="token token" style="color: rgb(20, 24, 31);">&lt;&lt;</span><span> </span><span class="token token" style="color: rgb(0, 128, 0);">'PY'
-</span></span><span>import struct
-</span><span>size,ss,n,done=314572800,39321600,8,4
-</span><span>out=struct.pack("&gt;IQII",0x46544632,size,0x81cfbbf7,n)
-</span><span>for i in range(n):
-</span><span>    ln=min(ss,size-i*ss)
-</span><span>    out+=struct.pack("&gt;QB",ln,1) if i&lt;done else struct.pack("&gt;QB",0,0)
-</span><span>open("dst/f_300M.bin.state","wb").write(out)
-</span><span><span class="token token" style="color: rgb(0, 128, 0);">PY</span><span>
-</span></span><span><span>stdbuf -oL ./server </span><span class="token token" style="color: rgb(0, 128, 128);">9093</span><span> dst </span><span class="token token" style="color: rgb(20, 24, 31);">&gt;</span><span>/tmp/sr.log </span><span class="token token file-descriptor" style="color: rgb(184, 10, 24); font-weight: bold;">2</span><span class="token token" style="color: rgb(20, 24, 31);">&gt;</span><span class="token token file-descriptor" style="color: rgb(184, 10, 24); font-weight: bold;">&amp;1</span><span> </span><span class="token token" style="color: rgb(20, 24, 31);">&amp;</span><span> </span><span class="token token assign-left" style="color: rgb(179, 74, 0);">SRV</span><span class="token token" style="color: rgb(20, 24, 31);">=</span><span class="token token" style="color: rgb(179, 74, 0);">$!</span><span>
-</span></span><span><span></span><span class="token token" style="color: rgb(0, 81, 194);">sleep</span><span> </span><span class="token token" style="color: rgb(0, 128, 128);">0.5</span><span>
-</span></span><span><span>./client </span><span class="token token" style="color: rgb(0, 128, 128);">127.0</span><span>.0.1 </span><span class="token token" style="color: rgb(0, 128, 128);">9093</span><span> </span><span class="token token" style="color: rgb(0, 128, 128);">4</span><span> src/f_300M.bin </span><span class="token token" style="color: rgb(20, 24, 31);">&gt;</span><span>/dev/null
-</span></span><span><span></span><span class="token token" style="color: rgb(0, 81, 194);">sleep</span><span> </span><span class="token token" style="color: rgb(0, 128, 128);">0.2</span><span>
-</span></span><span><span></span><span class="token token" style="color: rgb(179, 74, 0);">echo</span><span> </span><span class="token token" style="color: rgb(0, 128, 0);">"--- 服务端分片 resume 起点 (39321600=该片已完成被跳过, 0=从头传) ---"</span><span>
-</span></span><span><span></span><span class="token token" style="color: rgb(0, 81, 194);">grep</span><span> -oE </span><span class="token token" style="color: rgb(0, 128, 0);">"shard [0-7]/8 off=[0-9]+ len=[0-9]+ resume@[0-9]+"</span><span> /tmp/sr.log </span><span class="token token" style="color: rgb(20, 24, 31);">|</span><span> </span><span class="token token" style="color: rgb(0, 81, 194);">sort</span><span>
-</span></span><span><span></span><span class="token token" style="color: rgb(0, 81, 194);">kill</span><span> </span><span class="token token" style="color: rgb(179, 74, 0);">$SRV</span><span> </span><span class="token token file-descriptor" style="color: rgb(184, 10, 24); font-weight: bold;">2</span><span class="token token" style="color: rgb(20, 24, 31);">&gt;</span><span>/dev/null</span></span>
+<span
+  ><span class="token token" style="color: rgb(179, 74, 0)">cd</span
+  ><span> /home/claude/filetransfer </span
+  ><span class="token token" style="color: rgb(20, 24, 31)">&amp;&amp;</span
+  ><span> </span
+  ><span class="token token" style="color: rgb(0, 81, 194)">rm</span
+  ><span> -rf dst </span
+  ><span class="token token" style="color: rgb(20, 24, 31)">&amp;&amp;</span
+  ><span> </span
+  ><span class="token token" style="color: rgb(0, 81, 194)">mkdir</span
+  ><span> -p dst </span></span
+><span
+  ><span></span
+  ><span class="token token assign-left" style="color: rgb(179, 74, 0)"
+    >SIZE</span
+  ><span class="token token" style="color: rgb(20, 24, 31)">=</span
+  ><span class="token token" style="color: rgb(0, 128, 128)">314572800</span
+  ><span class="token token" style="color: rgb(43, 48, 59)">;</span
+  ><span> </span
+  ><span class="token token assign-left" style="color: rgb(179, 74, 0)">SS</span
+  ><span class="token token" style="color: rgb(20, 24, 31)">=</span
+  ><span class="token token" style="color: rgb(0, 128, 128)">39321600</span
+  ><span class="token token" style="color: rgb(43, 48, 59)">;</span
+  ><span> </span
+  ><span class="token token assign-left" style="color: rgb(179, 74, 0)"
+    >DONE</span
+  ><span class="token token" style="color: rgb(20, 24, 31)">=</span
+  ><span class="token token" style="color: rgb(0, 128, 128)">4</span
+  ><span> </span></span
+><span
+  ><span></span
+  ><span class="token token" style="color: rgb(0, 81, 194)">dd</span
+  ><span> </span
+  ><span class="token token assign-left" style="color: rgb(179, 74, 0)">if</span
+  ><span class="token token" style="color: rgb(20, 24, 31)">=</span
+  ><span>src/f_300M.bin </span
+  ><span class="token token assign-left" style="color: rgb(179, 74, 0)">of</span
+  ><span class="token token" style="color: rgb(20, 24, 31)">=</span
+  ><span>dst/f_300M.bin.part </span
+  ><span class="token token assign-left" style="color: rgb(179, 74, 0)">bs</span
+  ><span class="token token" style="color: rgb(20, 24, 31)">=</span
+  ><span class="token token" style="color: rgb(179, 74, 0)">$SS</span
+  ><span> </span
+  ><span class="token token assign-left" style="color: rgb(179, 74, 0)"
+    >count</span
+  ><span class="token token" style="color: rgb(20, 24, 31)">=</span
+  ><span class="token token" style="color: rgb(179, 74, 0)">$DONE</span
+  ><span> </span
+  ><span class="token token assign-left" style="color: rgb(179, 74, 0)"
+    >status</span
+  ><span class="token token" style="color: rgb(20, 24, 31)">=</span
+  ><span>none </span></span
+><span
+  ><span>python3 - </span
+  ><span class="token token" style="color: rgb(20, 24, 31)">&lt;&lt;</span
+  ><span> </span
+  ><span class="token token" style="color: rgb(0, 128, 0)">'PY' </span></span
+><span>import struct </span><span>size,ss,n,done=314572800,39321600,8,4 </span
+><span>out=struct.pack("&gt;IQII",0x46544632,size,0x81cfbbf7,n) </span
+><span>for i in range(n): </span><span> ln=min(ss,size-i*ss) </span
+><span>
+  out+=struct.pack("&gt;QB",ln,1) if i&lt;done else struct.pack("&gt;QB",0,0) </span
+><span>open("dst/f_300M.bin.state","wb").write(out) </span
+><span
+  ><span class="token token" style="color: rgb(0, 128, 0)">PY</span
+  ><span> </span></span
+><span
+  ><span>stdbuf -oL ./server </span
+  ><span class="token token" style="color: rgb(0, 128, 128)">9093</span
+  ><span> dst </span
+  ><span class="token token" style="color: rgb(20, 24, 31)">&gt;</span
+  ><span>/tmp/sr.log </span
+  ><span
+    class="token token file-descriptor"
+    style="color: rgb(184, 10, 24); font-weight: bold"
+    >2</span
+  ><span class="token token" style="color: rgb(20, 24, 31)">&gt;</span
+  ><span
+    class="token token file-descriptor"
+    style="color: rgb(184, 10, 24); font-weight: bold"
+    >&amp;1</span
+  ><span> </span
+  ><span class="token token" style="color: rgb(20, 24, 31)">&amp;</span
+  ><span> </span
+  ><span class="token token assign-left" style="color: rgb(179, 74, 0)"
+    >SRV</span
+  ><span class="token token" style="color: rgb(20, 24, 31)">=</span
+  ><span class="token token" style="color: rgb(179, 74, 0)">$!</span
+  ><span> </span></span
+><span
+  ><span></span
+  ><span class="token token" style="color: rgb(0, 81, 194)">sleep</span
+  ><span> </span
+  ><span class="token token" style="color: rgb(0, 128, 128)">0.5</span
+  ><span> </span></span
+><span
+  ><span>./client </span
+  ><span class="token token" style="color: rgb(0, 128, 128)">127.0</span
+  ><span>.0.1 </span
+  ><span class="token token" style="color: rgb(0, 128, 128)">9093</span
+  ><span> </span
+  ><span class="token token" style="color: rgb(0, 128, 128)">4</span
+  ><span> src/f_300M.bin </span
+  ><span class="token token" style="color: rgb(20, 24, 31)">&gt;</span
+  ><span>/dev/null </span></span
+><span
+  ><span></span
+  ><span class="token token" style="color: rgb(0, 81, 194)">sleep</span
+  ><span> </span
+  ><span class="token token" style="color: rgb(0, 128, 128)">0.2</span
+  ><span> </span></span
+><span
+  ><span></span
+  ><span class="token token" style="color: rgb(179, 74, 0)">echo</span
+  ><span> </span
+  ><span class="token token" style="color: rgb(0, 128, 0)"
+    >"--- 服务端分片 resume 起点 (39321600=该片已完成被跳过, 0=从头传)
+    ---"</span
+  ><span> </span></span
+><span
+  ><span></span
+  ><span class="token token" style="color: rgb(0, 81, 194)">grep</span
+  ><span> -oE </span
+  ><span class="token token" style="color: rgb(0, 128, 0)"
+    >"shard [0-7]/8 off=[0-9]+ len=[0-9]+ resume@[0-9]+"</span
+  ><span> /tmp/sr.log </span
+  ><span class="token token" style="color: rgb(20, 24, 31)">|</span
+  ><span> </span
+  ><span class="token token" style="color: rgb(0, 81, 194)">sort</span
+  ><span> </span></span
+><span
+  ><span></span
+  ><span class="token token" style="color: rgb(0, 81, 194)">kill</span
+  ><span> </span
+  ><span class="token token" style="color: rgb(179, 74, 0)">$SRV</span
+  ><span> </span
+  ><span
+    class="token token file-descriptor"
+    style="color: rgb(184, 10, 24); font-weight: bold"
+    >2</span
+  ><span class="token token" style="color: rgb(20, 24, 31)">&gt;</span
+  ><span>/dev/null</span></span
+>

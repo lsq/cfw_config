@@ -68,6 +68,62 @@ function mergeAndSortProxies(existing = [], fetched = []) {
   );
 }
 
+/**
+ * 将 URL 或域名列表转换为 mihomo nameserver-policy 配置对象
+ * @param {string|string[]} inputs - 单个URL/域名，或URL/域名数组
+ * @param {string|string[]} dnsServers - 单个DNS服务器地址，或多个DNS服务器地址数组
+ * @returns {Object} mihomo nameserver-policy 格式的对象
+ */
+function toNameserverPolicy(
+  inputs,
+  dnsServers = 'https://dns.alidns.com/dns-query#ecs=223.5.5.5/24&ecs-override=true'
+) {
+  const list = Array.isArray(inputs) ? inputs : [inputs];
+  // 核心修改：统一将 dnsServers 转为数组，确保每个域名的值都是合法的 DNS 服务器数组
+  const servers = Array.isArray(dnsServers) ? dnsServers : [dnsServers];
+
+  const domains = list.map((input) => {
+    try {
+      const hostname = new URL(input).hostname;
+      return `+.${hostname}`;
+    } catch {
+      const cleaned = input.replace(/^(https?:\/\/)/, '').split('/')[0];
+      return cleaned.startsWith('+.') ? cleaned : `+.${cleaned}`;
+    }
+  });
+
+  const uniqueDomains = [...new Set(domains)];
+
+  const policy = {};
+  uniqueDomains.forEach((domain) => {
+    // 直接赋值完整的服务器数组，而非包装单元素数组
+    policy[domain] = servers;
+  });
+
+  return policy;
+}
+
+/**
+ * 将 toNameserverPolicy 的返回值安全合并到原 mihomo 配置的 nameserver-policy 中
+ * @param {Object} originalConfig - 原始 mihomo 完整配置对象
+ * @param {Object} newPolicy - toNameserverPolicy() 的返回值
+ * @returns {Object} 合并后的完整配置对象（不修改原对象）
+ */
+function mergeNameserverPolicy(originalConfig, newPolicy) {
+  // 1. 深拷贝原配置，避免直接修改原始数据
+  const merged = JSON.parse(JSON.stringify(originalConfig));
+
+  // 2. 确保 nameserver-policy 字段存在
+  if (!merged.dns) merged.dns = {};
+  if (!merged.dns['nameserver-policy']) merged.dns['nameserver-policy'] = {};
+
+  // 3. 浅合并：新策略的键值对覆盖/追加到原 policy 中
+  // ⚠️ 相同域名键时，newPolicy 的值会完全替换原值（符合 mihomo 语义）
+  Object.assign(merged.dns['nameserver-policy'], newPolicy);
+
+  return merged;
+}
+
 async function main(config) {
   // 如果ipv6连接不通，在flClash上会出现同步providers失败
   // 那么就会VPN代理不通，需要切换github下载代理链接
@@ -118,5 +174,18 @@ async function main(config) {
       target: '',
     },
   ];
-  return config;
+  const newPolicy = toNameserverPolicy(
+    // ['https://fastgit.cc', 'https://gitproxy.mrhjx.cn'],
+    githubProxy,
+    [
+      'https://dns.alidns.com/dns-query#ecs=223.5.5.5/24&ecs-override=true',
+      'https://doh.pub/dns-query#ecs=223.5.5.5/24&ecs-override=true',
+    ]
+  );
+
+  // 3. ✅ 核心：一行合并
+  // config.dns['nameserver-policy'] = merge({},config.dns?.['nameserver-policy'] || {}, newPolicy);
+  const finalConfig = mergeNameserverPolicy(config, newPolicy);
+
+  return finalConfig;
 }

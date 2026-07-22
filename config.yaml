@@ -81,7 +81,12 @@ templates:
       proxy-name:
         - pattern: '机场推荐[：:]'
           target: ''
-    dns: false
+    dns:
+      nameserver-policy:
+        # 👇 新增：GitHub 及镜像站强制使用国内 DNS
+        '+.fastgit.cc':
+          - https://dns.alidns.com/dns-query#ecs=223.5.5.5/24&ecs-override=true
+          - https://doh.pub/dns-query#ecs=223.5.5.5/24&ecs-override=true
     rules: false
     tun:
       enable: true

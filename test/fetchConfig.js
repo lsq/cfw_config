@@ -1,6 +1,7 @@
 const axios = require('axios');
 
-const url = 'https://gh-proxy.com/raw.githubusercontent.com/HenryChiao/MIHOMO_YAMLS/main/THEYAMLS/General_Config/wanswu/config.yaml';
+const url =
+  'https://gh-proxy.com/raw.githubusercontent.com/HenryChiao/MIHOMO_YAMLS/main/THEYAMLS/General_Config/wanswu/config.yaml';
 
 async function fetchConfig() {
   try {

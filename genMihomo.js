@@ -10,7 +10,7 @@ const {
   createSymlink,
 } = require('./get_newpac');
 const { linkToClash } = require('./lib/converter');
-const {getFastestProxy} = require('./githubProxy')
+const { getFastestProxy } = require('./githubProxy');
 
 const newline = /\r?\n/;
 const trimText = /机场推荐：/;
@@ -18,7 +18,7 @@ const mihomoCfg = mihomoConfig();
 const { env } = require('node:process');
 
 const isCI = !!env.GITHUB_ACTIONS;
-const defaultProxy = "https://gh-proxy.com";
+const defaultProxy = 'https://gh-proxy.com';
 // const mihomoCfg = 'mihomo_config.yaml'
 
 // ======================
@@ -124,7 +124,7 @@ function renderProxyProvider(name, config, template) {
     lines.push(`    <<: *${template.providersAnchorFile}`);
   }
   if (template.interval) {
-      lines.push(`    interval: ${template.interval}`);
+    lines.push(`    interval: ${template.interval}`);
   }
   // if (config.type) lines.push(`    type: ${config.type}`);
   if (config.url) lines.push(`    url: ${config.url}`);
@@ -284,6 +284,54 @@ function checkDuplicateProxies(proxies) {
   } else {
     console.log('✅ 未发现重复代理（server:port 唯一）');
   }
+}
+
+/**
+ * 将 URL 或域名列表转换为 mihomo nameserver-policy 配置对象
+ * @param {string|string[]} inputs - 单个URL/域名，或URL/域名数组
+ * @param {string|string[]} dnsServers - 单个DNS服务器地址，或多个DNS服务器地址数组
+ * @returns {Object} mihomo nameserver-policy 格式的对象
+ */
+function toNameserverPolicy(
+  inputs,
+  dnsServers = 'https://dns.alidns.com/dns-query#ecs=223.5.5.5/24&ecs-override=true'
+) {
+  const list = Array.isArray(inputs) ? inputs : [inputs];
+  // 核心修改：统一将 dnsServers 转为数组，确保每个域名的值都是合法的 DNS 服务器数组
+  const servers = Array.isArray(dnsServers) ? dnsServers : [dnsServers];
+
+  const domains = list.map((input) => {
+    try {
+      const hostname = new URL(input).hostname;
+      return `+.${hostname}`;
+    } catch {
+      const cleaned = input.replace(/^(https?:\/\/)/, '').split('/')[0];
+      return cleaned.startsWith('+.') ? cleaned : `+.${cleaned}`;
+    }
+  });
+
+  const uniqueDomains = [...new Set(domains)];
+
+  const policy = {};
+  uniqueDomains.forEach((domain) => {
+    // 直接赋值完整的服务器数组，而非包装单元素数组
+    policy[domain] = servers;
+  });
+
+  return policy;
+}
+
+/**
+ * 生成可直接粘贴到 config.yaml 的文本（同步适配数组参数）
+ */
+function toYamlPolicy(inputs, dnsServers) {
+  const policy = toNameserverPolicy(inputs, dnsServers);
+  return Object.entries(policy)
+    .map(
+      ([domain, servers]) =>
+        `    "${domain}":\n${servers.map((s) => `      - ${s}`).join('\n')}`
+    )
+    .join('\n');
 }
 
 // ======================
@@ -516,7 +564,7 @@ async function methodTwo(config, mihomoCfg) {
 
   //切换github 最快代理
   const proxyResult = await getFastestProxy();
-    const mostFastProxy = proxyResult.success ? proxyResult.source : defaultProxy;
+  const mostFastProxy = proxyResult.success ? proxyResult.source : defaultProxy;
   // 下载模板为主配置
   const remoteFilename = path.basename(template.url);
   const localFilename = `${template.name}_${remoteFilename}`;
@@ -583,6 +631,27 @@ async function methodTwo(config, mihomoCfg) {
   if (template.tun) {
     console.log('准备修改tun配置');
     mainConfig = mergeReplaceWithExp('tun', mainConfig, template);
+  }
+
+  if (template.dns) {
+    console.log('准备修改dns配置');
+    // 2. 生成新的 policy
+    const newPolicy = toNameserverPolicy(
+      // ['https://fastgit.cc', 'https://gitproxy.mrhjx.cn'],
+      mostFastProxy,
+      [
+        'https://dns.alidns.com/dns-query#ecs=223.5.5.5/24&ecs-override=true',
+        'https://doh.pub/dns-query#ecs=223.5.5.5/24&ecs-override=true',
+      ]
+    );
+
+    // 3. ✅ 核心：一行合并
+    template.dns['nameserver-policy'] = merge(
+      {},
+      template.dns?.['nameserver-policy'] || {},
+      newPolicy
+    );
+    mainConfig = mergeReplaceWithExp('dns', mainConfig, template);
   }
 
   mainConfig = mainConfig.replaceAll(defaultProxy, mostFastProxy);

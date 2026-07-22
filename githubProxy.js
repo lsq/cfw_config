@@ -1,5 +1,5 @@
 const axios = require('axios');
-const {fetchProxyList} = require('./getFastGit');
+const { fetchProxyList } = require('./getFastGit');
 
 /**
  * 通过指定的 gh-proxy 获取配置文件
@@ -13,8 +13,9 @@ async function checkProxy(proxyHost) {
     const response = await axios.get(url, {
       timeout: 15000,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-        'Accept': '*/*',
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+        Accept: '*/*',
       },
     });
 
@@ -63,16 +64,15 @@ async function getProxyWithFallback(sources) {
  * 按顺序尝试 fallback 列表中的代理源
  * @returns {Promise<{success: boolean, source: string|null}>}
  */
-async function getFastestProxy(){
-
+async function getFastestProxy() {
   const ghfast = await fetchProxyList();
   console.log(ghfast);
-  const ghfastUrl = ghfast.map(itm => itm.url);
+  const ghfastUrl = ghfast.map((itm) => itm.url);
   const PROXY_SOURCES = [
-      'https://gh-proxy.com',
-      ...ghfastUrl,
-      'https://ghfast.top',
-      'https://mirror.ghproxy.com',
+    'https://gh-proxy.com',
+    ...ghfastUrl,
+    'https://ghfast.top',
+    'https://mirror.ghproxy.com',
   ];
 
   const result = await getProxyWithFallback(PROXY_SOURCES);
