@@ -313,6 +313,22 @@ interface IProxyHysteria2Config extends IProxyBaseConfig {
   cwnd?: number;
   'udp-mtu'?: number;
 }
+// anytls
+interface IProxyAnytlsConfig extends IProxyBaseConfig {
+  name: string;
+  type: 'anytls';
+  server?: string;
+  port?: number;
+  password?: string;
+  'client-fingerprint'?: ClientFingerprint;
+  udp?: boolean;
+  'idle-session-check-interval'?: number;
+  'idle-session-timeout'?: number;
+  'min-idle-session'?: number;
+  sni?: string;
+  alpn?: string[];
+  'skip-cert-verify'?: boolean;
+}
 // shadowsocks
 interface IProxyShadowsocksConfig extends IProxyBaseConfig {
   name: string;
@@ -390,6 +406,7 @@ interface IProxyConfig
     IProxyWireguardConfig,
     IProxyHysteriaConfig,
     IProxyHysteria2Config,
+    IProxyAnytlsConfig,
     IProxyShadowsocksConfig,
     IProxyshadowsocksRConfig,
     IProxySmuxConfig,
@@ -409,7 +426,8 @@ interface IProxyConfig
     | 'ssh'
     | 'socks5'
     | 'vmess'
-    | 'vless';
+    | 'vless'
+    | 'anytls';
   reality?: RealityOptions;
 }
 
