@@ -58,11 +58,16 @@ function mergeReplaceWithExp(key, content, obj) {
     const merged = merge({}, partial, replace);
     // console.log(merged)
     // console.log(yaml.dump(merged))
-    const newBlock = yaml.dump(merged, {
+    let newBlock = yaml.dump(merged, {
+      quotingType: '"',
       noRefs: true,
       indent: 2,
       sortKeys: false,
     });
+    newBlock = newBlock.replace(
+      /^(\s*)([^"\s\n]+[:+.][^"\s\n:]+)\s*:/gm,
+      '$1"$2":'
+    );
     return replaceWithExp(regex, content, newBlock);
   }
 
@@ -96,6 +101,7 @@ function objectToYamlSubBlock(key, obj, baseIndent = 2) {
 
   // 序列化对象为 YAML（不带顶层 key）
   let innerYaml = yaml.dump(obj, {
+    quotingType: '"',
     indent: 2, // 每层嵌套缩进 2 空格（YAML 内部层级）
     noRefs: true, // 禁用引用（避免 &id / *id）
     lineWidth: -1, // 不自动折行
@@ -104,6 +110,10 @@ function objectToYamlSubBlock(key, obj, baseIndent = 2) {
 
   // 去除末尾可能的多余空行
   innerYaml = innerYaml.trimEnd();
+  innerYaml = innerYaml.replace(
+    /^(\s*)([^"\s\n]+[:+.][^"\s\n:]+)\s*:/gm,
+    '$1"$2":'
+  );
 
   // 每行前面加上 baseIndent 个空格（用于作为子项）
   const indentedLines = innerYaml
@@ -499,11 +509,19 @@ async function methodOne(config) {
   // 输出最终配置
   // await exportData(mihomoCfg, mainConfig);
   console.log('✅ 方案一完成：config.yaml 已生成');
-  return yaml.dump(mainConfig, {
+  let yamlConfig = yaml.dump(mainConfig, {
+    quotingType: '"',
     indent: 2,
     noRefs: true,
     sortKeys: false, // 保持原有顺序
   });
+  // 2. 使用正则，精准抓取包含特殊字符（如 +, :, .）且没有被引号包裹的 Key
+  // 匹配规则：行首的空格 + (包含 + 或 : 或 . 的字符串) + 冒号 + 空格/换行
+  yamlConfig = yamlConfig.replace(
+    /^(\s*)([^"\s\n]+[:+.][^"\s\n:]+)\s*:/gm,
+    '$1"$2":'
+  );
+  return yamlConfig;
 }
 
 // ======================

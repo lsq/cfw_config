@@ -71,5 +71,10 @@ module.exports.parse = async (
   obj['proxy-groups'][0].proxies.push(...prxoyNames);
   // }
   obj['allow-lan'] = true;
-  return yaml.stringify(obj);
+  let yamlString = yaml.stringify(obj);
+  yamlString = yamlString.replace(
+    /^(\s*)([^"\s\n]+[:+.][^"\s\n:]+)\s*:/gm,
+    '$1"$2":'
+  );
+  return yamlString;
 };

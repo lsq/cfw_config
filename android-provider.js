@@ -152,12 +152,14 @@ async function main(config) {
     'https://www.xrayvip.com/free.txt', // 4
     `${githubProxy}https://github.com/chengaopan/AutoMergePublicNodes/raw/refs/heads/master/list.meta.yml`, // 5
     `${githubProxy}https://github.com/anaer/Sub/raw/refs/heads/main/proxies.yaml`, // 6
+    `${githubProxy}https://raw.githubusercontent.com/anaer/Sub/main/proxies.yaml`, //7
   ];
   // config.ipv6 = true;
   // config.tun.enable = true; // android上此参数无效
   // config['proxy-providers'] = {};
   config['external-controller'] = '0.0.0.0:9090';
   config['proxy-providers'].main.url = url[0];
+  config['proxy-providers'].main.interval = 3600;
   config['proxy-providers'].main.header = {};
   config['proxy-providers'].main.override['proxy-name'] = [
     {
@@ -167,6 +169,7 @@ async function main(config) {
   ];
 
   config['proxy-providers'].back.url = url[3];
+  config['proxy-providers'].back.interval = 3600;
   config['proxy-providers'].back.type = 'http';
   config['proxy-providers'].back.override['proxy-name'] = [
     {
