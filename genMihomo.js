@@ -42,49 +42,106 @@ function extractKey(obj, key) {
   return obj?.[key] !== undefined ? { [key]: obj[key] } : undefined;
 }
 
-function mergeReplaceWithExp(key, content, obj) {
+/**
+ * @param {'merge'|'append'|'prepend'|'replace'} arrayStrategy
+ *   - merge:   按索引深度合并（默认 lodash.merge 行为）
+ *   - append:  将新数组元素追加到原数组末尾
+ *   - prepend: 将新数组元素插入到原数组开头
+ *   - replace: 直接用新数组替换旧数组
+ */
+function mergeReplaceWithExp(key, content, obj, arrayStrategy = 'merge') {
   const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  // const regex = new RegExp(`^\\\\s*${escapedKey}:\\\\s*$((?:\\\\n(?:\\\\s.*|$))*)`, 'gm');
   const regex = new RegExp(`^${escapedKey}:\\s*\\n(?:\\s{2,}.*\\n?)*`, 'gm');
+
   if (!regex.test(content)) {
-    throw new Error(`${regex} block not found in content`);
+    throw new Error(`${key} block not found in content`);
   }
 
   const block = extractYamlBlock(content, regex);
-  if (block) {
-    const partial = yaml.load(block); // { tun: { ... } }
-    // const merged = merge({}, partial, { tun: { enable: true } });
-    const replace = extractKey(obj, key);
-    const merged = merge({}, partial, replace);
-    // console.log(merged)
-    // console.log(yaml.dump(merged))
-    let newBlock = yaml.dump(merged, {
-      quotingType: '"',
-      noRefs: true,
-      indent: 2,
-      sortKeys: false,
-    });
-    newBlock = newBlock.replace(
-      /^(\s*)([^"\s\n]+[:+.][^"\s\n:]+)\s*:/gm,
-      '$1"$2":'
-    );
-    return replaceWithExp(regex, content, newBlock);
-  }
+  if (!block) return content;
 
-  return content;
+  const partial = yaml.load(block);
+  const replace = extractKey(obj, key);
+
+  // ✅ 核心改动：使用自定义合并代替 lodash.merge
+  const merged = customMerge(partial, replace, arrayStrategy);
+
+  let newBlock = yaml.dump(merged, {
+    quotingType: '"',
+    noRefs: true,
+    indent: 2,
+    sortKeys: false,
+  });
+
+  // 为含特殊字符的 key 加引号
+  newBlock = newBlock.replace(
+    /^(\s*)([^"\s\n]+[:+.][^"\s\n:]+)\s*:/gm,
+    '$1"$2":'
+  );
+
+  return replaceWithExp(regex, content, newBlock);
+}
+
+// ---------- 辅助函数 ----------
+
+function extractKey(obj, key) {
+  return obj?.[key] !== undefined ? { [key]: obj[key] } : undefined;
 }
 
 function extractYamlBlock(text, regex) {
   regex.lastIndex = 0;
   const match = regex.exec(text);
-  // console.log(match)
   return match ? match[0] : null;
 }
 
 function replaceWithExp(reg, content, newBlock) {
-  const updated = content.replace(reg, `${newBlock.trim()}\n`);
-  // fs.writeFileSync(configPath, updated, 'utf8');
-  return updated;
+  return content.replace(reg, `${newBlock.trim()}\n`);
+}
+
+/**
+ * 自定义深度合并，支持数组策略
+ */
+function customMerge(target, source, arrayStrategy) {
+  if (source === undefined || source === null) return target;
+  if (target === undefined || target === null) return source;
+
+  // ✅ 数组处理：根据策略决定行为
+  if (Array.isArray(target) && Array.isArray(source)) {
+    switch (arrayStrategy) {
+      case 'append':
+        return [...target, ...source];
+      case 'prepend':
+        return [...source, ...target];
+      case 'replace':
+        return [...source];
+      case 'merge':
+      default:
+        // 按索引深度合并（与 lodash.merge 一致）
+        return source.reduce(
+          (acc, val, idx) => {
+            acc[idx] = customMerge(acc[idx], val, arrayStrategy);
+            return acc;
+          },
+          [...target]
+        );
+    }
+  }
+
+  // 对象处理：递归深度合并
+  if (isPlainObject(target) && isPlainObject(source)) {
+    const result = { ...target };
+    for (const key of Object.keys(source)) {
+      result[key] = customMerge(result[key], source[key], arrayStrategy);
+    }
+    return result;
+  }
+
+  // 基本类型 / 类型不匹配：source 覆盖 target
+  return source;
+}
+
+function isPlainObject(val) {
+  return val !== null && typeof val === 'object' && !Array.isArray(val);
 }
 
 /**
@@ -670,6 +727,14 @@ async function methodTwo(config, mihomoCfg) {
       newPolicy
     );
     mainConfig = mergeReplaceWithExp('dns', mainConfig, template);
+  }
+
+  if (template.rules) {
+    const hostname = new URL(mostFastProxy).hostname;
+    const proxyRule = `DOMAIN-SUFFIX,${hostname},DIRECT`;
+    if (template.rules.indexOf(proxyRule) === -1)
+      template.rules.push(proxyRule);
+    mainConfig = mergeReplaceWithExp('rules', mainConfig, template, 'prepend');
   }
 
   mainConfig = mainConfig.replaceAll(defaultProxy, mostFastProxy);

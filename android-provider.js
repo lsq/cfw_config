@@ -72,7 +72,7 @@ function mergeAndSortProxies(existing = [], fetched = []) {
  * 将 URL 或域名列表转换为 mihomo nameserver-policy 配置对象
  * @param {string|string[]} inputs - 单个URL/域名，或URL/域名数组
  * @param {string|string[]} dnsServers - 单个DNS服务器地址，或多个DNS服务器地址数组
- * @returns {Object} mihomo nameserver-policy 格式的对象
+ * @returns {object} mihomo nameserver-policy 格式的对象
  */
 function toNameserverPolicy(
   inputs,
@@ -105,9 +105,9 @@ function toNameserverPolicy(
 
 /**
  * 将 toNameserverPolicy 的返回值安全合并到原 mihomo 配置的 nameserver-policy 中
- * @param {Object} originalConfig - 原始 mihomo 完整配置对象
- * @param {Object} newPolicy - toNameserverPolicy() 的返回值
- * @returns {Object} 合并后的完整配置对象（不修改原对象）
+ * @param {object} originalConfig - 原始 mihomo 完整配置对象
+ * @param {object} newPolicy - toNameserverPolicy() 的返回值
+ * @returns {object} 合并后的完整配置对象（不修改原对象）
  */
 function mergeNameserverPolicy(originalConfig, newPolicy) {
   // 1. 深拷贝原配置，避免直接修改原始数据
@@ -152,7 +152,7 @@ async function main(config) {
     'https://www.xrayvip.com/free.txt', // 4
     `${githubProxy}https://github.com/chengaopan/AutoMergePublicNodes/raw/refs/heads/master/list.meta.yml`, // 5
     `${githubProxy}https://github.com/anaer/Sub/raw/refs/heads/main/proxies.yaml`, // 6
-    `${githubProxy}https://raw.githubusercontent.com/anaer/Sub/main/proxies.yaml`, //7
+    `${githubProxy}https://raw.githubusercontent.com/anaer/Sub/main/proxies.yaml`, // 7
   ];
   // config.ipv6 = true;
   // config.tun.enable = true; // android上此参数无效

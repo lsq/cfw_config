@@ -47,17 +47,5 @@
     "prettier": "3.8.3",
     "prettier-eslint": "^16.4.2",
     "yaml": "^2.9.0"
-  },
-  "overrides": {
-    "semver": "^7.5.4"
-  },
-  "resolutions": {
-    "semver": "7.8.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "semver": "^7.8.0",
-      "**/semver": "^7.8.0"
-    }
   }
 }

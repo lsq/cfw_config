@@ -73,7 +73,7 @@ module.exports.parse = async (
   obj['allow-lan'] = true;
   let yamlString = yaml.stringify(obj);
   yamlString = yamlString.replace(
-    /^(\s*)([^"\s\n]+[:+.][^"\s\n:]+)\s*:/gm,
+    /^(\s*)([^\s"][^\s"+.:]*[+.:]:*[^\s":]+(?::+[^\s":]+)*)\s*:/gm,
     '$1"$2":'
   );
   return yamlString;

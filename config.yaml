@@ -1,8 +1,8 @@
 method: 2 # 方案一；修复策略，方案二：模板策略
 templateset: 1 # 采用模板策略时，采用哪个模板, 可以是字符串，或者数字
 fileName:
-  - ssrsub-vless.txt
-  - ssrsub-hysteria2.txt
+# - ssrsub-vless.txt
+# - ssrsub-hysteria2.txt
 fileYaml:
   - default.yaml
 strategy-anchor:
@@ -28,11 +28,11 @@ strategy-anchor:
 groups-strategy:
   providers: { <<: *BaseCH }
 providers:
-  - name: vvTec
-    type: yaml
-    url:
-      - https://gh-proxy.com/raw.githubusercontent.com/free18/v2ray/main/c.yaml
-    main: true
+  # - name: vvTec
+  #   type: yaml
+  #   url:
+  #     - https://gh-proxy.com/raw.githubusercontent.com/free18/v2ray/main/c.yaml
+  #   main: true
   - name: newpac
     type: yaml
     url:
@@ -47,12 +47,13 @@ providers:
       - https://xmxosfepggzm.503403.xyz
   - name: ssrsub
     type: yaml
+    main: true
     url:
       - https://gh-proxy.com/raw.githubusercontent.com/ssrsub/ssr/master/clash.yaml
-  - name: ermao
-    type: yaml
-    url:
-      - https://gh-proxy.com/raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml
+  # - name: ermao
+  #   type: yaml
+  #   url:
+  #     - https://gh-proxy.com/raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml
   - name: fanpx
     type: yaml
     url:
@@ -62,10 +63,10 @@ providers:
     type: yaml
     url:
       - https://gh-proxy.com/raw.githubusercontent.com/anaer/Sub/main/proxies.yaml
-  - name: peasoft
-    type: yaml
-    url:
-      - https://gh-proxy.com/raw.githubusercontent.com/chengaopan/AutoMergePublicNodes/master/list.meta.yml
+  # - name: peasoft
+  #   type: yaml
+  #   url:
+  #     - https://gh-proxy.com/raw.githubusercontent.com/chengaopan/AutoMergePublicNodes/master/list.meta.yml
 
 templates:
   - name: wanswu
@@ -87,7 +88,10 @@ templates:
         '+.fastgit.cc':
           - https://dns.alidns.com/dns-query#ecs=223.5.5.5/24&ecs-override=true
           - https://doh.pub/dns-query#ecs=223.5.5.5/24&ecs-override=true
-    rules: false
+    rules:
+      - DOMAIN-SUFFIX,gh-proxy.com,DIRECT
+      - DOMAIN-SUFFIX,gh-proxy.org,DIRECT
+      - DOMAIN-SUFFIX,fastgit.cc,DIRECT
     tun:
       enable: true
 

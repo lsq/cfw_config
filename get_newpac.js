@@ -138,7 +138,7 @@ function replaceCFEmailWithReal(htmlString) {
 }
 
 function createParseProxies() {
-  let hasAppended = false;
+  const hasAppended = false;
   return function parseProxies(response) {
     if (!response.success) {
       throw new Error('Response not successful');

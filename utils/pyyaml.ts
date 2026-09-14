@@ -41,10 +41,7 @@ export async function parsePyYaml(yamlText: string): Promise<any> {
     const py = await getPyodide();
 
     // Strip control chars except tab (\x09), LF (\x0A), CR (\x0D) — newlines are required for YAML structure
-    const safeText = yamlText.replace(
-      /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g,
-      ''
-    );
+    const safeText = yamlText.replace(/[\x00-\x08\v\f\x0E-\x1F\x7F-\x9F]/g, '');
 
     // Pass YAML via globals.set to avoid string-interpolation injection issues
     py.globals.set('_yaml_input', safeText);

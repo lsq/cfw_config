@@ -46,10 +46,10 @@ console.log(result);
 // 1. Create a custom string type that forces double quotes
 const forcedStringTag = new yaml.Type('tag:yaml.org,002:str', {
   kind: 'scalar',
-  construct: function (data) {
+  construct(data) {
     return data !== null ? data : '';
   },
-  represent: function (value) {
+  represent(value) {
     return value;
   },
   // This properties forces the engine to wrap strings in double quotes
@@ -76,7 +76,7 @@ let yamlString = yaml.dump(config, { indent: 2 });
 // 2. 使用正则，精准抓取包含特殊字符（如 +, :, .）且没有被引号包裹的 Key
 // 匹配规则：行首的空格 + (包含 + 或 : 或 . 的字符串) + 冒号 + 空格/换行
 yamlString = yamlString.replace(
-  /^(\s*)([^"\s\n]+[:+.][^"\s\n:]+)\s*:/gm,
+  /^(\s*)([^\s"][^\s"+.:]*[+.:]:*[^\s":]+(?::+[^\s":]+)*)\s*:/gm,
   '$1"$2":'
 );
 
@@ -92,7 +92,10 @@ const resulty = YAML.stringify(config, {
 
 console.log(resulty);
 console.log(
-  resulty.replace(/^(\s*)([^"\s\n]+[:+.][^"\s\n:]+)\s*:/gm, '$1"$2":')
+  resulty.replace(
+    /^(\s*)([^\s"][^\s"+.:]*[+.:]:*[^\s":]+(?::+[^\s":]+)*)\s*:/gm,
+    '$1"$2":'
+  )
 );
 console.log('--------------');
 

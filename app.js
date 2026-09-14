@@ -1,6 +1,6 @@
 const os = require('node:os');
 const path = require('node:path');
-const { env } = require('process');
+const { env } = require('node:process');
 const { DOMParser } = require('@xmldom/xmldom');
 const xpath = require('xpath');
 const { genClashCfg } = require('./genMihomo');
@@ -12,6 +12,7 @@ const {
   mihomoConfig,
 } = require('./get_newpac');
 const math = require('./math');
+
 const isCI = !!env.GITHUB_ACTIONS;
 
 const html = `<code>abc\nbcb13ecb-4f63-4257-ae01-ec5aeaa613a5@157.254.223.64\ndef</code>`;

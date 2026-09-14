@@ -1,5 +1,5 @@
-const { getProxyWithFallback } = require('../githubProxy');
 const { fetchProxyList } = require('../getFastGit');
+const { getProxyWithFallback } = require('../githubProxy');
 // Fallback 链：按优先级从高到低排列
 // 既然有本地代理，raw.githubusercontent.com 直连应排在第一位
 
