@@ -186,6 +186,38 @@ async function main(config) {
     ]
   );
 
+  const adsets = [
+    `${githubProxy}https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash-Classical.yaml`,
+    `${githubProxy}https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash-Classical-Only.Ads.yaml`,
+    `${githubProxy}https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash.yaml`,
+    `${githubProxy}https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash-Only.Ads.yaml`,
+    `${githubProxy}https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash-No.Privacy.yaml`,
+    `${githubProxy}https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash-No.Unwelcome.yaml`,
+  ];
+  // 定义要添加的规则提供者
+  const adRuleProvider = {
+    秋风广告规则: {
+      type: 'http',
+      behavior: 'classical',
+      format: 'yaml',
+      // path: './rule_providers/AWAvenue-Ads-Rule-Clash.yaml',
+      url: adsets[0],
+      interval: 86400,
+      proxy: 'DIRECT',
+    },
+  };
+
+  // 定义要添加的规则
+  const adRules = ['RULE-SET,秋风广告规则,REJECT'];
+
+  // ✅ 安全合并到原有 config（不覆盖已有内容）
+  config['rule-providers'] = {
+    ...(config['rule-providers'] || {}),
+    ...adRuleProvider,
+  };
+
+  config.rules = [...adRules, ...(config.rules || [])];
+
   // 3. ✅ 核心：一行合并
   // config.dns['nameserver-policy'] = merge({},config.dns?.['nameserver-policy'] || {}, newPolicy);
   const finalConfig = mergeNameserverPolicy(config, newPolicy);
