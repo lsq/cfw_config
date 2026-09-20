@@ -80,7 +80,8 @@ templates:
       upd: true
       additional-prefix: '|'
       proxy-name:
-        - pattern: '机场推荐[：:]'
+        # - pattern: '机场推荐[：:]'
+        - pattern: '【(.*?)】|机场推荐[：:]'
           target: ''
     dns:
       nameserver-policy:
