@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@bratel/webcrack": "^2.16.4",
-    "@nestjs/axios": "^4.0.1",
+    "@nestjs/axios": "^12.0.0",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^25.6.0",
     "@xmldom/xmldom": "^0.9.10",
