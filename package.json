@@ -45,7 +45,7 @@
     "@xmldom/xmldom": "^0.9.0",
     "eslint": "^10.2.1",
     "prettier": "3.9.8",
-    "prettier-eslint": "^16.4.2",
+    "prettier-eslint": "^17.0.0",
     "yaml": "^2.9.0"
   }
 }
