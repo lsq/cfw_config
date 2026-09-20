@@ -2,7 +2,7 @@
   "name": "axios-example",
   "type": "commonjs",
   "version": "1.0.0",
-  "packageManager": "pnpm@11.27.0",
+  "packageManager": "pnpm@12.5.1",
   "description": "",
   "author": "",
   "license": "ISC",
