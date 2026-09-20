@@ -6,7 +6,8 @@ const axiosN = require('axios');
 const xpath = require('xpath');
 
 const amazoneUrl =
-  'https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html';
+  'https://alvin9999.com/v2ray%e5%85%8d%e8%b4%b9%e8%b4%a6%e5%8f%b7';
+// 'https://s3.dualstack.us-west-2.amazonaws.com/zhifan2/v2ray.html';
 const parser = new DOMParser();
 function xpathHtml(parseString, doc) {
   return xpath.parse(parseString).select({ node: doc, isHtml: true });
@@ -51,7 +52,8 @@ async function update_uri() {
     // saveTextToFile("amazoneInfo-log.html", amazoneResponse.data);
     const retDoc = parser.parseFromString(amazoneResponse.data, 'text/html');
     // const uriNode = xpath.parse("//link[@rel='icon']/@href").select({node: retDoc, isHtml: true})
-    const uriNode = xpathHtml("//link[@rel='icon']/@href", retDoc);
+    // const uriNode = xpathHtml("//link[@rel='icon']/@href", retDoc);
+    const uriNode = xpathHtml("//link[@rel='canonical']/@href", retDoc);
     // console.log(uriNode)
     if (uriNode.length > 0) {
       const faviconUri = uriNode[0].nodeValue;
@@ -116,6 +118,7 @@ async function update_uri() {
 }
 
 (async () => {
+  // const url = await update_uri();
   const url = await update_uri();
   // console.log(process.execPath)
   console.log(url);

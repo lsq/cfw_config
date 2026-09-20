@@ -556,6 +556,7 @@ async function updateUrl(consoleObj = console) {
       nodePath = process.execPath;
     }
     consoleObj.log(`nodePath: ${nodePath}\n`);
+    if (!nodePath) nodePath = process.execPath;
 
     const nodeOutput = execSync(
       `${nodePath.trim()} ${path.join(__dirname, 'updateUri.js')}`,
