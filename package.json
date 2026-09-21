@@ -29,7 +29,7 @@
     "js-yaml": "^4.1.1",
     "lodash": "^4.18.1",
     "node-html-parser": "^9.0.0",
-    "pyodide": "^0.29.3",
+    "pyodide": "^314.0.0",
     "ts-punycode": "^0.1.2",
     "typescript": "^7.0.0",
     "xpath": "github:goto100/xpath#master",
