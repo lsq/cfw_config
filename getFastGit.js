@@ -7,7 +7,7 @@ async function fetchProxyList() {
     credentials: 'omit',
     headers: {
       'User-Agent':
-        'Mozilla/5.0 (X11; Linux x86_64; rv:151.0) Gecko/20100101 Firefox/151.0',
+        'Mozilla/5.0 (X11; Linux x86_64; rv:158.0) Gecko/20100101 Firefox/158.0',
       Accept: '*/*',
       'Accept-Language':
         'zh-CN,zh;q=0.9,zh-TW;q=0.8,zh-HK;q=0.7,en-US;q=0.6,en;q=0.5',
