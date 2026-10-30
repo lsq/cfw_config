@@ -207,7 +207,7 @@ importers:
         version: 4.18.1
       node-html-parser:
         specifier: ^9.0.0
-        version: 9.0.5
+        version: 9.0.6
       pyodide:
         specifier: ^0.29.3
         version: 0.29.5
@@ -2541,8 +2541,8 @@ packages:
     engines: {node: ^18.17.0 || >=20.5.0}
     hasBin: true
 
-  node-html-parser@9.0.5:
-    resolution: {integrity: sha512-LpUc74Ax3L6AsxTEqoep0GDqCBbsPjtn74sYaiazxGXfwhe6iqD4E5sHTJFCU+wBxVMX+Dd7mvLim0QM1vsvpw==}
+  node-html-parser@9.0.6:
+    resolution: {integrity: sha512-q3ETJ2gU+VlERyYbiJ5JQ6+mMVV1Bc6mZQ7MdJ30moq+h3oN0kQGj3rWDORaSX1SOLSkPbY/bN+sBzDlliVOBA==}
 
   node-ninja@1.0.2:
     resolution: {integrity: sha512-wMtWsG2QZI1Z5V7GciX9OI2DVT0PuDRIDQfe3L3rJsQ1qN1Gm3QQhoNtb4PMRi7gq4ByvEIYtPwHC7YbEf5yxw==}
@@ -6079,7 +6079,7 @@ snapshots:
       - supports-color
     optional: true
 
-  node-html-parser@9.0.5:
+  node-html-parser@9.0.6:
     dependencies:
       css-select: 5.2.2
       entities: 8.1.0
