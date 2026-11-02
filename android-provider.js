@@ -1,5 +1,6 @@
 /**
  * 请求 gh-fast.com 的代理配置接口，返回标准化的代理列表
+ * @param {} key
  * @returns {Promise<Array<{url: string, name: string, latency: number}>>}
  */
 async function fetchProxyList() {
@@ -85,10 +86,10 @@ function fetchProxyListSync() {
 }
 
 /**
- * 合并两个代理列表，以 url 为唯一键去重，新数据优先，最终按 latency 升序排序
  * @param {Array<{url: string, name: string, latency: number}>} existing
  * @param {Array<{url: string, name: string, latency: number}>} fetched
  * @returns {Array<{url: string, name: string, latency: number}>}
+ * 合并两个代理列表，以 url 为唯一键去重，新数据优先，最终按 latency 升序排序
  */
 function mergeAndSortProxies(existing = [], fetched = []) {
   const proxyMap = new Map();

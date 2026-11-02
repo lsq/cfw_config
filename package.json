@@ -12,11 +12,12 @@
     "preinstall": "npx only-allow pnpm",
     "lint": "eslint",
     "lint:fix": "eslint . --ext .jsx --ext .js --ext .tsx --ext .ts --cache --fix",
-    "build": "npx tsc",
+    "build": "pnpm exec tsc",
     "format": "pnpm exec prettier . --write",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@bratel/dgit": "^1.0.1",
     "@bratel/webcrack": "^2.16.4",
     "@nestjs/axios": "^12.0.0",
     "@types/js-yaml": "^4.0.9",
@@ -31,7 +32,6 @@
     "node-html-parser": "^9.0.0",
     "pyodide": "^0.29.3",
     "ts-punycode": "^0.1.2",
-    "typescript": "^7.0.0",
     "xpath": "github:goto100/xpath#master",
     "xpath-html": "^1.0.3"
   },
@@ -46,6 +46,7 @@
     "eslint": "^10.2.1",
     "prettier": "3.9.10",
     "prettier-eslint": "^17.0.0",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "yaml": "^2.9.0"
   }
 }

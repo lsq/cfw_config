@@ -26,7 +26,8 @@ async function fetchProxyList() {
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    return [{ url: 'https://gh-proxy.com', name: 'ghproxy', latency: 1 }];
+    // throw new Error(`HTTP error! status: ${response.status}`);
   }
 
   const data = await response.json();

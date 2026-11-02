@@ -651,7 +651,9 @@ function URI_VMESS(line: string): IProxyVmessConfig {
         } else {
           const opts: Record<string, any> = {
             path: getIfNotBlank(transportPath),
-            headers: { Host: getIfNotBlank(transportHost) },
+            headers: {
+              Host: getIfNotBlank(transportHost),
+            },
           };
           if (httpupgrade) {
             opts['v2ray-http-upgrade'] = true;
@@ -839,7 +841,7 @@ function URI_Trojan(line: string): IProxyTrojanConfig {
       : serverRaw;
 
   let portNum = Number.parseInt(`${port}`, 10);
-  if (isNaN(portNum)) {
+  if (Number.isNaN(portNum)) {
     portNum = 443;
   }
 
@@ -936,7 +938,7 @@ function URI_ANYTLS(line: string): IProxyConfig {
       : serverRaw;
 
   let portNum = Number.parseInt(`${port}`, 10);
-  if (isNaN(portNum)) {
+  if (Number.isNaN(portNum)) {
     portNum = 443;
   }
 
@@ -1039,8 +1041,12 @@ function URI_Hysteria2(line: string): IProxyHysteria2Config {
       /true/i.test(params.get('skip-cert-verify') || '')) && {
       'skip-cert-verify': true,
     }),
-    ...(params.get('sni') && { sni: params.get('sni')! }),
-    ...(params.get('obfs') && { obfs: params.get('obfs')! }),
+    ...(params.get('sni') && {
+      sni: params.get('sni')!,
+    }),
+    ...(params.get('obfs') && {
+      obfs: params.get('obfs')!,
+    }),
     ...(params.get('obfs-password') && {
       'obfs-password': params.get('obfs-password')!,
     }),
@@ -1073,7 +1079,7 @@ function URI_Hysteria(line: string): IProxyHysteriaConfig {
   const [, server, , port, , addons = '', nameRaw] =
     /^(.*?)(:(\d+))?\/?(\?(.*?))?(?:#(.*))?$/.exec(line)!;
   let portNum = Number.parseInt(`${port}`, 10);
-  if (isNaN(portNum)) {
+  if (Number.isNaN(portNum)) {
     portNum = 443;
   }
   const decodedName = trimStr(decodeURIComponent(nameRaw || ''));
@@ -1168,7 +1174,7 @@ function URI_TUIC(line: string): IProxyTuicConfig {
     /^(.*?):(.*?)@(.*?)(:(\d+))?\/?(\?(.*?))?(?:#(.*))?$/.exec(line) || [];
 
   let portNum = Number.parseInt(`${port}`, 10);
-  if (isNaN(portNum)) {
+  if (Number.isNaN(portNum)) {
     portNum = 443;
   }
   const password = decodeURIComponent(passwordRaw);
@@ -1373,11 +1379,7 @@ function URI_HTTP(line: string): IProxyHttpConfig {
           ['dual', 'ipv4', 'ipv6', 'ipv4-prefer', 'ipv6-prefer'].includes(value)
         ) {
           proxy['ip-version'] = value as
-            | 'dual'
-            | 'ipv4'
-            | 'ipv6'
-            | 'ipv4-prefer'
-            | 'ipv6-prefer';
+            'dual' | 'ipv4' | 'ipv6' | 'ipv4-prefer' | 'ipv6-prefer';
         } else {
           proxy['ip-version'] = 'dual';
         }
@@ -1441,11 +1443,7 @@ function URI_SOCKS(line: string): IProxySocks5Config {
           ['dual', 'ipv4', 'ipv6', 'ipv4-prefer', 'ipv6-prefer'].includes(value)
         ) {
           proxy['ip-version'] = value as
-            | 'dual'
-            | 'ipv4'
-            | 'ipv6'
-            | 'ipv4-prefer'
-            | 'ipv6-prefer';
+            'dual' | 'ipv4' | 'ipv6' | 'ipv4-prefer' | 'ipv6-prefer';
         } else {
           proxy['ip-version'] = 'dual';
         }
@@ -1518,7 +1516,9 @@ function generateClashNode(node: any): string {
 
   // 生成带 - 的完整节点字符串
   const yamlLines = genYaml(cleaned, { indent: 2 }).trim().split('\n');
-  return `- ${yamlLines.map((line, i) => (i === 0 ? line : `  ${line}`)).join('\n')}`;
+  return `- ${yamlLines
+    .map((line, i) => (i === 0 ? line : `  ${line}`))
+    .join('\n')}`;
 }
 
 // UTF-8 安全的 base64：btoa 只接受 Latin1，含 CJK/emoji 会抛异常。
@@ -1697,7 +1697,9 @@ export function generateUri(node: any): string {
       if (node.obfs) hParams.set('obfs', node.obfs);
       if (node.ports) hParams.set('mport', String(node.ports));
       if (node['skip-cert-verify']) hParams.set('insecure', '1');
-      return `${hy + (hParams.toString() ? `?${hParams.toString()}` : '')}#${name}`;
+      return `${
+        hy + (hParams.toString() ? `?${hParams.toString()}` : '')
+      }#${name}`;
     }
 
     case 'wireguard': {
@@ -1716,7 +1718,9 @@ export function generateUri(node: any): string {
       if (node.mtu) wgParams.set('mtu', String(node.mtu));
       if (Array.isArray(node.dns) && node.dns.length)
         wgParams.set('dns', node.dns.join(','));
-      return `${wg + (wgParams.toString() ? `?${wgParams.toString()}` : '')}#${name}`;
+      return `${
+        wg + (wgParams.toString() ? `?${wgParams.toString()}` : '')
+      }#${name}`;
     }
 
     case 'http': {

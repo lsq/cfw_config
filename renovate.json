@@ -12,8 +12,8 @@
       "automerge": true
     },
     {
-        "matchPackageNames":["js-yaml", "pyodide"],
-        "major": {"enabled": false}
+      "matchPackageNames": ["js-yaml", "pyodide"],
+      "major": { "enabled": false }
     }
   ],
   "npm": {

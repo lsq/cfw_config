@@ -11,6 +11,7 @@ const {
 } = require('./get_newpac');
 const { linkToClash } = require('./lib/converter');
 const { getFastestProxy } = require('./githubProxy');
+const { getFlclashNode } = require('./lib/fetchFlclashnode');
 
 const newline = /\r?\n/;
 const trimText = /机场推荐：/;
@@ -19,8 +20,31 @@ const { env } = require('node:process');
 
 const isCI = !!env.GITHUB_ACTIONS;
 const defaultProxy = 'https://gh-proxy.com';
+const flclashUrl = 'https://github.com/flclashnode/flclashnode.github.io';
+const githubLink = `${flclashUrl}/tree/main/uploads`;
 // const mihomoCfg = 'mihomo_config.yaml'
 
+async function getFlclashProxies() {
+  const result = await getFlclashNode({ githubLink });
+  const proxyUrls = result
+    ?.filter(
+      (node) =>
+        // console.log(path.extname(Object.values(node)[0]) === '.json'),
+        !(path.extname(Object.values(node)[0]) === '.json')
+    )
+    ?.map((it) => {
+      const key = Object.keys(it)[0];
+      // if (!key) continue;
+      const yamlOrNot = path.extname(it[key]) === '.yaml';
+      return {
+        name: `flNode${key}`,
+        type: yamlOrNot ? 'yaml' : 'base64',
+        url: [`${defaultProxy}/${flclashUrl}/${it[key]}`],
+      };
+    });
+
+  return proxyUrls;
+}
 // ======================
 // 工具函数
 // ======================
@@ -83,10 +107,6 @@ function mergeReplaceWithExp(key, content, obj, arrayStrategy = 'merge') {
 }
 
 // ---------- 辅助函数 ----------
-
-function extractKey(obj, key) {
-  return obj?.[key] !== undefined ? { [key]: obj[key] } : undefined;
-}
 
 function extractYamlBlock(text, regex) {
   regex.lastIndex = 0;
@@ -623,10 +643,13 @@ async function processProvidersForMethod2(providers) {
 }
 
 async function methodTwo(config, mihomoCfg) {
+  // 获取flclashnode
+  const flclashProxies = await getFlclashProxies();
   // 1. 处理 providers（下载并保存到 proxy_providers/）
-  const proxyProvidersFromRemote = await processProvidersForMethod2(
-    config.providers
-  );
+  const proxyProvidersFromRemote = await processProvidersForMethod2([
+    ...flclashProxies,
+    ...config.providers,
+  ]);
 
   // 2. 获取模板
   let template;

@@ -3,7 +3,12 @@ import antfu from '@antfu/eslint-config';
 
 export default antfu({
   rules: {
-    'no-console': ['error', { allow: ['warn', 'log', 'error'] }],
+    'no-console': [
+      'error',
+      {
+        allow: ['warn', 'log', 'error'],
+      },
+    ],
     'unused-imports/no-unused-vars': ['off'],
     'regexp/no-unused-capturing-group': ['off'],
     'regexp/no-control-character': ['off'],

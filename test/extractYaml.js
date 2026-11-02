@@ -34,7 +34,9 @@ console.log('Extracted:', tunBlock);
 
 if (tunBlock) {
   const partial = yaml.load(tunBlock); // { tun: { ... } }
-  const merged = merge({}, partial, { tun: { enable: true } });
+  const merged = merge({}, partial, {
+    tun: { enable: true },
+  });
   console.log(merged.tun.enable); // true
   console.log(merged);
   console.log(yaml.dump(merged));

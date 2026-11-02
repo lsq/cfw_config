@@ -160,7 +160,9 @@ const obj = {
   tun: {
     enable: true,
     routes: ['192.168.0.0/16'],
-    dns: { servers: ['1.1.1.1'] },
+    dns: {
+      servers: ['1.1.1.1'],
+    },
   },
 };
 
