@@ -20,8 +20,10 @@ const { env } = require('node:process');
 
 const isCI = !!env.GITHUB_ACTIONS;
 const defaultProxy = 'https://gh-proxy.com';
-const flclashUrl = 'https://github.com/flclashnode/flclashnode.github.io';
-const githubLink = `${flclashUrl}/tree/main/uploads`;
+const flRepo = 'flclashnode/flclashnode.github.io';
+const flRef = 'main';
+const flclashUrl = `https://github.com/${flRepo}`;
+const githubLink = `${flclashUrl}/tree/${flRef}/uploads`;
 // const mihomoCfg = 'mihomo_config.yaml'
 
 async function getFlclashProxies() {
@@ -39,7 +41,9 @@ async function getFlclashProxies() {
       return {
         name: `flNode${key}`,
         type: yamlOrNot ? 'yaml' : 'base64',
-        url: [`${defaultProxy}/${flclashUrl}/${it[key]}`],
+        url: [
+          `${defaultProxy}/https://raw.githubusercontent.com/${flRepo}/${flRef}/${it[key]}`,
+        ],
       };
     });
 
@@ -816,4 +820,4 @@ if (require.main === module) {
   genClashCfg();
 }
 
-module.exports = { methodOne, methodTwo, genClashCfg };
+module.exports = { methodOne, methodTwo, genClashCfg, checkDuplicateProxies, base64Decode, linkToConfig};

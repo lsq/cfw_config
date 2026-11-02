@@ -94,7 +94,7 @@ templates:
       - DOMAIN-SUFFIX,gh-proxy.org,DIRECT
       - DOMAIN-SUFFIX,fastgit.cc,DIRECT
     tun:
-      enable: true
+      enable: false
 
 fix:
   base:

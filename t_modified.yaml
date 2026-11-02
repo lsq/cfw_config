@@ -24,7 +24,7 @@ proxy-providers:
   flNode0:
     <<: *PU
     interval: 3600
-    url: https://gh-proxy.com/https://github.com/flclashnode/flclashnode.github.io/uploads/2026/10/0-20261030.yaml
+    url: https://gh-proxy.com/https://raw.githubusercontent.com/flclashnode/flclashnode.github.io/main/uploads/2026/10/0-20261030.yaml
     path: proxy_providers/flNode0_0-20261030.yaml
     override:
       upd: true
@@ -35,7 +35,7 @@ proxy-providers:
   flNode1:
     <<: *PU
     interval: 3600
-    url: https://gh-proxy.com/https://github.com/flclashnode/flclashnode.github.io/uploads/2026/10/1-20261030.yaml
+    url: https://gh-proxy.com/https://raw.githubusercontent.com/flclashnode/flclashnode.github.io/main/uploads/2026/10/1-20261030.yaml
     path: proxy_providers/flNode1_1-20261030.yaml
     override:
       upd: true
@@ -46,7 +46,7 @@ proxy-providers:
   flNode2:
     <<: *PU
     interval: 3600
-    url: https://gh-proxy.com/https://github.com/flclashnode/flclashnode.github.io/uploads/2026/10/2-20261030.yaml
+    url: https://gh-proxy.com/https://raw.githubusercontent.com/flclashnode/flclashnode.github.io/main/uploads/2026/10/2-20261030.yaml
     path: proxy_providers/flNode2_2-20261030.yaml
     override:
       upd: true
@@ -57,7 +57,7 @@ proxy-providers:
   flNode3:
     <<: *PU
     interval: 3600
-    url: https://gh-proxy.com/https://github.com/flclashnode/flclashnode.github.io/uploads/2026/10/3-20261030.yaml
+    url: https://gh-proxy.com/https://raw.githubusercontent.com/flclashnode/flclashnode.github.io/main/uploads/2026/10/3-20261030.yaml
     path: proxy_providers/flNode3_3-20261030.yaml
     override:
       upd: true
@@ -68,7 +68,7 @@ proxy-providers:
   flNode4:
     <<: *PU
     interval: 3600
-    url: https://github.com/flclashnode/flclashnode.github.io/uploads/2026/10/4-20261030.yaml
+    url: https://gh-proxy.com/https://raw.githubusercontent.com/flclashnode/flclashnode.github.io/main/uploads/2026/10/4-20261030.yaml
     path: proxy_providers/flNode4_4-20261030.yaml
     override:
       upd: true
@@ -180,7 +180,7 @@ etag-support: true
 
 # 入站
 tun:
-  enable: true
+  enable: false
   stack: mips
   auto-route: true
   strict-route: true
