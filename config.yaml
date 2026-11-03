@@ -83,6 +83,8 @@ templates:
         # - pattern: '机场推荐[：:]'
         - pattern: '【(.*?)】|机场推荐[：:]'
           target: ''
+        - pattern: 'B/s.*'
+          target: B/s
     dns:
       nameserver-policy:
         # 👇 新增：GitHub 及镜像站强制使用国内 DNS

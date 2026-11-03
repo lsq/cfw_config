@@ -9,9 +9,9 @@ const {
   restartMihomo,
   createSymlink,
 } = require('./get_newpac');
-const { linkToClash } = require('./lib/converter');
 const { getFastestProxy } = require('./githubProxy');
-const { getFlclashNode } = require('./lib/fetchFlclashnode');
+const { linkToClash } = require('./lib/converter');
+const { getFlclashNode, genFlclashNode } = require('./lib/fetchFlclashnode');
 
 const newline = /\r?\n/;
 const trimText = /机场推荐：/;
@@ -25,6 +25,7 @@ const flRef = 'main';
 const flclashUrl = `https://github.com/${flRepo}`;
 const githubLink = `${flclashUrl}/tree/${flRef}/uploads`;
 // const mihomoCfg = 'mihomo_config.yaml'
+const downloading = new Map();
 
 async function getFlclashProxies() {
   const result = await getFlclashNode({ githubLink });
@@ -103,7 +104,7 @@ function mergeReplaceWithExp(key, content, obj, arrayStrategy = 'merge') {
 
   // 为含特殊字符的 key 加引号
   newBlock = newBlock.replace(
-    /^(\s*)([^"\s\n]+[:+.][^"\s\n:]+)\s*:/gm,
+    /^(\s*)([^\s"][^\s"+.:]*[+.:]:*[^\s":]+(?::+[^\s":]+)*)\s*:/gm,
     '$1"$2":'
   );
 
@@ -192,7 +193,7 @@ function objectToYamlSubBlock(key, obj, baseIndent = 2) {
   // 去除末尾可能的多余空行
   innerYaml = innerYaml.trimEnd();
   innerYaml = innerYaml.replace(
-    /^(\s*)([^"\s\n]+[:+.][^"\s\n:]+)\s*:/gm,
+    /^(\s*)([^\s"][^\s"+.:]*[+.:]:*[^\s":]+(?::+[^\s":]+)*)\s*:/gm,
     '$1"$2":'
   );
 
@@ -221,7 +222,9 @@ function renderProxyProvider(name, config, template) {
   if (config.url) lines.push(`    url: ${config.url}`);
   if (config.path) {
     lines.push(
-      `    path: ${template.providersDir ? `${template.providersDir}/` : './'}${config.path}`
+      `    path: ${
+        template.providersDir ? `${template.providersDir}/` : './'
+      }${config.path}`
     );
   }
   if (template.override) {
@@ -254,8 +257,33 @@ function rmKeywords(str, reg) {
   return str.replace(reg, '');
 }
 
+// 如果多处同时调用此函数下载同一文件，可能出现竞态条件。如需防止重复下载，可加一个简单的内存锁
 // 工具函数：下载文件
-async function downloadFile(url, filename) {
+async function _downloadFileImpl(url, filename, useCache = false) {
+  if (useCache) {
+    try {
+      // 检查文件是否存在且未过期（1天内）
+      const stat = await fs.stat(filename);
+      const ageMs = Date.now() - stat.mtimeMs;
+      const oneDayMs = 24 * 60 * 60 * 1000;
+
+      if (ageMs < oneDayMs) {
+        // 文件存在且未超过一天，直接读取返回
+        const cachedContent = await fs.readFile(filename, { encoding: 'utf8' });
+        console.log(
+          `✅ 使用缓存 [${filename}] (年龄: ${(ageMs / 3600000).toFixed(1)}h)`
+        );
+        return cachedContent;
+      }
+      // 文件存在但已过期，继续往下执行下载
+      console.log(`⏰ 缓存已过期 [${filename}]，重新下载...`);
+    } catch (err) {
+      // 文件不存在或其他 stat 错误，继续往下执行下载
+      if (err.code !== 'ENOENT') {
+        console.warn(`⚠️ 检查文件状态失败 [${filename}]:`, err.message);
+      }
+    }
+  }
   try {
     const res = await axios.get(url, { responseType: 'text' });
     const rawContent = res.data;
@@ -264,6 +292,22 @@ async function downloadFile(url, filename) {
   } catch (err) {
     console.error(`❌ 下载失败 [${filename}] ${url}:`, err.message);
     return null;
+  }
+}
+
+async function downloadFile(url, filename, useCache = false) {
+  // 防止同一文件并发下载
+  if (downloading.has(filename)) {
+    return downloading.get(filename);
+  }
+
+  const promise = _downloadFileImpl(url, filename, useCache); // 将上面完整逻辑提取为此函数
+  downloading.set(filename, promise);
+
+  try {
+    return await promise;
+  } finally {
+    downloading.delete(filename);
   }
 }
 /**
@@ -352,7 +396,10 @@ function checkDuplicateProxies(proxies) {
 
     const key = `${proxy.server}:${proxy.port}`;
     if (!map.has(key)) {
-      map.set(key, { names: [proxy.name], example: proxy });
+      map.set(key, {
+        names: [proxy.name],
+        example: proxy,
+      });
     } else {
       map.get(key).names.push(proxy.name);
     }
@@ -381,7 +428,7 @@ function checkDuplicateProxies(proxies) {
  * 将 URL 或域名列表转换为 mihomo nameserver-policy 配置对象
  * @param {string|string[]} inputs - 单个URL/域名，或URL/域名数组
  * @param {string|string[]} dnsServers - 单个DNS服务器地址，或多个DNS服务器地址数组
- * @returns {Object} mihomo nameserver-policy 格式的对象
+ * @returns {object} mihomo nameserver-policy 格式的对象
  */
 function toNameserverPolicy(
   inputs,
@@ -476,7 +523,9 @@ async function processProvidersForMethod1(providers) {
             }
             proxies = proxies.map((p) => ({
               ...p,
-              name: `${provider.name}${index > 0 ? index : ''}|${rmKeywords(p.name, trimText)}`,
+              name: `${provider.name}${
+                index > 0 ? index : ''
+              }|${rmKeywords(p.name, trimText)}`,
             }));
             return {
               isMain: false,
@@ -599,7 +648,7 @@ async function methodOne(config) {
   // 2. 使用正则，精准抓取包含特殊字符（如 +, :, .）且没有被引号包裹的 Key
   // 匹配规则：行首的空格 + (包含 + 或 : 或 . 的字符串) + 冒号 + 空格/换行
   yamlConfig = yamlConfig.replace(
-    /^(\s*)([^"\s\n]+[:+.][^"\s\n:]+)\s*:/gm,
+    /^(\s*)([^\s"][^\s"+.:]*[+.:]:*[^\s":]+(?::+[^\s":]+)*)\s*:/gm,
     '$1"$2":'
   );
   return yamlConfig;
@@ -646,13 +695,20 @@ async function processProvidersForMethod2(providers) {
   return proxyProviders;
 }
 
-async function methodTwo(config, mihomoCfg) {
-  // 获取flclashnode
-  const flclashProxies = await getFlclashProxies();
+async function methodTwo(config, mihomoCfg, defaultConfig = true) {
+  let useProvider;
+  if (defaultConfig) {
+    useProvider = config.providers;
+  } else {
+    // 获取flclashnode
+    const genUrls = await genFlclashNode();
+    useProvider = genUrls.length > 0 ? genUrls : await getFlclashNode;
+  }
   // 1. 处理 providers（下载并保存到 proxy_providers/）
   const proxyProvidersFromRemote = await processProvidersForMethod2([
-    ...flclashProxies,
-    ...config.providers,
+    // ...flclashProxies,
+    // ...config.providers,
+    ...useProvider,
   ]);
 
   // 2. 获取模板
@@ -664,7 +720,7 @@ async function methodTwo(config, mihomoCfg) {
   }
   if (!template) throw new Error('模板未找到');
 
-  //切换github 最快代理
+  // 切换github 最快代理
   const proxyResult = await getFastestProxy();
   const mostFastProxy = proxyResult.success ? proxyResult.source : defaultProxy;
   // 下载模板为主配置
@@ -676,7 +732,8 @@ async function methodTwo(config, mihomoCfg) {
           ?.replace('gh-proxy.com/raw.githubusercontent.com/', 'github.com/')
           .replace('main', 'raw/refs/heads/main')
       : template.url?.replace(defaultProxy, mostFastProxy),
-    path.join(__dirname, `downloads/${localFilename}`)
+    path.join(__dirname, `downloads/${localFilename}`),
+    true
   );
   if (!res) throw new Error(`主配置未下载成功!`);
 
@@ -732,6 +789,9 @@ async function methodTwo(config, mihomoCfg) {
   mainConfig = replaceProxyProviders(res, yamlStr);
   if (template.tun) {
     console.log('准备修改tun配置');
+    if (process.platform == 'linux') {
+      template.tun.enable = true;
+    }
     mainConfig = mergeReplaceWithExp('tun', mainConfig, template);
   }
 
@@ -759,8 +819,7 @@ async function methodTwo(config, mihomoCfg) {
   if (template.rules) {
     const hostname = new URL(mostFastProxy).hostname;
     const proxyRule = `DOMAIN-SUFFIX,${hostname},DIRECT`;
-    if (template.rules.indexOf(proxyRule) === -1)
-      template.rules.push(proxyRule);
+    if (!template.rules.includes(proxyRule)) template.rules.push(proxyRule);
     mainConfig = mergeReplaceWithExp('rules', mainConfig, template, 'prepend');
   }
 
@@ -776,8 +835,10 @@ async function methodTwo(config, mihomoCfg) {
 // 主入口
 // ======================
 
-async function genClashCfg(miCfg = mihomoCfg) {
-  const isUsingDefault = arguments.length === 0;
+async function genClashCfg(options = {}) {
+  const isUsingDefault = !options.miCfg;
+  const useDefaultConfig = options.useDefConfig ?? true;
+  const miCfg = options.miCfg ?? mihomoCfg;
   try {
     const configFile = await fs.readFile(
       path.join(__dirname, 'config.yaml'),
@@ -791,7 +852,7 @@ async function genClashCfg(miCfg = mihomoCfg) {
       generatedConfig = await methodOne(config);
     } else if (config.method === 2) {
       console.log('🚀 执行方案二：模板策略');
-      generatedConfig = await methodTwo(config, miCfg);
+      generatedConfig = await methodTwo(config, miCfg, useDefaultConfig);
     } else {
       throw new Error('method 必须为 1 或 2');
     }
@@ -799,8 +860,11 @@ async function genClashCfg(miCfg = mihomoCfg) {
     // 5. 保存最终配置
     let outputPath;
     outputPath = miCfg;
-    if (isUsingDefault && require('node:process').platform === 'win32') {
-      outputPath = path.join(__dirname, 't_modified.yaml');
+    if (isUsingDefault && process.platform === 'win32') {
+      outputPath = path.join(
+        __dirname,
+        useDefaultConfig ? 't_modified.yaml' : 't_modified_fl.yaml'
+      );
     }
     if (!generatedConfig) {
       throw new Error(`generatedConfig: ${generatedConfig}`);
@@ -820,4 +884,11 @@ if (require.main === module) {
   genClashCfg();
 }
 
-module.exports = { methodOne, methodTwo, genClashCfg, checkDuplicateProxies, base64Decode, linkToConfig};
+module.exports = {
+  methodOne,
+  methodTwo,
+  genClashCfg,
+  checkDuplicateProxies,
+  base64Decode,
+  linkToConfig,
+};

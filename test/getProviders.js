@@ -1,12 +1,8 @@
-const {
-  checkDuplicateProxies,
-  base64Decode,
-  linkToConfig,
-} = require('../genMihomo');
+const crypto = require('node:crypto');
+const fs = require('node:fs');
+const path = require('node:path');
+const { base64Decode, linkToConfig } = require('../genMihomo');
 const { mihomoConfig, readyaml, exportData } = require('../get_newpac');
-const crypto = require('crypto');
-const path = require('path');
-const fs = require('fs');
 
 /**
  * Calculates the Clash cache filename for a given provider/subscription URL
@@ -21,7 +17,7 @@ function getClashCacheFilename(url) {
   hash.update(url);
 
   // 3. Generate the hexadecimal MD5 string and append '.yaml'
-  return hash.digest('hex') + '.yaml';
+  return `${hash.digest('hex')}.yaml`;
 }
 
 // === Test Case ===
@@ -98,13 +94,20 @@ async function readProviders(fileMap, baseDir) {
         fileInfo.type === 'yaml'
           ? await readyaml(filePath)
           : {
-              proxies: (await linkToConfig(base64Decode(fs.readFileSync(filePath, 'utf8')))),
+              proxies: await linkToConfig(
+                base64Decode(fs.readFileSync(filePath, 'utf8'))
+              ),
             };
       // if (fileInfo.type === 'txt') console.log(data);
       return { key, filename, data };
     } catch (err) {
       console.error(`[ERROR] 读取文件失败 ${filename}: ${err.message}`);
-      return { key, filename, data: null, error: err.message };
+      return {
+        key,
+        filename,
+        data: null,
+        error: err.message,
+      };
     }
   });
 
@@ -144,6 +147,116 @@ async function readProviders(fileMap, baseDir) {
   return result;
 }
 
+/**
+ * Generates a unique signature string for a proxy based strictly on its core network parameters.
+ * Excludes cosmetic fields like 'name', 'client-fingerprint', etc.
+ */
+function getProxySignature(proxy) {
+  if (!proxy || typeof proxy !== 'object') return '';
+
+  // Core parameters common to most proxy types (vless, vmess, trojan, ss, etc.)
+  const server = proxy.server || '';
+  const port = proxy.port || '';
+  const secret = proxy.uuid || proxy.password || '';
+
+  // Transport protocol sub-parameters (like WebSocket paths)
+  const path =
+    proxy['ws-opts']?.path ||
+    proxy['ws-opts']?.headers?.Host ||
+    proxy['xhttp-opts']?.path ||
+    proxy['grpc-opts']?.['grpc-service-name'] ||
+    '';
+
+  const sni = proxy.sni || proxy.servername || '';
+
+  // Combine them into a deterministic string format
+  return `${proxy.type || ''}://${server}:${port}?secret=${secret}&path=${path}&sni=${sni}`;
+}
+
+/**
+ * 1. Checks for duplicate proxies and logs the findings.
+ * @param {Array} proxies - The array of proxy objects from a Clash configuration.
+ */
+function checkDuplicates(proxies) {
+  if (!Array.isArray(proxies)) {
+    console.error('Invalid input: proxies must be an array.');
+    return;
+  }
+
+  console.log(
+    `--- Starting Duplicate Check (Total nodes: ${proxies.length}) ---`
+  );
+
+  const signatureMap = new Map();
+
+  proxies.forEach((proxy, index) => {
+    const signature = getProxySignature(proxy);
+    if (!signatureMap.has(signature)) {
+      signatureMap.set(signature, []);
+    }
+    signatureMap.get(signature).push({
+      index,
+      name: proxy.name,
+      server: proxy.server,
+      port: proxy.port,
+    });
+  });
+
+  let duplicateGroupsCount = 0;
+
+  for (const [signature, nodes] of signatureMap.entries()) {
+    if (nodes.length > 1) {
+      duplicateGroupsCount++;
+      console.log(
+        `\n[Duplicate Group #${duplicateGroupsCount}] Core Route: ${nodes[0].server}:${nodes[0].port}`
+      );
+      console.log(`  - Kept:   "${nodes[0].name}" (Index ${nodes[0].index})`);
+
+      for (let i = 1; i < nodes.length; i++) {
+        console.log(
+          `  - Redundant: "${nodes[i].name}" (Index ${nodes[i].index})`
+        );
+      }
+    }
+  }
+
+  if (duplicateGroupsCount === 0) {
+    console.log('\n✅ Perfect! No duplicate core nodes found.');
+  } else {
+    console.log(`\nFound ${duplicateGroupsCount} groups of duplicate nodes.`);
+  }
+  console.log(`--- Duplicate Check Finished ---\n`);
+}
+
+/**
+ * 2. Removes duplicate proxies, keeping only the first occurrence of each unique core signature.
+ * @param {Array} proxies - The array of proxy objects from a Clash configuration.
+ * @returns {Array} A filtered array containing only unique proxies.
+ */
+function removeDuplicates(proxies) {
+  if (!Array.isArray(proxies)) {
+    console.error('Invalid input: proxies must be an array.');
+    return [];
+  }
+
+  const seenSignatures = new Set();
+  const uniqueProxies = [];
+
+  proxies.forEach((proxy) => {
+    const signature = getProxySignature(proxy);
+
+    if (!seenSignatures.has(signature)) {
+      seenSignatures.push(signature);
+      uniqueProxies.push(proxy); // Keeps the first occurrence
+    }
+  });
+
+  console.log(
+    `♻️ Cleaned proxies array: Reduced from ${proxies.length} to ${uniqueProxies.length} nodes.`
+  );
+  return uniqueProxies;
+}
+
 async function getPr() {
   const basePath = `${path.dirname(mihomoConfig())}`;
   const configPath = `${basePath}/profiles/list.yml`;
@@ -170,9 +283,65 @@ async function getPr() {
 
   console.log(prInfo);
   const proxies = await readProviders(prInfo, `${basePath}/providers/proxy`);
-  checkDuplicateProxies(proxies.proxies)
+  checkDuplicates(proxies.proxies);
 }
 
 (async () => {
   await getPr();
+  // ==========================================
+  // EXAMPLE USAGE:
+  // ==========================================
+
+  // Simulating the sample nodes you provided
+  const mockProxies = [
+    {
+      type: 'vless',
+      name: 'fl1|瑞士(yudou99.com 玉豆分享)',
+      server: '195.141.65.98',
+      port: 443,
+      uuid: '53f03acd-fec1-6685-fc8f-03baf9550cb8',
+      'client-fingerprint': 'qq',
+      'ws-opts': {
+        path: '/test-ws',
+        headers: { Host: '148-253-210-191.sslip.io' },
+      },
+    },
+    {
+      type: 'vless',
+      name: 'fl0|🇩🇪DE德国丨yoyapai.com (3)',
+      server: '195.141.65.98',
+      port: 443,
+      uuid: '53f03acd-fec1-6685-fc8f-03baf9550cb8',
+      'client-fingerprint': 'ios',
+      'ws-opts': {
+        path: '/test-ws',
+        headers: { Host: '148-253-210-191.sslip.io' },
+      },
+    },
+    {
+      type: 'vless',
+      name: 'Unique gRPC Node',
+      server: '128.0.0.1',
+      port: 443,
+      uuid: '977b814d-d9e0-4889-bb71-98d6bfb8f462',
+      'grpc-opts': { 'grpc-service-name': 'app.v1.PushService' },
+    },
+    {
+      type: 'ss',
+      name: 'Unique US Node',
+      server: '1.1.1.1',
+      port: 8388,
+      password: 'some-password',
+    },
+  ];
+
+  // 1. Run check log
+  checkDuplicates(mockProxies);
+
+  // 2. Clean array
+  const cleanProxies = removeDuplicates(mockProxies);
+  console.log(
+    'Result names:',
+    cleanProxies.map((p) => p.name)
+  );
 })();

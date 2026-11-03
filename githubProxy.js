@@ -65,8 +65,14 @@ async function getProxyWithFallback(sources) {
  * @returns {Promise<{success: boolean, source: string|null}>}
  */
 async function getFastestProxy() {
-  const ghfast = await fetchProxyList();
-  console.log(ghfast);
+  let ghfast;
+  try {
+    ghfast = await fetchProxyList();
+    console.log(ghfast);
+  } catch (err) {
+    console.log(`[gh-fast]: ${err.message}`);
+    ghfast = [];
+  }
   const ghfastUrl = ghfast.map((itm) => itm.url);
   const PROXY_SOURCES = [
     'https://gh-proxy.com',

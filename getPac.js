@@ -58,7 +58,9 @@ async function writeOutPut(num) {
 (async () => {
   try {
     console.log('🚀 开始更新ssrhub节点配置...');
-    const ssrContents = await genClashCfg(path.join(__dirname, 'ssrhub.yaml'));
+    const ssrContents = await genClashCfg({
+      miCfg: path.join(__dirname, 'ssrhub.yaml'),
+    });
     if (!ssrContents) {
       throw new Error('ssrhub更新失败！');
     }

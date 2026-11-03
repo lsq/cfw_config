@@ -9,6 +9,7 @@ const {
   mergeData,
   parseData,
   restartMihomo,
+  tunOn,
   mihomoConfig,
 } = require('./get_newpac');
 const math = require('./math');
@@ -75,6 +76,7 @@ async function reloadConfig() {
     await genClashCfg();
     if (!isCI) {
       await reloadConfig();
+      // await tunOn();
     }
   }
   // ----- test  reload mihomo config ----------

@@ -1,5 +1,4 @@
-import { getFlclashNode } from '../utils/fetchFlclashnode';
-import path from 'path';
+import path from 'node:path';
 
 const flclashUrl = 'https://github.com/flclashnode/flclashnode.github.io';
 const githubLink = `${flclashUrl}/tree/main/uploads`;

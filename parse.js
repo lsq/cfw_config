@@ -57,6 +57,11 @@ module.exports.parse = async (
     console.log(`genClashCfg生成成功...`);
     return newRaw;
     // return raw
+  } else if (name === 'flClashNode') {
+    console.log(`开始生成flClashNode`);
+    const newRaw = await genClashCfg({ useDefConfig: false });
+    console.log(`flClashNode生成成功...`);
+    return newRaw;
   }
 
   const obj = yaml.parse(raw);

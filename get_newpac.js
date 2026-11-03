@@ -747,7 +747,7 @@ async function mergeData(getFn, parseFn, storePath) {
   }
 }
 
-async function restartMihomo() {
+async function clashApi(uri, opts) {
   const isWindows = process.platform === 'win32';
   const configData = await readyaml(mihomoConfig());
   const externalController = configData['external-controller'];
@@ -768,21 +768,10 @@ async function restartMihomo() {
   // if (isWindows) {
   const secret = configData.secret;
   headers.Authorization = `Bearer ${secret}`;
+  opts.headers = headers;
   // }
 
-  // 5. 请求配置
-  const options = {
-    method: 'PUT',
-    headers,
-    body: JSON.stringify({ path: '', payload: '' }),
-    // Node.js fetch 默认行为类似 cors，但不需要显式声明 mode，除非特定库要求
-    // credentials: 'include' 在 Node.js 中通常用于携带 Cookie，需配合 agent 使用，
-    // 如果只是简单的 API 调用且无 Cookie 依赖，可省略。若必须，需确保服务端支持。
-  };
-  const res = await fetch(
-    `http://${externalController}/configs?force=true`,
-    options
-  );
+  const res = await fetch(`http://${externalController}${uri}`, opts);
 
   if (res.status === 204) {
     // 无内容，不要尝试读取 .json() 或 .text()
@@ -795,6 +784,30 @@ async function restartMihomo() {
     return true;
   }
   return false;
+}
+
+async function tunOn() {
+  const tunApi = '/configs';
+  const options = {
+    method: 'PATCH',
+    body: '{"tun":{"enable":true}}',
+    mode: 'cors',
+  };
+  return clashApi(tunApi, options);
+}
+
+async function restartMihomo() {
+  const reloadApi = '/configs?force=true';
+  // 5. 请求配置
+  const options = {
+    method: 'PUT',
+    body: JSON.stringify({ path: '', payload: '' }),
+    // Node.js fetch 默认行为类似 cors，但不需要显式声明 mode，除非特定库要求
+    // credentials: 'include' 在 Node.js 中通常用于携带 Cookie，需配合 agent 使用，
+    // 如果只是简单的 API 调用且无 Cookie 依赖，可省略。若必须，需确保服务端支持。
+  };
+
+  return clashApi(reloadApi, options);
 }
 
 async function fileExists(filePath) {
@@ -988,6 +1001,7 @@ exports.parseData = parse_data;
 exports.mergeData = mergeData;
 exports.getPublicNodeset = getPublicNodeset;
 exports.restartMihomo = restartMihomo;
+exports.tunOn = tunOn;
 exports.updateUrl = updateUrl;
 exports.exportData = exportData;
 exports.fileExists = fileExists;
