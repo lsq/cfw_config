@@ -46,43 +46,48 @@ async function fetchProxyList() {
 }
 
 function fetchProxyListSync() {
-  const response = fetch('https://gh-fast.com/api/proxy-config.json', {
-    credentials: 'omit',
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (X11; Linux x86_64; rv:151.0) Gecko/20100101 Firefox/151.0',
-      Accept: '*/*',
-      'Accept-Language':
-        'zh-CN,zh;q=0.9,zh-TW;q=0.8,zh-HK;q=0.7,en-US;q=0.6,en;q=0.5',
-      'Alt-Used': 'gh-fast.com',
-      'Sec-Fetch-Dest': 'empty',
-      'Sec-Fetch-Mode': 'cors',
-      'Sec-Fetch-Site': 'same-origin',
-      'Sec-GPC': '1',
-      Priority: 'u=4',
-      Pragma: 'no-cache',
-      'Cache-Control': 'no-cache',
-    },
-    referrer: 'https://gh-fast.com/',
-  });
+  try {
+    const response = fetch('https://gh-fast.com/api/proxy-config.json', {
+      credentials: 'omit',
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (X11; Linux x86_64; rv:151.0) Gecko/20100101 Firefox/151.0',
+        Accept: '*/*',
+        'Accept-Language':
+          'zh-CN,zh;q=0.9,zh-TW;q=0.8,zh-HK;q=0.7,en-US;q=0.6,en;q=0.5',
+        'Alt-Used': 'gh-fast.com',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin',
+        'Sec-GPC': '1',
+        Priority: 'u=4',
+        Pragma: 'no-cache',
+        'Cache-Control': 'no-cache',
+      },
+      referrer: 'https://gh-fast.com/',
+    });
 
-  if (!response.status === 200) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    if (!response.status === 200) {
+      console.log(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = response.json();
+    if (!data.success) {
+      throw new Error('API returned success: false');
+    }
+
+    const options = data.data?.options || [];
+    return options
+      .map((opt) => ({
+        url: `${opt.url}/`,
+        name: opt.name,
+        latency: opt.latency,
+      }))
+      .sort((a, b) => (a.latency ?? Infinity) - (b.latency ?? Infinity));
+  } catch {
+    return [{ url: 'https://gh-proxy.com/', name: 'ghproxy', latency: 1 }];
   }
-
-  const data = response.json();
-  if (!data.success) {
-    throw new Error('API returned success: false');
-  }
-
-  const options = data.data?.options || [];
-  return options
-    .map((opt) => ({
-      url: `${opt.url}/`,
-      name: opt.name,
-      latency: opt.latency,
-    }))
-    .sort((a, b) => (a.latency ?? Infinity) - (b.latency ?? Infinity));
 }
 
 /**

@@ -75,7 +75,7 @@ export async function getFlclashNode(
   return downLoadFiles;
 }
 
-function formatter_date(time: string | null | undefined) {
+function formatter_date(time: string | undefined) {
   const date = typeof time == 'undefined' ? new Date() : new Date(time);
   const formattedDate = date.toLocaleString('zh-CN', {
     year: 'numeric',
@@ -86,12 +86,12 @@ function formatter_date(time: string | null | undefined) {
   return formattedDate;
 }
 
-function formatter_date_to_items(time: string | null | undefined) {
+function formatter_date_to_items(time: string | undefined) {
   const d = formatter_date(time);
   const dSplit = d.split('/');
   const year = dSplit[0];
-  const month = dSplit[1].length == 1 ? `0${dSplit[1]}` : dSplit[1];
-  const day = dSplit[2].length == 1 ? `0${dSplit[2]}` : dSplit[2];
+  const month = dSplit[1].length === 1 ? `0${dSplit[1]}` : dSplit[1];
+  const day = dSplit[2].length === 1 ? `0${dSplit[2]}` : dSplit[2];
 
   const re = {
     year,
@@ -130,7 +130,7 @@ async function fetchGjs() {
   }
 }
 
-export async function genFlclashNode(date: string | null | undefined) {
+export async function genFlclashNode(date: string | undefined) {
   const dateItems = formatter_date_to_items(date);
   const flUrl = await fetchGjs();
 
