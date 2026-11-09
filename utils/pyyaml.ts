@@ -15,12 +15,20 @@ export async function getPyodide() {
     await py.loadPackage('micropip');
     const micropip = py.pyimport('micropip');
 
-    // 步骤2: 用自定义镜像安装 PyYAML（加速下载）
+    // 步骤2: 用自定义镜像安装 PyYAML（加速下载），失败则回退到官方 PyPI
     console.log('通过镜像安装 PyYAML...');
-    await micropip.install('PyYAML', {
-      index_url: 'https://pypi-mirror.siiway.top/pypi/simple/', // 你的自定义镜像
-      trusted_host: 'pypi-mirror.siiway.top', // 避免 SSL 警告
-    });
+    try {
+      await micropip.install('PyYAML', {
+        index_url: 'https://pypi-mirror.siiway.top/pypi/simple/',
+        trusted_host: 'pypi-mirror.siiway.top',
+      });
+    } catch (mirrorErr) {
+      console.warn(
+        'PyPI mirror failed, falling back to official PyPI:',
+        mirrorErr
+      );
+      await micropip.install('PyYAML');
+    }
 
     console.log('PyYAML 安装完成！');
     return py;

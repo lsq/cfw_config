@@ -278,6 +278,7 @@ interface IProxyHysteriaConfig extends IProxyBaseConfig {
   'auth-str'?: string;
   obfs?: string;
   sni?: string;
+  peer?: string;
   'skip-cert-verify'?: boolean;
   fingerprint?: string;
   alpn?: string[];
