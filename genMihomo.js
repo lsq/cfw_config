@@ -794,6 +794,13 @@ async function methodTwo(config, mihomoCfg, defaultConfig = true) {
     }
     mainConfig = mergeReplaceWithExp('tun', mainConfig, template);
   }
+  if (template.ipv6) {
+    console.log('准备修改ipv6配置');
+    if (process.platform == 'linux') {
+      template.ipv6.enable = true;
+    }
+    mainConfig = mainConfig.replace('ipv6: false', 'ipv6: true');
+  }
 
   if (template.dns) {
     console.log('准备修改dns配置');
@@ -823,7 +830,14 @@ async function methodTwo(config, mihomoCfg, defaultConfig = true) {
     mainConfig = mergeReplaceWithExp('rules', mainConfig, template, 'prepend');
   }
 
-  mainConfig = mainConfig.replaceAll(defaultProxy, mostFastProxy);
+  // 匹配从 "# proxies:" 开始的连续注释行，去掉每行开头的 "# "
+  const uncommented = mainConfig.replace(
+    /(^|\n)# (proxies:(?:\r?\n# .*)*)/g,
+    (match, prefix, block) => prefix + block.replace(/\n# /g, '\n')
+  );
+
+  mainConfig = uncommented.replaceAll(defaultProxy, mostFastProxy);
+
 
   // 5. 保存最终配置
   // await fs.writeFile(mihomoCfg, mainConfig);

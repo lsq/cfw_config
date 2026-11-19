@@ -86,6 +86,7 @@ templates:
         - pattern: 'B/s.*'
           target: B/s
     dns:
+      ipv6: true
       nameserver-policy:
         # 👇 新增：GitHub 及镜像站强制使用国内 DNS
         '+.fastgit.cc':
@@ -97,6 +98,7 @@ templates:
       - DOMAIN-SUFFIX,fastgit.cc,DIRECT
     tun:
       enable: false
+    ipv6: true
 
 fix:
   base:
