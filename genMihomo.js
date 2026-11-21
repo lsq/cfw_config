@@ -19,7 +19,7 @@ const mihomoCfg = mihomoConfig();
 const { env } = require('node:process');
 
 const isCI = !!env.GITHUB_ACTIONS;
-const defaultProxy = 'https://gh-proxy.com';
+const defaultProxy = 'https://gh-proxy.org';
 const flRepo = 'flclashnode/flclashnode.github.io';
 const flRef = 'main';
 const flclashUrl = `https://github.com/${flRepo}`;

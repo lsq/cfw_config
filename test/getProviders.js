@@ -259,15 +259,17 @@ function removeDuplicates(proxies) {
 
 async function getPr() {
   const basePath = `${path.dirname(mihomoConfig())}`;
+  console.log(`basePath: ${basePath}`)
   const configPath = `${basePath}/profiles/list.yml`;
   const configData = await readyaml(configPath);
-  const prYaml = configData.files
-    .filter((it) => {
-      if (it.name === 'custom') {
-        return true;
-      }
-    })
-    .map((i) => i.time);
+  const index = configData.index;
+  const prYaml = configData.files[index].time
+    // .filter((it) => {
+    //   if (it.name === 'custom') {
+    //     return true;
+    //   }
+    // })
+    // .map((i) => i.time);
   const prData = await readyaml(`${basePath}/profiles/${prYaml}`);
   const prs = prData['proxy-providers'];
   const prInfo = {};

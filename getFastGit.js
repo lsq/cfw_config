@@ -30,7 +30,7 @@ async function fetchProxyListApi(api, callback) {
   });
 
   if (!response.ok) {
-    return [{ url: 'https://gh-proxy.com', name: 'ghproxy', latency: 1 }];
+    return [{ url: 'https://gh-proxy.org', name: 'ghproxy', latency: 1 }];
     // throw new Error(`HTTP error! status: ${response.status}`);
   }
 

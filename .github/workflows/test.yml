@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [24.x]
+        node-version: [26.x]
 
     steps:
       - name: Checkout Commit
@@ -40,6 +40,8 @@ jobs:
         run: |
           pnpm i --frozen-lockfile
 
+      - name: Verify tsc binary
+        run: pnpm exec tsc --version  # 或 tsc6 --version
       # 构建 React 应用
       - name: Build
         run: |
