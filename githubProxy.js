@@ -1,6 +1,92 @@
 const axios = require('axios');
 const { fetchProxyList } = require('./getFastGit');
 
+// https://github.akams.cn
+// https://github.com/hubporg/ghproxy-next/tree/main
+const ghproxy_next =
+  'https://github.com/hubporg/ghproxy-next/blob/main/components/nodes.ts';
+const imciel = 'http://ghproxy.imciel.com';
+
+const githubcdn = 'https://githubcdn.com/';
+// https://download.githubcdn.com/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fhubporg%2Fghproxy-next%2Fmain%2Fcomponents%2Fnodes.ts
+const ghproxy_vip = 'https://ghproxy.vip/';
+
+const gh_proxy_cn = 'https://gh-proxy.cn/github';
+
+const PROXY_SOURCES = [
+  'https://gh-proxy.com',
+  gh_proxy_cn,
+  'https://ghfast.top',
+  'https://mirror.ghproxy.com',
+  imciel,
+  ghproxy_vip,
+  githubcdn,
+];
+
+/**
+ * 2. 从源码文本中提取所有 value 值
+ * @param {string} text - response.text() 返回的原始字符串
+ * @returns {string[]} - 提取出的域名数组（未去重）
+ */
+function extractValues(text) {
+  // 匹配 value: "..." 或 value: '...'（兼容单双引号和任意空格）
+  const regex = /value:\s*["']([^"']+)["']/g;
+  const results = [];
+  let match;
+
+  while ((match = regex.exec(text)) !== null) {
+    // match[1] 就是括号中捕获到的域名内容
+    results.push(match[1].trim());
+  }
+
+  return results;
+}
+
+/**
+ * 1. 独立的数组去重函数
+ * 利用 ES6 Set 特性，保留原有顺序并去除重复项
+ * @param {Array} arr - 原始数组
+ * @returns {Array} - 去重后的新数组
+ */
+function uniqueArray(arr) {
+  if (!arr || arr.length == 0) return;
+  return [...new Set(arr)];
+}
+
+async function fetchproxy_next() {
+  const result = await getProxyWithFallback(PROXY_SOURCES);
+  if (!result.success) return;
+  const response = await fetch(`${result.source}/${ghproxy_next}`, {
+    credentials: 'omit',
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (X11; Linux x86_64; rv:158.0) Gecko/20100101 Firefox/158.0',
+      Accept: '*/*',
+      'Accept-Language':
+        'zh-CN,zh;q=0.9,zh-TW;q=0.8,zh-HK;q=0.7,en-US;q=0.6,en;q=0.5',
+      'Sec-Fetch-Dest': 'empty',
+      'Sec-Fetch-Mode': 'cors',
+      'Sec-Fetch-Site': 'same-origin',
+      'Sec-GPC': '1',
+      Priority: 'u=4',
+      Pragma: 'no-cache',
+      'Cache-Control': 'no-cache',
+    },
+    referrer: 'https://github.com',
+    method: 'GET',
+    mode: 'cors',
+  });
+
+  if (!response.ok) {
+    return;
+    // throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const domainNodes = extractValues(await response.text());
+
+  return uniqueArray(domainNodes);
+}
+
 /**
  * 通过指定的 gh-proxy 获取配置文件
  * @param {string} proxyHost - 代理域名，如 'gh-proxy.com'
@@ -65,23 +151,24 @@ async function getProxyWithFallback(sources) {
  * @returns {Promise<{success: boolean, source: string|null}>}
  */
 async function getFastestProxy() {
-  let ghfast;
+  let ghfast, ghnext;
   try {
-    ghfast = await fetchProxyList();
-    console.log(ghfast);
+    [ghfast, ghnext] = await Promise.all([fetchProxyList(), fetchproxy_next()]);
+    // console.log(ghfast);
   } catch (err) {
     console.log(`[gh-fast]: ${err.message}`);
     ghfast = [];
+    ghnext = [];
   }
   const ghfastUrl = ghfast.map((itm) => itm.url);
-  const PROXY_SOURCES = [
-    'https://gh-proxy.com',
-    ...ghfastUrl,
-    'https://ghfast.top',
-    'https://mirror.ghproxy.com',
-  ];
 
-  const result = await getProxyWithFallback(PROXY_SOURCES);
+  const proxy_sources = uniqueArray([
+    ...PROXY_SOURCES,
+    ...ghnext,
+    ...ghfastUrl,
+  ]);
+
+  const result = await getProxyWithFallback(proxy_sources);
 
   if (result.success) {
     console.log(`\n✅ 最终成功，可用源: ${result.source}`);
@@ -92,4 +179,9 @@ async function getFastestProxy() {
   return result;
 }
 
-module.exports = { checkProxy, getProxyWithFallback, getFastestProxy };
+module.exports = {
+  checkProxy,
+  getProxyWithFallback,
+  getFastestProxy,
+  fetchproxy_next,
+};

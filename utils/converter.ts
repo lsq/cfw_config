@@ -1641,16 +1641,18 @@ export function generateUri(node: any): string {
         aParams.set('client-fingerprint', node['client-fingerprint']);
       if (node['skip-cert-verify']) aParams.set('allowInsecure', '1');
       if (node.udp) aParams.set('udp', '1');
-      if (node['idle-session-check-interval'])
+      if (node['idle-session-check-interval']) {
         aParams.set(
           'idle-session-check-interval',
           String(node['idle-session-check-interval'])
         );
-      if (node['idle-session-timeout'])
+      }
+      if (node['idle-session-timeout']) {
         aParams.set(
           'idle-session-timeout',
           String(node['idle-session-timeout'])
         );
+      }
       if (node['min-idle-session'])
         aParams.set('min-idle-session', String(node['min-idle-session']));
       return `${

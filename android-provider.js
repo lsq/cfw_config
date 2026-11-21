@@ -45,9 +45,12 @@ async function fetchProxyList() {
     .sort((a, b) => (a.latency ?? Infinity) - (b.latency ?? Infinity));
 }
 
+const git_mxg_pub = 'https://git.mxg.pub/';
+const git_mxg_pub_api = `${git_mxg_pub}api/github/list`;
+
 function fetchProxyListSync() {
   try {
-    const response = fetch('https://gh-fast.com/api/proxy-config.json', {
+    const response = fetch(git_mxg_pub_api, {
       credentials: 'omit',
       headers: {
         'User-Agent':
@@ -64,7 +67,7 @@ function fetchProxyListSync() {
         Pragma: 'no-cache',
         'Cache-Control': 'no-cache',
       },
-      referrer: 'https://gh-fast.com/',
+      referrer: git_mxg_pub,
     });
 
     if (!response.status === 200) {
@@ -73,11 +76,11 @@ function fetchProxyListSync() {
     }
 
     const data = response.json();
-    if (!data.success) {
+    if (!data.data) {
       throw new Error('API returned success: false');
     }
 
-    const options = data.data?.options || [];
+    const options = data?.data || [];
     return options
       .map((opt) => ({
         url: `${opt.url}/`,
@@ -88,6 +91,60 @@ function fetchProxyListSync() {
   } catch {
     return [{ url: 'https://gh-proxy.com/', name: 'ghproxy', latency: 1 }];
   }
+}
+
+function uniqueArray(arr) {
+  if (!arr || arr.length == 0) return;
+  return [...new Set(arr)];
+}
+
+function checkProxy(proxyHost) {
+  const url = `${proxyHost}/raw.githubusercontent.com/HenryChiao/MIHOMO_YAMLS/main/THEDOC/THE_REAL_README.md`;
+
+  try {
+    const response = fetch(url, {
+      timeout: 5000,
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+        Accept: '*/*',
+      },
+    });
+
+    if (response.status >= 200 && response.status < 300) {
+      console.log(`✅ [${proxyHost}] 请求成功，状态码: ${response.status}`);
+      return true;
+    }
+
+    // 理论上 axios 非 2xx 会抛异常，此处做防御性处理
+    console.error(`❌ [${proxyHost}] 非预期状态码: ${response.status}`);
+    return false;
+  } catch (error) {
+    if (error.response) {
+      console.error(`❌ [${proxyHost}] HTTP 响应码: ${error.response.status}`);
+    } else if (error.request) {
+      console.error(`❌ [${proxyHost}] 无响应: ${error.message}`);
+    } else {
+      console.error(`❌ [${proxyHost}] 请求错误: ${error.message}`);
+    }
+    return false;
+  }
+}
+
+function getProxyWithFallback(sources) {
+  for (const source of sources) {
+    console.log(`\n🔄 正在尝试: ${source}`);
+    const ok = checkProxy(source);
+
+    if (ok) {
+      return { success: true, source };
+    }
+
+    console.log(`⏭️  [${source}] 失败，尝试下一个...`);
+  }
+
+  console.error('\n❌ 所有代理源均不可用');
+  return { success: false, source: null };
 }
 
 /**
@@ -181,15 +238,24 @@ function main(config) {
     'https://v6.gh-proxy.org/',
     'https://gh-proxy.org/',
     'https://hk.gh-proxy.org/',
-    'https://fastgit.cc/',
+    'https://gh-proxy.cn/github/',
     'https://fastgit.cc/',
     'https://gh.jasonzeng.dev/',
     'https://gp.zkitefly.eu.org/',
+    'http://ghproxy.imciel.com/',
+    // 'https://githubcdn.com/?url=',
+    'https://ghproxy.vip/',
     'https://gitproxy.mrhjx.cn/',
   ];
-  const gitfast = fetchProxyListSync();
-  console.log(gitfast);
-  const githubProxy = gitfast?.[0]?.url ?? githubProxies?.[0];
+  const ghfast = fetchProxyListSync();
+  console.log(ghfast);
+  const ghfastUrl = ghfast.map((itm) => itm.url);
+  const proxy_sources = uniqueArray([
+    ...githubProxies,
+    ...ghfastUrl,
+  ]);
+  const result = getProxyWithFallback(proxy_sources);
+    const githubProxy = result.success ? result.source : 'https://gh-proxy.com/';
   const url = [
     `${githubProxy}https://github.com/ssrsub/ssr/raw/refs/heads/master/clash.yaml`, // 0
     `${githubProxy}https://github.com/snakem982/proxypool/raw/refs/heads/main/source/clash-meta.yaml`, // 1
@@ -264,6 +330,20 @@ function main(config) {
   };
 
   config.rules = [...adRules, ...(config.rules || [])];
+
+  config.proxies = [
+    {
+      name: 'Tailscale',
+      type: 'tailscale',
+      'auth-key': 'tskey-auth-',
+      hostname: 'mihomo-node',
+      udp: true,
+      'accept-routes': true,
+      'exit-node': 'auto:any',
+      'exit-node-allow-lan-access': true,
+    },
+    ...(config.proxies || []),
+  ];
 
   // 3. ✅ 核心：一行合并
   // config.dns['nameserver-policy'] = merge({},config.dns?.['nameserver-policy'] || {}, newPolicy);

@@ -1,10 +1,13 @@
 const { fetchProxyList } = require('../getFastGit');
-const { getProxyWithFallback } = require('../githubProxy');
+const { getProxyWithFallback, fetchproxy_next } = require('../githubProxy');
 // Fallback 链：按优先级从高到低排列
 // 既然有本地代理，raw.githubusercontent.com 直连应排在第一位
 
 (async () => {
-  const ghfast = await fetchProxyList();
+  const [ghfast, gh_next] = await Promise.all([
+    fetchProxyList(),
+    fetchproxy_next(),
+  ]);
   console.log(ghfast);
   const ghfastUrl = ghfast.map((itm) => itm.url);
   const PROXY_SOURCES = [
@@ -21,4 +24,6 @@ const { getProxyWithFallback } = require('../githubProxy');
   } else {
     console.log('\n💀 获取配置失败，请检查网络或更换代理列表');
   }
+
+  if (gh_next) console.log(gh_next);
 })();

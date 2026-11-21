@@ -838,7 +838,6 @@ async function methodTwo(config, mihomoCfg, defaultConfig = true) {
 
   mainConfig = uncommented.replaceAll(defaultProxy, mostFastProxy);
 
-
   // 5. 保存最终配置
   // await fs.writeFile(mihomoCfg, mainConfig);
   console.log('✅ 方案二完成：config.yaml 已生成');

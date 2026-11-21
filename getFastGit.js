@@ -2,8 +2,13 @@
  * 请求 gh-fast.com 的代理配置接口，返回标准化的代理列表
  * @returns {Promise<Array<{url: string, name: string, latency: number}>>}
  */
-async function fetchProxyList() {
-  const response = await fetch('https://gh-fast.com/api/proxy-config.json', {
+
+// gh-fast.com 已经失效
+const ghFast = 'https://gh-fast.com/api/proxy-config.json';
+const git_mxg_pub = 'https://git.mxg.pub/api/github/list';
+
+async function fetchProxyListApi(api, callback) {
+  const response = await fetch(api, {
     credentials: 'omit',
     headers: {
       'User-Agent':
@@ -11,7 +16,6 @@ async function fetchProxyList() {
       Accept: '*/*',
       'Accept-Language':
         'zh-CN,zh;q=0.9,zh-TW;q=0.8,zh-HK;q=0.7,en-US;q=0.6,en;q=0.5',
-      'Alt-Used': 'gh-fast.com',
       'Sec-Fetch-Dest': 'empty',
       'Sec-Fetch-Mode': 'cors',
       'Sec-Fetch-Site': 'same-origin',
@@ -20,7 +24,7 @@ async function fetchProxyList() {
       Pragma: 'no-cache',
       'Cache-Control': 'no-cache',
     },
-    referrer: 'https://gh-fast.com/',
+    referrer: api,
     method: 'GET',
     mode: 'cors',
   });
@@ -30,6 +34,10 @@ async function fetchProxyList() {
     // throw new Error(`HTTP error! status: ${response.status}`);
   }
 
+  return callback(response);
+}
+
+async function fetchGitFastList() {
   const data = await response.json();
   if (!data.success) {
     throw new Error('API returned success: false');
@@ -43,6 +51,22 @@ async function fetchProxyList() {
       latency: opt.latency,
     }))
     .sort((a, b) => (a.latency ?? Infinity) - (b.latency ?? Infinity));
+}
+
+async function fetchGitMxgPubList() {
+  return fetchProxyListApi(git_mxg_pub, async (response) => {
+    const data = await response.json();
+    // console.log("fetchGitMxgPubList: ", data)
+
+    const options = data?.data || [];
+    return options
+      .map((opt) => ({
+        url: opt.url,
+        name: opt.name,
+        latency: opt.latency,
+      }))
+      .sort((a, b) => (a.latency ?? Infinity) - (b.latency ?? Infinity));
+  });
 }
 
 /**
@@ -69,8 +93,13 @@ function mergeAndSortProxies(existing = [], fetched = []) {
   );
 }
 
+async function fetchProxyList() {
+  return fetchGitMxgPubList();
+}
+
 // CommonJS 导出
 module.exports = {
   fetchProxyList,
   mergeAndSortProxies,
+  fetchGitMxgPubList,
 };
