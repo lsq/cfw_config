@@ -89,7 +89,7 @@ function fetchProxyListSync() {
       }))
       .sort((a, b) => (a.latency ?? Infinity) - (b.latency ?? Infinity));
   } catch {
-    return [{ url: 'https://gh-proxy.com/', name: 'ghproxy', latency: 1 }];
+    return [{ url: 'https://gh-proxy.org/', name: 'ghproxy', latency: 1 }];
   }
 }
 
@@ -234,7 +234,7 @@ function main(config) {
   // https://testipv6.cn/index.html.zh_CN
   // https://ipv6.ustb.edu.cn/
   const githubProxies = [
-    'https://gh-proxy.com/',
+    'https://gh-proxy.org/',
     'https://v6.gh-proxy.org/',
     'https://gh-proxy.org/',
     'https://hk.gh-proxy.org/',
@@ -255,7 +255,7 @@ function main(config) {
     ...ghfastUrl,
   ]);
   const result = getProxyWithFallback(proxy_sources);
-    const githubProxy = result.success ? result.source : 'https://gh-proxy.com/';
+    const githubProxy = result.success ? result.source : 'https://gh-proxy.org/';
   const url = [
     `${githubProxy}https://github.com/ssrsub/ssr/raw/refs/heads/master/clash.yaml`, // 0
     `${githubProxy}https://github.com/snakem982/proxypool/raw/refs/heads/main/source/clash-meta.yaml`, // 1
@@ -271,6 +271,7 @@ function main(config) {
   // config.tun.enable = true; // android上此参数无效
   // config['proxy-providers'] = {};
   config['external-controller'] = '0.0.0.0:9090';
+  config['dns'].enable = false;
   config['proxy-providers'].main.url = url[0];
   config['proxy-providers'].main.interval = 3600;
   config['proxy-providers'].main.header = {};

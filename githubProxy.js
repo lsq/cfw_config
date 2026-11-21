@@ -14,7 +14,7 @@ const ghproxy_vip = 'https://ghproxy.vip/';
 const gh_proxy_cn = 'https://gh-proxy.cn/github';
 
 const PROXY_SOURCES = [
-  'https://gh-proxy.com',
+  'https://gh-proxy.org',
   gh_proxy_cn,
   'https://ghfast.top',
   'https://mirror.ghproxy.com',
@@ -89,7 +89,7 @@ async function fetchproxy_next() {
 
 /**
  * 通过指定的 gh-proxy 获取配置文件
- * @param {string} proxyHost - 代理域名，如 'gh-proxy.com'
+ * @param {string} proxyHost - 代理域名，如 'gh-proxy.org'
  * @returns {Promise<boolean>} 请求成功返回 true，失败返回 false
  */
 async function checkProxy(proxyHost) {
